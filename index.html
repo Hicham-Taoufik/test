@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!-- Changed Title -->
-  <title>Dashboard - Infirmier</title>
-  <!-- Using Doctor's Fonts & Font Awesome -->
+  <title>Dashboard - Réception</title> <!-- Updated Title -->
+  <!-- Using Consistent Fonts & Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-  <!-- Using Doctor's CSS -->
+  <!-- Using Consistent CSS -->
   <style>
     :root {
       --primary: #5d74f2;
@@ -40,27 +39,27 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--gray-100); /* Changed background */
+      background: var(--gray-100);
       color: var(--gray-800);
       line-height: 1.5;
       min-height: 100vh;
-      padding: 0; /* Removed body padding */
+      padding: 0;
     }
 
-    /* Added Container from Doctor's CSS */
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 20px; /* Add padding to container instead of body */
     }
 
-    /* Added Header from Doctor's CSS */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 0;
-      margin-bottom: 30px;
+      padding: 0 0 30px 0; /* Adjusted padding */
+      margin-bottom: 0; /* Removed bottom margin */
+      border-bottom: 1px solid var(--gray-200);
+       margin-bottom: 30px; /* Added margin back for spacing */
     }
 
     .header-title {
@@ -81,7 +80,6 @@
       margin-right: 8px;
     }
 
-    /* Added Card styles from Doctor's CSS */
      .card {
       background: white;
       border-radius: var(--border-radius);
@@ -111,7 +109,7 @@
       color: var(--primary);
     }
 
-    .card-actions {
+    .card-actions { /* Optional: Icon on the right */
       color: white;
       background: var(--primary);
       border-radius: var(--border-radius);
@@ -126,38 +124,44 @@
       padding: 20px;
     }
 
-    /* Added Patient Info grid styles */
-    .patient-info {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 15px;
+     /* Layout using flexbox for side-by-side cards */
+     .flex-row {
+      display: flex;
+      gap: 25px;
+      margin-bottom: 25px;
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
     }
 
-    .info-group {
-      margin-bottom: 5px;
+    .flex-col {
+      flex: 1; /* Each column takes equal space */
+      min-width: 350px; /* Minimum width before wrapping */
     }
 
-    .info-label {
-      font-size: 0.75rem;
-      color: var(--gray-500);
-      margin-bottom: 4px;
-    }
-
-    .info-value {
-      font-size: 0.9rem;
-      color: var(--gray-800);
-      font-weight: 500;
-    }
-
-    /* Added Form element styles */
-     label {
+    /* Form elements styling */
+    label { /* Style labels if needed */
       display: block;
       margin-bottom: 6px;
       font-size: 0.85rem;
       color: var(--gray-600);
     }
 
-    textarea, input[type="text"], input[type="date"] {
+    /* Grouping label and input */
+    .input-group {
+      margin-bottom: 15px;
+    }
+    /* Keep original form grid for structure inside card */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px; /* Space before button */
+    }
+
+
+    input[type="text"],
+    input[type="date"],
+    input[type="tel"], /* Added tel type */
+    select {
       width: 100%;
       padding: 10px 12px;
       font-size: 0.9rem;
@@ -168,31 +172,48 @@
       font-family: 'Inter', sans-serif;
     }
 
-    textarea:focus, input[type="text"]:focus, input[type="date"]:focus {
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="tel"]:focus,
+    select:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(93, 116, 242, 0.1);
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 120px; /* Adjusted height */
+    /* Checkbox styling */
+     .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--gray-700);
+    }
+    .checkbox-label input[type="checkbox"] {
+        width: auto; /* Override default width */
+        margin-right: 6px;
+    }
+    .mutuelle-group {
+        grid-column: span 2; /* Span across grid */
+        display: flex;
+        flex-direction: column; /* Stack elements */
+        gap: 10px;
+    }
+    .mutuelle-checkbox-line {
+        display: flex;
+        align-items: center;
     }
 
-    /* Added Input Group Style */
-    .input-group {
-        margin-bottom: 15px;
-    }
 
-    /* Added Button Group Style */
-     .btn-group {
+    /* Button styling */
+    .btn-group {
       display: flex;
       gap: 10px;
-      margin-top: 15px; /* Add margin top to separate from textarea */
+      margin-top: 15px;
+      justify-content: flex-start; /* Align buttons */
     }
 
-    /* Added Button styles */
-    .btn {
+     .btn {
       padding: 8px 16px;
       font-size: 0.85rem;
       font-weight: 500;
@@ -213,44 +234,42 @@
       background: var(--primary);
       color: white;
     }
+    .btn-primary:hover { background: #4a62d8; }
 
-    .btn-primary:hover {
-      background: #4a62d8;
+    .btn-success {
+      background: var(--success);
+      color: white;
     }
+    .btn-success:hover { background: #28a960; }
+
+    .btn-secondary { /* Keep secondary for print? or use outline */
+        background: var(--gray-600);
+        color: white;
+    }
+     .btn-secondary:hover { background: var(--gray-700); }
 
     .btn-outline {
       background: white;
       color: var(--primary);
       border: 1px solid var(--gray-300);
     }
-
     .btn-outline:hover {
       border-color: var(--primary);
       background: var(--primary-light);
     }
+     .form-submit-button { /* Specific class for form submit */
+         grid-column: span 2; /* Make submit button span grid */
+     }
 
-    .btn-success {
-      background: var(--success);
-      color: white;
+    /* Search bar specific styling */
+    .search-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
     }
+    .search-bar input { flex-grow: 1; } /* Input takes available space */
 
-    .btn-success:hover {
-      background: #28a960;
-    }
-
-    /* Added Status styles */
-    .status {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      color: var(--gray-600);
-      background: var(--gray-200);
-      margin-left: 10px; /* Adjusted alignment */
-    }
-
-    /* Added Message styles */
+    /* Message/Result styling */
     .message {
       padding: 10px;
       border-radius: 6px;
@@ -258,344 +277,438 @@
       font-size: 0.85rem;
       font-weight: 500;
       display: none; /* Hidden by default */
+       grid-column: span 2; /* Span message across form grid */
     }
+    .message-success { background: var(--success-light); color: var(--success); }
+    .message-warning { background: var(--warning-light); color: var(--warning); }
+    .message-error { background: var(--danger-light); color: var(--danger); }
 
-    .message-success {
-      background: var(--success-light);
-      color: var(--success);
+    #getResult {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: var(--gray-100); /* Lighter background */
+        border-radius: var(--border-radius);
+        border-left: 4px solid var(--primary); /* Accent border */
     }
-
-    .message-warning {
-      background: var(--warning-light);
-      color: var(--warning);
+     /* Styling for patient result display */
+    .patient-result-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px 15px; /* Row and column gap */
+        margin-bottom: 15px;
     }
+     .patient-result-info .info-group { margin-bottom: 0; } /* Remove extra margin */
+     .patient-result-qr {
+         text-align: center; /* Center QR code and button */
+         margin-top: 20px;
+     }
+     .patient-result-qr img {
+         max-width: 200px; /* Smaller QR code */
+         display: block;
+         margin: 0 auto 15px auto; /* Center and add bottom margin */
+         border: 1px solid var(--gray-300);
+         padding: 5px;
+     }
 
-    .message-error {
-      background: var(--danger-light);
-      color: var(--danger);
-    }
-
-    /* Added Responsive styles */
+    /* Responsive adjustments */
      @media (max-width: 768px) {
-      .patient-info {
-        grid-template-columns: 1fr 1fr;
+      .flex-row {
+        flex-direction: column; /* Stack cards */
       }
+       .form-grid {
+           grid-template-columns: 1fr; /* Single column form on small screens */
+       }
+       .mutuelle-group, .form-submit-button, .message {
+           grid-column: span 1; /* Reset span */
+       }
+        .patient-result-info {
+            grid-template-columns: 1fr; /* Single column results */
+        }
     }
+
   </style>
 </head>
 <body>
-  <!-- Added Container -->
   <div class="container">
-    <!-- Added Header -->
+    <!-- Header -->
     <div class="header">
-      <h1 class="header-title">🩺 Espace Infirmier</h1> <!-- Updated Title -->
+      <h1 class="header-title">🎯 Dashboard Réception</h1>
       <div class="logo">
-        <i class="fas fa-hospital"></i> MediClinic <!-- Or a nurse icon: fa-user-nurse -->
+        <i class="fas fa-clinic-medical"></i> MediClinic
       </div>
     </div>
 
-    <!-- Patient Info Card -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">
-          <i class="fas fa-user-circle"></i> Informations du Patient
-        </h2>
-        <div class="card-actions">
-          <i class="fas fa-user"></i>
+    <!-- Main Content Area -->
+    <div class="flex-row">
+
+      <!-- Create Patient Card -->
+      <div class="flex-col">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><i class="fas fa-user-plus"></i> Créer un Patient</h2>
+            <div class="card-actions"><i class="fas fa-pen"></i></div>
+          </div>
+          <div class="card-body">
+            <form id="createForm">
+              <div class="form-grid">
+                <div class="input-group">
+                  <label for="nom">Nom</label>
+                  <input id="nom" name="nom" placeholder="Nom de famille" required />
+                </div>
+                <div class="input-group">
+                   <label for="prenom">Prénom</label>
+                  <input id="prenom" name="prenom" placeholder="Prénom" required />
+                </div>
+                <div class="input-group">
+                  <label for="cin">CIN</label>
+                  <input id="cin" name="cin" placeholder="Carte d'Identité Nationale" required />
+                </div>
+                 <div class="input-group">
+                  <label for="telephone">Téléphone</label>
+                  <input id="telephone" name="telephone" type="tel" placeholder="Numéro de téléphone" required />
+                </div>
+                 <div class="input-group">
+                  <label for="adresse">Adresse</label>
+                  <input id="adresse" name="adresse" placeholder="Adresse complète" required />
+                </div>
+                 <div class="input-group">
+                  <label for="ville">Ville</label>
+                  <input id="ville" name="ville" placeholder="Ville" required />
+                </div>
+                 <div class="input-group">
+                   <label for="date_naissance">Date de Naissance</label>
+                  <input id="date_naissance" name="date_naissance" type="date" required />
+                </div>
+                 <div class="input-group">
+                   <label for="sexe">Sexe</label>
+                  <select id="sexe" name="sexe">
+                    <option value="M">Homme</option>
+                    <option value="F">Femme</option>
+                  </select>
+                 </div>
+                 <!-- Mutuelle Grouping -->
+                 <div class="input-group mutuelle-group">
+                    <div class="mutuelle-checkbox-line">
+                      <input type="checkbox" id="has_insurance" name="has_insurance" />
+                      <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label>
+                    </div>
+                    <input name="mutuelle" placeholder="Nom Mutuelle (si case cochée)" />
+                 </div>
+                  <!-- Submit button -->
+                <div class="form-submit-button">
+                   <button type="submit" class="btn btn-success">
+                       <i class="fas fa-plus-circle"></i> Créer Patient
+                   </button>
+                </div>
+                <!-- Message Area -->
+                <div id="message" class="message"></div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <!-- Target for patient info, using new class -->
-        <div id="patientInfo" class="patient-info">Chargement...</div>
-      </div>
-    </div>
 
-    <!-- Observation Card -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">
-          <i class="fas fa-notes-medical"></i> Observation Infirmier
-        </h2>
-         <div class="card-actions">
-            <i class="fas fa-clipboard-list"></i>
+      <!-- Search Patient Card -->
+      <div class="flex-col">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><i class="fas fa-search"></i> Rechercher un Patient</h2>
+             <div class="card-actions"><i class="fas fa-users"></i></div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <input id="getCin" placeholder="Entrer le CIN du patient" />
+              <button onclick="getPatient()" class="btn btn-primary">
+                <i class="fas fa-search"></i> Rechercher
+              </button>
+            </div>
+            <!-- Result Area -->
+            <div id="getResult">
+              <!-- Patient details will be injected here by JS -->
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <!-- Input Group for Textarea -->
-        <div class="input-group">
-          <textarea id="observationInput" placeholder="Saisir ou dicter l'observation ici..."></textarea>
-          <!-- Removed absolutely positioned mic button -->
-        </div>
 
-        <!-- Button Group for Recording -->
-        <div class="btn-group">
-          <button class="btn btn-outline" id="startObservationBtn" onclick="startRecording()">
-            <i class="fas fa-microphone"></i> Démarrer
-          </button>
-          <button class="btn btn-outline" onclick="stopRecording()">
-             <i class="fas fa-stop-circle"></i> Arrêter & Transcrire
-          </button>
-          <!-- Status indicator -->
-          <span id="observationStatus" class="status"></span>
-        </div>
+    </div> <!-- End flex-row -->
+  </div> <!-- End container -->
 
-         <!-- Button Group for Saving -->
-        <div class="btn-group">
-          <button class="btn btn-success" onclick="submitObservation()">
-            <i class="fas fa-check-circle"></i> Enregistrer l'observation
-          </button>
-        </div>
-
-        <!-- Message area for submission status -->
-        <div id="obsMessage" class="message"></div>
-      </div>
-    </div>
-
-  </div> <!-- End Container -->
-
-  <!-- Adapted JavaScript -->
   <script>
     const BASE_URL = 'https://workflows.aphelionxinnovations.com';
     const TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiZmJmMmI1ZjctZTc3ZS00ZGZmLWJlN2UtN2ZlOGVkZmViZmY1IiwiZmlyc3ROYW1lIjoiTW91c3NhIiwibGFzdE5hbWUiOiJTYWlkaSIsInVzZXJuYW1lIjoic2FpZGkiLCJlbWFpbCI6Im1vdXNzYS5zYWlkaS4wMUBnbXppbC5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk1MjMyNn0.1s_IWO-h-AKwkP0LIX8mcjdeLRwsRtgbqAchIJSRVEA';
 
-    let currentIPP = null;
-    let mediaRecorder;
-    let audioChunks = [];
+    const resultDiv = document.getElementById("getResult");
+    const messageDiv = document.getElementById("message");
+    const createForm = document.getElementById("createForm");
 
-    window.onload = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      currentIPP = urlParams.get('ipp');
-      const patientInfoContainer = document.getElementById("patientInfo"); // Get container reference
-
-      if (currentIPP) {
-        loadPatient(currentIPP);
-      } else {
-        patientInfoContainer.innerHTML = `<div class="message message-error" style="display:block; grid-column: 1 / -1;">❌ IPP non trouvé dans l'URL.</div>`; // Span across grid
-      }
-    };
-
-    function loadPatient(ipp) {
-      const patientInfoContainer = document.getElementById("patientInfo");
-      patientInfoContainer.innerHTML = 'Chargement des informations...'; // Loading state
-
-      fetch(`${BASE_URL}/webhook/nurse-get-patient?ipp=${ipp}`, { // Using nurse endpoint
-        headers: { Authorization: TOKEN }
-      })
-        .then(res => {
-            if (!res.ok) throw new Error(`Erreur réseau ${res.status}`);
-            return res.json();
-        })
-        .then(data => {
-          if (!data || !data.nom) { // Check if data is valid
-             throw new Error("Patient non trouvé ou réponse invalide.");
-          }
-
-          // Generate HTML using the Doctor's dashboard grid structure
-          patientInfoContainer.innerHTML = `
-            <div class="info-group">
-              <div class="info-label">Nom</div>
-              <div class="info-value">${data.prenom || 'N/A'} ${data.nom || 'N/A'}</div>
-            </div>
-            <div class="info-group">
-              <div class="info-label">IPP</div>
-              <div class="info-value">${data.ipp || 'N/A'}</div>
-            </div>
-            <div class="info-group">
-              <div class="info-label">CIN</div>
-              <div class="info-value">${data.cin || 'N/A'}</div>
-            </div>
-            <div class="info-group">
-              <div class="info-label">Téléphone</div>
-              <div class="info-value">${data.telephone || 'N/A'}</div>
-            </div>
-            <div class="info-group">
-              <div class="info-label">Adresse</div>
-              <div class="info-value">${data.adresse || 'N/A'}</div>
-            </div>
-            <div class="info-group">
-              <div class="info-label">Mutuelle</div>
-              <div class="info-value">${data.mutuelle || 'Aucune'}</div>
-            </div>
-          `;
-        })
-        .catch(err => {
-          patientInfoContainer.innerHTML = `<div class="message message-error" style="display:block; grid-column: 1 / -1;">❌ Erreur chargement: ${err.message}</div>`; // Span across grid
-          console.error("Error loading patient data:", err);
-        });
-    }
-
-    function startRecording() {
-      audioChunks = [];
-       // Use the status element for feedback
-      document.getElementById("observationStatus").innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enregistrement...';
-      document.getElementById("observationStatus").style.display = 'inline-flex'; // Make status visible
-
-
-      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.start();
-
-        mediaRecorder.ondataavailable = e => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunks, { type: 'audio/webm' });
-          sendAudioToAI(blob);
-           // Update status
-           document.getElementById("observationStatus").innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Transcription...';
-        };
-
-        // Disable start button during recording
-        document.getElementById("startObservationBtn").disabled = true;
-
-      }).catch(err => {
-         document.getElementById("observationStatus").innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur micro';
-         console.error("Microphone error:", err);
-         // Optionally use showMessage for a more prominent error
-         showMessage("obsMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur microphone: ${err.message}`, "error");
-      });
-    }
-
-    function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-        // Re-enable start button
-        document.getElementById("startObservationBtn").disabled = false;
-         // Status will be updated in onstop handler
-      } else {
-          // Clear status if not recording when stop is clicked
-          document.getElementById("observationStatus").innerHTML = '';
-          document.getElementById("observationStatus").style.display = 'none';
-          document.getElementById("startObservationBtn").disabled = false; // Ensure it's enabled
-      }
-    }
-
-    function sendAudioToAI(blob) {
-      const formData = new FormData();
-      formData.append("audio", blob, "observation.webm");
-
-      // Update status
-      document.getElementById("observationStatus").innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi...';
-
-
-      fetch(`${BASE_URL}/webhook/nurse-transcribe-observation`, { // Using nurse endpoint
-        method: "POST",
-        headers: { Authorization: TOKEN },
-        body: formData
-      })
-        .then(res => {
-            if (!res.ok) throw new Error(`Erreur réseau ${res.status}`);
-            return res.json();
-        })
-        .then(data => {
-          // Handle potential variations in transcription response structure
-          let text = '';
-          if (Array.isArray(data) && data.length > 0) {
-              text = data[0]?.transcript || data[0]?.text || '';
-          } else if (typeof data === 'object' && data !== null) {
-              text = data.transcript || data.text || '';
-          }
-
-          if (!text) {
-            console.warn("Transcription result empty or in unexpected format:", data);
-            document.getElementById("observationStatus").innerHTML = '<i class="fas fa-exclamation-circle"></i> Vide';
-            return;
-          }
-
-          document.getElementById("observationInput").value = text;
-          document.getElementById("observationStatus").innerHTML = '<i class="fas fa-check"></i> Terminé';
-          // Optionally hide status after a delay
-          // setTimeout(() => {
-          //     document.getElementById("observationStatus").style.display = 'none';
-          // }, 3000);
-
-        })
-        .catch(err => {
-          console.error("Transcription error:", err);
-           document.getElementById("observationStatus").innerHTML = '<i class="fas fa-times-circle"></i> Erreur Transc.';
-           // Show persistent error in main message area
-           showMessage("obsMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur transcription: ${err.message}`, "error");
-
-        });
-    }
-
-    function submitObservation() {
-      const observation = document.getElementById("observationInput").value.trim();
-      if (!observation) {
-         // Use the showMessage function for feedback
-         showMessage("obsMessage", "Veuillez entrer ou dicter une observation.", "warning");
-        return;
-      }
-      // Clear previous messages before submitting
-      showMessage("obsMessage", "", "");
-
-
-      fetch(`${BASE_URL}/webhook/nurse-submit-observation`, { // Using nurse endpoint
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: TOKEN
-        },
-        body: JSON.stringify({ ipp: currentIPP, observation })
-      })
-       .then(response => {
-            if (!response.ok) throw new Error(`Erreur réseau ${response.status}`);
-            // Check content type as response might be empty on success
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                return response.json();
-            }
-            return {}; // Return empty object if no JSON
-        })
-        .then((data) => { // data might be empty
-          // Use the showMessage function for success feedback
-          showMessage("obsMessage", "<i class='fas fa-check-circle'></i> Observation enregistrée avec succès.", "success");
-          console.log("Observation submission response:", data);
-          // Optionally clear the textarea after success
-          // document.getElementById("observationInput").value = '';
-        })
-        .catch(err => {
-          console.error("Erreur enregistrement observation:", err);
-          // Use the showMessage function for error feedback
-           showMessage("obsMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur enregistrement: ${err.message}`, "error");
-        });
-    }
-
-     // Added showMessage function (similar to Doctor's dashboard)
-     function showMessage(elementId, message, type) {
+    // Show Message Function (from other dashboards)
+    function showMessage(elementId, message, type) {
         const messageElement = document.getElementById(elementId);
         if (!messageElement) {
             console.error(`Message element with ID "${elementId}" not found.`);
             return;
         }
-
-        messageElement.innerHTML = message || ""; // Ensure content is cleared if message is empty
-        messageElement.style.display = message ? "block" : "none"; // Show only if there is a message
-
-        // Remove any existing type classes first
-        messageElement.classList.remove("message-success", "message-warning", "message-error");
-         messageElement.className = "message"; // Reset class to base
-
-        // Add appropriate class based on type
-        if (type === "success") {
-            messageElement.classList.add("message-success");
-        } else if (type === "warning") {
-            messageElement.classList.add("message-warning");
-        } else if (type === "error") {
-            messageElement.classList.add("message-error");
+        // Clear previous content explicitly if used for results
+        if (elementId === 'getResult' && type !== 'result') {
+            messageElement.innerHTML = '';
         }
 
-        // Auto-hide after 5 seconds ONLY for success messages
-        if (type === "success" && message) { // Only set timeout if it's a success message with content
+        messageElement.innerHTML = message || "";
+        messageElement.style.display = message ? "block" : "none";
+        messageElement.className = "message"; // Reset class
+
+        if (type === "success") messageElement.classList.add("message-success");
+        else if (type === "warning") messageElement.classList.add("message-warning");
+        else if (type === "error") messageElement.classList.add("message-error");
+        else messageElement.className = ""; // Reset class if just displaying result HTML
+
+        // Auto-hide for success messages
+        if (type === "success" && message) {
             setTimeout(() => {
-            // Check if the message is still the same success message before hiding
-            if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
-                messageElement.style.display = "none";
-            }
+                if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
+                   messageElement.style.display = "none";
+                }
             }, 5000);
         }
     }
+
+
+    // Search and display patient info
+    function getPatient() {
+      const cin = document.getElementById("getCin").value.trim();
+      if (!cin) {
+          showMessage('getResult', 'Veuillez entrer un CIN pour rechercher.', 'warning');
+          return;
+      }
+      resultDiv.innerHTML = '<p style="text-align:center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Recherche...</p>'; // Loading indicator
+      resultDiv.style.display = 'block'; // Ensure div is visible
+      resultDiv.className = ""; // Reset message classes if any
+
+      const url = `${BASE_URL}/webhook/get-patient?cin=${cin}`;
+
+      fetch(url, { headers: { Authorization: TOKEN } })
+        .then(res => {
+            if (!res.ok) throw new Error(`Erreur ${res.status}: Patient non trouvé ou erreur réseau.`);
+            return res.json();
+        })
+        .then(data => {
+          if (!data || !data.nom) { // Double check data validity
+             throw new Error("Les données du patient reçues sont invalides.");
+          }
+
+          // Default QR code generation if not provided by API
+          const qr = data.qr_code || `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.ipp || data.cin)}`; // Use IPP if available for QR
+
+          // Format date nicely (handle potential null dates)
+          const formatDate = (dateString) => {
+              if (!dateString) return 'N/A';
+              try {
+                  return new Date(dateString).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+              } catch (e) {
+                  return dateString; // Return original if parsing fails
+              }
+          };
+           const formatDateTime = (dateString) => {
+              if (!dateString) return 'N/A';
+              try {
+                  return new Date(dateString).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short'});
+              } catch (e) {
+                  return dateString;
+              }
+          };
+
+          // Use info-group structure for display
+          resultDiv.innerHTML = `
+            <div class="patient-result-header" style="margin-bottom: 15px;">
+                <h3 style="color: var(--primary); margin-bottom: 5px;"><i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}</h3>
+            </div>
+            <div class="patient-result-info">
+                <div class="info-group">
+                    <div class="info-label">IPP</div>
+                    <div class="info-value">${data.ipp || 'N/A'}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">CIN</div>
+                    <div class="info-value">${data.cin || 'N/A'}</div>
+                </div>
+                 <div class="info-group">
+                    <div class="info-label">Téléphone</div>
+                    <div class="info-value">${data.telephone || 'N/A'}</div>
+                </div>
+                 <div class="info-group">
+                    <div class="info-label">Date de Naissance</div>
+                    <div class="info-value">${formatDate(data.date_naissance)}</div>
+                </div>
+                 <div class="info-group">
+                    <div class="info-label">Sexe</div>
+                    <div class="info-value">${data.sexe === 'M' ? 'Homme' : data.sexe === 'F' ? 'Femme' : 'N/A'}</div>
+                </div>
+                 <div class="info-group">
+                    <div class="info-label">Mutuelle</div>
+                    <div class="info-value">${data.mutuelle || "Non"}</div>
+                </div>
+                 <div class="info-group" style="grid-column: span 2;"> <!-- Address spans 2 cols -->
+                    <div class="info-label">Adresse</div>
+                    <div class="info-value">${data.adresse || 'N/A'}, ${data.ville || ''}</div>
+                </div>
+                 <div class="info-group">
+                    <div class="info-label">Créé le</div>
+                    <div class="info-value">${formatDateTime(data.created_at)}</div>
+                </div>
+            </div>
+            <div class="patient-result-qr">
+              <img src="${qr}" alt="QR Code Patient" />
+              <button onclick="printQRCode('${qr}')" class="btn btn-secondary">
+                <i class="fas fa-print"></i> Imprimer QR Code
+              </button>
+            </div>
+          `;
+           // Use 'result' type for showMessage to just handle display block/none without adding message classes
+           showMessage('getResult', resultDiv.innerHTML, 'result');
+
+        })
+        .catch((err) => {
+          console.error("Error fetching patient:", err);
+          showMessage('getResult', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur lors de la récupération."}`, 'error');
+        });
+    }
+
+    // Print QR Code with logo (assuming logo.webp is in the same folder)
+    function printQRCode(qrUrl) {
+        const printWindow = window.open('', '_blank', 'width=600,height=600');
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>Imprimer le QR Code</title>
+                <style>
+                body { font-family: 'Inter', sans-serif; text-align: center; margin-top: 50px; }
+                img.logo { width: 80px; margin-bottom: 15px; }
+                img.qrcode { width: 250px; border: 1px solid #ccc; padding: 8px; }
+                @media print {
+                    body { margin: 0; } /* Adjust print margins */
+                    button { display: none; } /* Hide button when printing */
+                }
+                </style>
+            </head>
+            <body>
+                <img src="logo.webp" alt="Clinic Logo" class="logo" onerror="this.style.display='none'" /> <br/> <!-- Hide logo if it fails to load -->
+                <img src="${qrUrl}" alt="QR Code" class="qrcode" />
+                <br/><br/>
+                <button onclick="window.print()">Imprimer</button>
+                <script>
+                 // Give images time to load before printing
+                 let imagesLoaded = 0;
+                 const images = document.querySelectorAll('img');
+                 const totalImages = images.length;
+
+                 if (totalImages === 0) { // No images, print immediately
+                    window.print();
+                    window.onafterprint = () => window.close();
+                 } else {
+                    images.forEach(img => {
+                        if (img.complete) {
+                            imagesLoaded++;
+                        } else {
+                            img.onload = () => {
+                                imagesLoaded++;
+                                if (imagesLoaded === totalImages) {
+                                    window.print();
+                                    window.onafterprint = () => window.close();
+                                }
+                            };
+                             img.onerror = () => { // Handle image load errors
+                                imagesLoaded++;
+                                console.error("Failed to load image:", img.src);
+                                if (imagesLoaded === totalImages) {
+                                    window.print();
+                                    window.onafterprint = () => window.close();
+                                }
+                            };
+                        }
+                    });
+                    // Fallback timeout if images never load/error
+                    setTimeout(() => {
+                         if (imagesLoaded < totalImages) {
+                              console.warn("Printing before all images confirmed loaded.");
+                              window.print();
+                              window.onafterprint = () => window.close();
+                         }
+                    }, 2000); // 2 second timeout
+                 }
+
+
+                </script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close(); // Important for some browsers
+    }
+
+
+    // Handle create patient form submission
+    createForm?.addEventListener("submit", function (e) {
+      e.preventDefault();
+      showMessage('message', '', ''); // Clear previous message
+
+      const form = e.target;
+      const hasInsurance = form.has_insurance.checked;
+      const mutuelleValue = form.mutuelle.value.trim();
+
+      if (hasInsurance && !mutuelleValue) {
+           showMessage('message', 'Veuillez entrer le nom de la mutuelle si la case est cochée.', 'warning');
+           return;
+      }
+
+      const payload = {
+        nom: form.nom.value.trim(),
+        prenom: form.prenom.value.trim(),
+        cin: form.cin.value.trim(),
+        telephone: form.telephone.value.trim(),
+        adresse: form.adresse.value.trim(),
+        ville: form.ville.value.trim(),
+        date_naissance: form.date_naissance.value, // Already YYYY-MM-DD
+        sexe: form.sexe.value,
+        // has_insurance: hasInsurance, // Usually not sent, determined by mutuelle presence
+        mutuelle: hasInsurance ? mutuelleValue : "" // Send empty string or null if no insurance
+      };
+
+      // Basic validation example (add more as needed)
+      if (!payload.nom || !payload.prenom || !payload.cin || !payload.telephone || !payload.date_naissance) {
+          showMessage('message', 'Veuillez remplir tous les champs obligatoires.', 'warning');
+          return;
+      }
+
+       // Show loading state on button? (Optional)
+       const submitButton = form.querySelector('button[type="submit"]');
+       const originalButtonText = submitButton.innerHTML;
+       submitButton.disabled = true;
+       submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
+
+      fetch(`${BASE_URL}/webhook/create-patient`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: TOKEN },
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+          if (!res.ok) throw new Error(`Erreur ${res.status}: Impossible de créer le patient.`);
+          return res.json();
+       })
+      .then(data => {
+        showMessage('message', '<i class="fas fa-check-circle"></i> Patient créé avec succès.', 'success');
+        form.reset(); // Clear the form
+        console.log("Create patient response:", data); // Log response
+      })
+      .catch((err) => {
+         console.error("Error creating patient:", err);
+         showMessage('message', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur lors de la création."}`, 'error');
+      })
+      .finally(() => {
+           // Restore button state
+           submitButton.disabled = false;
+           submitButton.innerHTML = originalButtonText;
+      });
+    });
+
   </script>
 </body>
 </html>
