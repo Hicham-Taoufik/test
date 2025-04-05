@@ -778,7 +778,7 @@
             };
             const searchPatientAPI = async (cin) => {
                 // ADAPT: Endpoint and response structure handling
-                const url = `${baseUrl}/webhook/get-patient-by-cin?cin=${encodeURIComponent(cin)}`; // <<< ADAPT endpoint
+                const url = `${baseUrl}/webhook/get-patient?cin=${encodeURIComponent(cin)}`; // <<< ADAPT endpoint
                  console.log("API Request: GET", url);
                 const response = await fetch(url, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } });
                 if (!response.ok) { if (response.status === 404) { return null; } const e = await response.json().catch(() => ({ message: `Erreur ${response.status}` })); throw new Error(e.message || `Erreur recherche: ${response.statusText}`); }
