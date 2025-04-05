@@ -428,7 +428,7 @@
 
               <div class="input-group">
                 <label>Date de fin:</label>
-                <input type="date" id="end_date"/>
+                <input type="date" id="end_date"/> <!-- Ensure ID is correct -->
               </div>
 
               <div class="input-group">
@@ -483,7 +483,6 @@
         return res.json();
       })
       .then(data => {
-        // Ensure data is an object before accessing properties
         if (typeof data !== 'object' || data === null) {
             throw new Error("Réponse invalide pour les infos patient");
         }
@@ -544,7 +543,7 @@
           document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Transcription...';
         };
       } else {
-           document.getElementById(`${field}Status`).innerHTML = ''; // Clear status if not recording
+           document.getElementById(`${field}Status`).innerHTML = '';
       }
     }
 
@@ -556,7 +555,7 @@
       const formData = new FormData();
       formData.append("audio", blob, `${field}.webm`);
 
-      document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi...'; // Indicate upload/processing
+      document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi...';
 
       fetch(endpoint, {
         method: "POST",
@@ -568,21 +567,16 @@
          return res.json();
       })
       .then(data => {
-        // Handle potential variations in transcription response structure
         let text = '';
         if (Array.isArray(data) && data.length > 0) {
-             // Case: Response is like [{ "text": "...", ... }] or [{ "transcript": "...", ... }]
              text = data[0]?.text || data[0]?.transcript || '';
         } else if (typeof data === 'object' && data !== null) {
-             // Case: Response is like { "text": "..." } or { "transcript": "..." }
              text = data.text || data.transcript || '';
         }
 
         if (!text) {
           console.warn("Transcription result empty or in unexpected format:", data);
           document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-circle"></i> Vide';
-          // Optionally clear the textarea:
-          // document.getElementById(field === 'diagnosis' ? 'diagnosticInput' : 'prescriptionInput').value = '';
           return;
         }
 
@@ -592,7 +586,6 @@
       .catch(error => {
         document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-times-circle"></i> Erreur';
         console.error("Transcription error:", error);
-        // Optionally show a user-friendly message here using showMessage() if needed
       });
     }
 
@@ -602,7 +595,7 @@
         showMessage("diagMessage", "Veuillez entrer un diagnostic", "warning");
         return;
       }
-      showMessage("diagMessage", "", ""); // Clear previous message
+      showMessage("diagMessage", "", "");
 
       fetch(`${BASE_URL}/webhook/doctor-submit-diagnostic`, {
         method: "POST",
@@ -611,17 +604,16 @@
       })
       .then(response => {
         if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
-        // Check content type before parsing JSON, as some successful responses might be empty
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
             return response.json();
         } else {
-            return {}; // Return empty object for non-JSON success response
+            return {};
         }
       })
-      .then((data) => { // data might be empty object here
+      .then((data) => {
         showMessage("diagMessage", "<i class='fas fa-check-circle'></i> Diagnostic enregistré", "success");
-        console.log("Diagnostic submission response:", data); // Log success response
+        console.log("Diagnostic submission response:", data);
       })
       .catch(error => {
         showMessage("diagMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur enregistrement: ${error.message}`, "error");
@@ -636,8 +628,8 @@
         document.getElementById("aiSuggestion").style.display = "none";
         return;
       }
-      showMessage("validationMessage", "", ""); // Clear previous message
-      document.getElementById("aiSuggestion").style.display = "none"; // Hide initially
+      showMessage("validationMessage", "", "");
+      document.getElementById("aiSuggestion").style.display = "none";
 
       fetch(`${BASE_URL}/webhook/doctor-submit-prescription`, {
         method: "POST",
@@ -648,14 +640,12 @@
         if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
         return response.json();
       })
-      // *** THIS IS THE CORRECTED .then() BLOCK ***
       .then(data => {
-        console.log("Raw data received from API:", JSON.stringify(data, null, 2)); // Log response
+        console.log("Raw data received from API:", JSON.stringify(data, null, 2));
 
-        // Check if the response has success=true and the suggestion object exists
         if (data && data.success === true && data.suggestion) {
             console.log("Data structure check PASSED (found data.success and data.suggestion). Attempting to show suggestion.");
-            aiData = data.suggestion; // CORRECT ASSIGNMENT
+            aiData = data.suggestion;
 
             document.getElementById("aiSuggestion").style.display = "block";
             console.log("aiSuggestion display set to 'block'.");
@@ -664,18 +654,56 @@
 
             // --- Convert MM/DD/YYYY to YYYY-MM-DD for date input ---
             const convertDate = (dateStr) => {
+                // Added detailed logging within the function
                 if (!dateStr || typeof dateStr !== 'string' || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
-                    console.warn("Invalid date format received:", dateStr);
-                    return '';
+                    console.warn(`Invalid or unexpected date format received in convertDate: "${dateStr}" (Type: ${typeof dateStr})`);
+                    return ''; // Return empty string for invalid input
                 }
                 const parts = dateStr.split('/');
-                return `${parts[2]}-${parts[0]}-${parts[1]}`; // Format to YYYY-MM-DD
+                if (parts.length !== 3) {
+                     console.warn(`Date string "${dateStr}" did not split into 3 parts.`);
+                     return ''; // Return empty string if split fails
+                }
+                 // Ensure parts are reasonable numbers (basic check)
+                const month = parseInt(parts[0], 10);
+                const day = parseInt(parts[1], 10);
+                const year = parseInt(parts[2], 10);
+                if (isNaN(month) || isNaN(day) || isNaN(year) || month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > 2100) {
+                    console.warn(`Parsed date parts seem invalid: M=${month}, D=${day}, Y=${year} from "${dateStr}"`);
+                    return '';
+                }
+                // Pad month and day with leading zero if necessary for YYYY-MM-DD format
+                const formattedMonth = String(month).padStart(2, '0');
+                const formattedDay = String(day).padStart(2, '0');
+                const formattedResult = `${year}-${formattedMonth}-${formattedDay}`;
+                console.log(`convertDate: Input="${dateStr}", Output="${formattedResult}"`);
+                return formattedResult;
             };
-            document.getElementById("start_date").value = convertDate(aiData.start_date);
-            document.getElementById("end_date").value = convertDate(aiData.end_date);
-            // --- End Date Conversion ---
 
-            // Check if schedule exists (good practice)
+            // --- ADDED DETAILED LOGGING FOR DATES ---
+            // Set start date
+            console.log("START_DATE: Raw value =", aiData.start_date);
+            const formattedStartDate = convertDate(aiData.start_date);
+            console.log("START_DATE: Formatted value =", formattedStartDate);
+            document.getElementById("start_date").value = formattedStartDate;
+            console.log("START_DATE: Element value after setting =", document.getElementById("start_date").value);
+
+            // Set end date
+            console.log("END_DATE: Raw value =", aiData.end_date);
+            const formattedEndDate = convertDate(aiData.end_date);
+            console.log("END_DATE: Formatted value =", formattedEndDate);
+
+            const endDateElement = document.getElementById("end_date");
+            if (endDateElement) {
+                console.log("END_DATE: Element found. Attempting to set value...");
+                endDateElement.value = formattedEndDate;
+                console.log("END_DATE: Element value immediately after setting =", endDateElement.value); // Read back value
+            } else {
+                console.error("!!! CRITICAL: Could not find HTML element with ID 'end_date' !!!");
+            }
+            // --- END OF DETAILED DATE LOGGING ---
+
+
             if (aiData.schedule) {
                 document.getElementById("matin").checked = aiData.schedule.matin || false;
                 document.getElementById("apres_midi").checked = aiData.schedule.apres_midi || false;
@@ -683,34 +711,29 @@
                 document.getElementById("nuit").checked = aiData.schedule.nuit || false;
             } else {
                 console.warn("Schedule object missing in suggestion");
-                // Clear checkboxes if schedule is missing
                 document.getElementById("matin").checked = false;
                 document.getElementById("apres_midi").checked = false;
                 document.getElementById("soir").checked = false;
                 document.getElementById("nuit").checked = false;
             }
 
-            // Scroll to AI suggestion
             document.getElementById("aiSuggestion").scrollIntoView({ behavior: 'smooth' });
 
         } else {
-            // Log why the check failed more specifically
             console.error("Data structure check FAILED.");
             if (!data) console.error("Reason: Data object is null or undefined.");
             else if (data.success !== true) console.error("Reason: data.success is not true. Value:", data.success);
             else if (!data.suggestion) console.error("Reason: data.suggestion object is missing.");
             else console.error("Reason: Unknown (check data structure).", data);
 
-            // Show error message to user
             showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Réponse invalide ou échec de l'IA", "error");
-            document.getElementById("aiSuggestion").style.display = "none"; // Ensure it remains hidden
+            document.getElementById("aiSuggestion").style.display = "none";
         }
       })
-      // *** END OF CORRECTED .then() BLOCK ***
       .catch(error => {
         showMessage("validationMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur soumission IA: ${error.message}`, "error");
         console.error("Error submitting prescription:", error);
-        document.getElementById("aiSuggestion").style.display = "none"; // Ensure it's hidden on error
+        document.getElementById("aiSuggestion").style.display = "none";
       });
     }
 
@@ -723,7 +746,7 @@
         showMessage("validationMessage", "Veuillez remplir tous les champs obligatoires (Médicament, Dates)", "warning");
         return;
       }
-      showMessage("validationMessage", "", ""); // Clear previous message
+      showMessage("validationMessage", "", "");
 
       const schedule = {
         matin: document.getElementById("matin").checked,
@@ -734,9 +757,18 @@
 
       // --- Convert YYYY-MM-DD back to MM/DD/YYYY if needed by the backend ---
       const convertDateToAPI = (dateStr) => {
-          if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return ''; // Validate format
+          if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+              console.warn(`Invalid YYYY-MM-DD format for API conversion: "${dateStr}"`);
+              return '';
+          }
           const parts = dateStr.split('-');
-          return `${parts[1]}/${parts[2]}/${parts[0]}`; // Format to MM/DD/YYYY
+           if (parts.length !== 3) {
+             console.warn(`API Date string "${dateStr}" did not split into 3 parts.`);
+             return '';
+          }
+          const formattedResult = `${parts[1]}/${parts[2]}/${parts[0]}`; // Format to MM/DD/YYYY
+          console.log(`convertDateToAPI: Input="${dateStr}", Output="${formattedResult}"`);
+          return formattedResult;
       };
       const apiStartDate = convertDateToAPI(start_date);
       const apiEndDate = convertDateToAPI(end_date);
@@ -749,31 +781,24 @@
         body: JSON.stringify({
           ipp: currentIPP,
           final_prescription: document.getElementById("prescriptionInput").value,
-          // Send the original format expected by your API (MM/DD/YYYY)
-          start_date: apiStartDate,
-          end_date: apiEndDate,
-          // If API expects YYYY-MM-DD directly, use:
-          // start_date: start_date,
-          // end_date: end_date,
+          start_date: apiStartDate, // Sending MM/DD/YYYY
+          end_date: apiEndDate,     // Sending MM/DD/YYYY
           schedule,
           medicament_name: medicament
         })
       })
       .then(response => {
         if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
-        // Check content type before parsing JSON
          const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
             return response.json();
         } else {
-            return {}; // Return empty object for non-JSON success response
+            return {};
         }
       })
-      .then((data) => { // data might be empty object
+      .then((data) => {
         showMessage("validationMessage", "<i class='fas fa-check-circle'></i> Prescription enregistrée avec succès", "success");
-        console.log("Validation response:", data); // Log success response
-         // Optionally hide the suggestion box after successful validation
-         // document.getElementById("aiSuggestion").style.display = "none";
+        console.log("Validation response:", data);
       })
       .catch(error => {
         showMessage("validationMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur validation: ${error.message}`, "error");
@@ -788,13 +813,11 @@
           return;
       }
 
-      messageElement.innerHTML = message || ""; // Ensure content is cleared if message is empty
-      messageElement.style.display = message ? "block" : "none"; // Show only if there is a message
+      messageElement.innerHTML = message || "";
+      messageElement.style.display = message ? "block" : "none";
 
-      // Remove any existing type classes first
       messageElement.classList.remove("message-success", "message-warning", "message-error");
 
-      // Add appropriate class based on type
       if (type === "success") {
         messageElement.classList.add("message-success");
       } else if (type === "warning") {
@@ -803,10 +826,8 @@
         messageElement.classList.add("message-error");
       }
 
-      // Auto-hide after 5 seconds ONLY for success messages
-      if (type === "success" && message) { // Only set timeout if it's a success message with content
+      if (type === "success" && message) {
         setTimeout(() => {
-          // Check if the message is still the same success message before hiding
           if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
              messageElement.style.display = "none";
           }
