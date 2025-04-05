@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - Médecin</title>
+  <!-- Changed Title -->
+  <title>Dashboard - Infirmier</title>
+  <!-- Using Doctor's Fonts & Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Using Doctor's CSS -->
   <style>
     :root {
       --primary: #5d74f2;
@@ -37,19 +40,21 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #f9fafb;
+      background: var(--gray-100); /* Changed background */
       color: var(--gray-800);
       line-height: 1.5;
       min-height: 100vh;
-      padding: 0;
+      padding: 0; /* Removed body padding */
     }
 
+    /* Added Container from Doctor's CSS */
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
     }
 
+    /* Added Header from Doctor's CSS */
     .header {
       display: flex;
       justify-content: space-between;
@@ -76,7 +81,8 @@
       margin-right: 8px;
     }
 
-    .card {
+    /* Added Card styles from Doctor's CSS */
+     .card {
       background: white;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow-md);
@@ -120,6 +126,7 @@
       padding: 20px;
     }
 
+    /* Added Patient Info grid styles */
     .patient-info {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -142,20 +149,8 @@
       font-weight: 500;
     }
 
-    .flex-row {
-      display: flex;
-      gap: 25px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-    }
-
-    .flex-col {
-      flex: 1;
-      min-width: 320px;
-    }
-
-    /* Form elements */
-    label {
+    /* Added Form element styles */
+     label {
       display: block;
       margin-bottom: 6px;
       font-size: 0.85rem;
@@ -171,19 +166,7 @@
       background: white;
       transition: all 0.2s ease;
       font-family: 'Inter', sans-serif;
-      /* Appearance setting for date input */
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      position: relative; /* Needed for icon overlay if desired */
     }
-     /* Add specific styling for date inputs if needed, e.g., a calendar icon */
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        /* Default icon styling, adjust as needed */
-        opacity: 0.6;
-        cursor: pointer;
-    }
-
 
     textarea:focus, input[type="text"]:focus, input[type="date"]:focus {
       outline: none;
@@ -193,19 +176,22 @@
 
     textarea {
       resize: vertical;
-      min-height: 120px;
+      min-height: 120px; /* Adjusted height */
     }
 
+    /* Added Input Group Style */
     .input-group {
-      margin-bottom: 15px;
+        margin-bottom: 15px;
     }
 
-    .btn-group {
+    /* Added Button Group Style */
+     .btn-group {
       display: flex;
       gap: 10px;
-      margin-top: 15px;
+      margin-top: 15px; /* Add margin top to separate from textarea */
     }
 
+    /* Added Button styles */
     .btn {
       padding: 8px 16px;
       font-size: 0.85rem;
@@ -252,6 +238,7 @@
       background: #28a960;
     }
 
+    /* Added Status styles */
     .status {
       display: inline-flex;
       align-items: center;
@@ -260,51 +247,17 @@
       font-size: 0.75rem;
       color: var(--gray-600);
       background: var(--gray-200);
-      margin-left: 10px;
+      margin-left: 10px; /* Adjusted alignment */
     }
 
-    .checkbox-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 10px;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-    }
-
-    .checkbox-item input[type="checkbox"] {
-      margin-right: 6px;
-    }
-
-    .ai-suggestion {
-      background: var(--primary-light);
-      border-radius: var(--border-radius);
-      padding: 15px;
-      margin-top: 20px;
-    }
-
-    .ai-suggestion h3 {
-      font-size: 0.95rem;
-      margin-bottom: 15px;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-    }
-
-    .ai-suggestion h3 i {
-      margin-right: 8px;
-    }
-
+    /* Added Message styles */
     .message {
       padding: 10px;
       border-radius: 6px;
       margin-top: 15px;
       font-size: 0.85rem;
       font-weight: 500;
-      display: none;
+      display: none; /* Hidden by default */
     }
 
     .message-success {
@@ -322,12 +275,8 @@
       color: var(--danger);
     }
 
-    @media (max-width: 768px) {
-      .flex-row {
-        flex-direction: column;
-        gap: 20px;
-      }
-
+    /* Added Responsive styles */
+     @media (max-width: 768px) {
       .patient-info {
         grid-template-columns: 1fr 1fr;
       }
@@ -335,14 +284,17 @@
   </style>
 </head>
 <body>
+  <!-- Added Container -->
   <div class="container">
+    <!-- Added Header -->
     <div class="header">
-      <h1 class="header-title">Dashboard de Médecin</h1>
+      <h1 class="header-title">🩺 Espace Infirmier</h1> <!-- Updated Title -->
       <div class="logo">
-        <i class="fas fa-hospital"></i> MediClinic
+        <i class="fas fa-hospital"></i> MediClinic <!-- Or a nurse icon: fa-user-nurse -->
       </div>
     </div>
 
+    <!-- Patient Info Card -->
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">
@@ -353,504 +305,297 @@
         </div>
       </div>
       <div class="card-body">
-        <div id="patientInfo" class="patient-info">Chargement des informations...</div>
+        <!-- Target for patient info, using new class -->
+        <div id="patientInfo" class="patient-info">Chargement...</div>
       </div>
     </div>
 
-    <div class="flex-row">
-      <div class="flex-col">
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <i class="fas fa-stethoscope"></i> Diagnostic
-            </h2>
-            <div class="card-actions">
-              <i class="fas fa-notes-medical"></i>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="input-group">
-              <textarea id="diagnosticInput" placeholder="Entrez le diagnostic du patient..."></textarea>
-            </div>
-
-            <div class="btn-group">
-              <button class="btn btn-outline" onclick="startRecording('diagnosis')">
-                <i class="fas fa-microphone"></i> Démarrer
-              </button>
-              <button class="btn btn-outline" onclick="stopRecording('diagnosis')">
-                <i class="fas fa-stop-circle"></i> Arrêter
-              </button>
-              <span id="diagnosisStatus" class="status"></span>
-            </div>
-
-            <div class="btn-group">
-              <button class="btn btn-success" onclick="submitDiagnostic()">
-                <i class="fas fa-check-circle"></i> Enregistrer
-              </button>
-            </div>
-
-            <div id="diagMessage" class="message message-success"></div>
-          </div>
+    <!-- Observation Card -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-notes-medical"></i> Observation Infirmier
+        </h2>
+         <div class="card-actions">
+            <i class="fas fa-clipboard-list"></i>
         </div>
       </div>
-
-      <div class="flex-col">
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <i class="fas fa-prescription-bottle-alt"></i> Prescription
-            </h2>
-            <div class="card-actions">
-              <i class="fas fa-pills"></i>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="input-group">
-              <textarea id="prescriptionInput" placeholder="Ex: Amoxicillin 500mg 3x/jour pendant 5 jours..."></textarea>
-            </div>
-
-            <div class="btn-group">
-              <button class="btn btn-outline" onclick="startRecording('prescription')">
-                <i class="fas fa-microphone"></i> Démarrer
-              </button>
-              <button class="btn btn-outline" onclick="stopRecording('prescription')">
-                <i class="fas fa-stop-circle"></i> Arrêter
-              </button>
-              <span id="prescriptionStatus" class="status"></span>
-            </div>
-
-            <div class="btn-group">
-              <button class="btn btn-primary" onclick="submitPrescription()">
-                <i class="fas fa-robot"></i> Soumettre à l'IA
-              </button>
-            </div>
-
-            <div id="aiSuggestion" class="ai-suggestion" style="display: none;">
-              <h3><i class="fas fa-lightbulb"></i> Suggestion IA</h3>
-
-              <div class="input-group">
-                <label>Médicament:</label>
-                <input type="text" id="medicament"/>
-              </div>
-
-              <div class="input-group">
-                <label>Date de début:</label>
-                <input type="date" id="start_date"/>
-              </div>
-
-              <div class="input-group">
-                <label>Date de fin:</label>
-                <input type="date" id="end_date"/> <!-- Ensure ID is correct -->
-              </div>
-
-              <div class="input-group">
-                <label>Horaires:</label>
-                <div class="checkbox-wrapper">
-                  <label class="checkbox-item"><input type="checkbox" id="matin"/> Matin</label>
-                  <label class="checkbox-item"><input type="checkbox" id="apres_midi"/> Après-midi</label>
-                  <label class="checkbox-item"><input type="checkbox" id="soir"/> Soir</label>
-                  <label class="checkbox-item"><input type="checkbox" id="nuit"/> Nuit</label>
-                </div>
-              </div>
-
-              <!-- Total Amount Div Removed -->
-
-              <div class="btn-group">
-                <button class="btn btn-success" onclick="validatePrescription()">
-                  <i class="fas fa-check-double"></i> Valider la prescription
-                </button>
-              </div>
-
-              <div id="validationMessage" class="message message-success"></div>
-            </div>
-          </div>
+      <div class="card-body">
+        <!-- Input Group for Textarea -->
+        <div class="input-group">
+          <textarea id="observationInput" placeholder="Saisir ou dicter l'observation ici..."></textarea>
+          <!-- Removed absolutely positioned mic button -->
         </div>
+
+        <!-- Button Group for Recording -->
+        <div class="btn-group">
+          <button class="btn btn-outline" id="startObservationBtn" onclick="startRecording()">
+            <i class="fas fa-microphone"></i> Démarrer
+          </button>
+          <button class="btn btn-outline" onclick="stopRecording()">
+             <i class="fas fa-stop-circle"></i> Arrêter & Transcrire
+          </button>
+          <!-- Status indicator -->
+          <span id="observationStatus" class="status"></span>
+        </div>
+
+         <!-- Button Group for Saving -->
+        <div class="btn-group">
+          <button class="btn btn-success" onclick="submitObservation()">
+            <i class="fas fa-check-circle"></i> Enregistrer l'observation
+          </button>
+        </div>
+
+        <!-- Message area for submission status -->
+        <div id="obsMessage" class="message"></div>
       </div>
     </div>
 
-    <!-- Consultation History Card Removed -->
+  </div> <!-- End Container -->
 
-  </div>
-
+  <!-- Adapted JavaScript -->
   <script>
     const BASE_URL = 'https://workflows.aphelionxinnovations.com';
-    const TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiZmJmMmI1ZjctZTc3ZS00ZGZmLWJlN2UtN2ZlOGVkZmViZmY1IiwiZmlyc3ROYW1lIjoiTW91c3NhIiwibGFzdE5hbWUiOiJTYWlkaSIsInVzZXJuYW1lIjoic2FpZGkiLCJlbWFpbCI6Im1vdXNzYS5zYWlkaS4wMUBnbXppbC5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk1MjMyNn0.1s_IWO-h-AKwkP0LIX8mcjdeLRwsRtgbqAchIJSRVEA'; // Replace with your actual token
+    const TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiZmJmMmI1ZjctZTc3ZS00ZGZmLWJlN2UtN2ZlOGVkZmViZmY1IiwiZmlyc3ROYW1lIjoiTW91c3NhIiwibGFzdE5hbWUiOiJTYWlkaSIsInVzZXJuYW1lIjoic2FpZGkiLCJlbWFpbCI6Im1vdXNzYS5zYWlkaS4wMUBnbXppbC5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk1MjMyNn0.1s_IWO-h-AKwkP0LIX8mcjdeLRwsRtgbqAchIJSRVEA';
+
     let currentIPP = null;
     let mediaRecorder;
     let audioChunks = [];
-    let aiData = {};
 
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
-      currentIPP = urlParams.get("ipp");
-      if (currentIPP) loadPatient(currentIPP);
+      currentIPP = urlParams.get('ipp');
+      const patientInfoContainer = document.getElementById("patientInfo"); // Get container reference
+
+      if (currentIPP) {
+        loadPatient(currentIPP);
+      } else {
+        patientInfoContainer.innerHTML = `<div class="message message-error" style="display:block; grid-column: 1 / -1;">❌ IPP non trouvé dans l'URL.</div>`; // Span across grid
+      }
     };
 
     function loadPatient(ipp) {
-      fetch(`${BASE_URL}/webhook/doctor-get-patient?ipp=${ipp}`, {
+      const patientInfoContainer = document.getElementById("patientInfo");
+      patientInfoContainer.innerHTML = 'Chargement des informations...'; // Loading state
+
+      fetch(`${BASE_URL}/webhook/nurse-get-patient?ipp=${ipp}`, { // Using nurse endpoint
         headers: { Authorization: TOKEN }
       })
-      .then(res => {
-        if (!res.ok) throw new Error(`Erreur réseau: ${res.statusText}`);
-        return res.json();
-      })
-      .then(data => {
-        if (typeof data !== 'object' || data === null) {
-            throw new Error("Réponse invalide pour les infos patient");
-        }
-        const patientInfoContainer = document.getElementById("patientInfo");
-        patientInfoContainer.innerHTML = `
-          <div class="info-group">
-            <div class="info-label">Nom</div>
-            <div class="info-value">${data.nom || 'N/A'}</div>
-          </div>
-          <div class="info-group">
-            <div class="info-label">Prénom</div>
-            <div class="info-value">${data.prenom || 'N/A'}</div>
-          </div>
-          <div class="info-group">
-            <div class="info-label">CIN</div>
-            <div class="info-value">${data.cin || 'N/A'}</div>
-          </div>
-          <div class="info-group">
-            <div class="info-label">Téléphone</div>
-            <div class="info-value">${data.telephone || 'N/A'}</div>
-          </div>
-          <div class="info-group">
-            <div class="info-label">Adresse</div>
-            <div class="info-value">${data.adresse || 'N/A'}</div>
-          </div>
-          <div class="info-group">
-            <div class="info-label">Mutuelle</div>
-            <div class="info-value">${data.mutuelle || 'Aucune'}</div>
-          </div>
-        `;
-      })
-      .catch(error => {
-        document.getElementById("patientInfo").innerHTML =
-          `<div class="message message-error" style="display:block">Erreur lors du chargement: ${error.message}</div>`;
-        console.error("Error loading patient data:", error);
-      });
+        .then(res => {
+            if (!res.ok) throw new Error(`Erreur réseau ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+          if (!data || !data.nom) { // Check if data is valid
+             throw new Error("Patient non trouvé ou réponse invalide.");
+          }
+
+          // Generate HTML using the Doctor's dashboard grid structure
+          patientInfoContainer.innerHTML = `
+            <div class="info-group">
+              <div class="info-label">Nom</div>
+              <div class="info-value">${data.prenom || 'N/A'} ${data.nom || 'N/A'}</div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">IPP</div>
+              <div class="info-value">${data.ipp || 'N/A'}</div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">CIN</div>
+              <div class="info-value">${data.cin || 'N/A'}</div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">Téléphone</div>
+              <div class="info-value">${data.telephone || 'N/A'}</div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">Adresse</div>
+              <div class="info-value">${data.adresse || 'N/A'}</div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">Mutuelle</div>
+              <div class="info-value">${data.mutuelle || 'Aucune'}</div>
+            </div>
+          `;
+        })
+        .catch(err => {
+          patientInfoContainer.innerHTML = `<div class="message message-error" style="display:block; grid-column: 1 / -1;">❌ Erreur chargement: ${err.message}</div>`; // Span across grid
+          console.error("Error loading patient data:", err);
+        });
     }
 
-    function startRecording(field) {
+    function startRecording() {
       audioChunks = [];
+       // Use the status element for feedback
+      document.getElementById("observationStatus").innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enregistrement...';
+      document.getElementById("observationStatus").style.display = 'inline-flex'; // Make status visible
+
+
       navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
         mediaRecorder = new MediaRecorder(stream);
         mediaRecorder.start();
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enregistrement...';
-      }).catch(error => {
-        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur micro';
-        console.error("Error accessing microphone:", error);
+
+        mediaRecorder.ondataavailable = e => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
+          sendAudioToAI(blob);
+           // Update status
+           document.getElementById("observationStatus").innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Transcription...';
+        };
+
+        // Disable start button during recording
+        document.getElementById("startObservationBtn").disabled = true;
+
+      }).catch(err => {
+         document.getElementById("observationStatus").innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur micro';
+         console.error("Microphone error:", err);
+         // Optionally use showMessage for a more prominent error
+         showMessage("obsMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur microphone: ${err.message}`, "error");
       });
     }
 
-    function stopRecording(field) {
+    function stopRecording() {
       if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunks, { type: 'audio/webm' });
-          sendAudioToAI(blob, field);
-          document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Transcription...';
-        };
+        // Re-enable start button
+        document.getElementById("startObservationBtn").disabled = false;
+         // Status will be updated in onstop handler
       } else {
-           document.getElementById(`${field}Status`).innerHTML = '';
+          // Clear status if not recording when stop is clicked
+          document.getElementById("observationStatus").innerHTML = '';
+          document.getElementById("observationStatus").style.display = 'none';
+          document.getElementById("startObservationBtn").disabled = false; // Ensure it's enabled
       }
     }
 
-    function sendAudioToAI(blob, field) {
-      const endpoint = field === 'diagnosis'
-        ? `${BASE_URL}/webhook/transcribe-diagnosis`
-        : `${BASE_URL}/webhook/transcribe-prescription`;
-
+    function sendAudioToAI(blob) {
       const formData = new FormData();
-      formData.append("audio", blob, `${field}.webm`);
+      formData.append("audio", blob, "observation.webm");
 
-      document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi...';
+      // Update status
+      document.getElementById("observationStatus").innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi...';
 
-      fetch(endpoint, {
+
+      fetch(`${BASE_URL}/webhook/nurse-transcribe-observation`, { // Using nurse endpoint
         method: "POST",
         headers: { Authorization: TOKEN },
         body: formData
       })
-      .then(res => {
-         if (!res.ok) throw new Error(`Erreur réseau ${res.status}: ${res.statusText}`);
-         return res.json();
-      })
-      .then(data => {
-        let text = '';
-        if (Array.isArray(data) && data.length > 0) {
-             text = data[0]?.text || data[0]?.transcript || '';
-        } else if (typeof data === 'object' && data !== null) {
-             text = data.text || data.transcript || '';
-        }
-
-        if (!text) {
-          console.warn("Transcription result empty or in unexpected format:", data);
-          document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-circle"></i> Vide';
-          return;
-        }
-
-        document.getElementById(field === 'diagnosis' ? 'diagnosticInput' : 'prescriptionInput').value = text;
-        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-check"></i> Terminé';
-      })
-      .catch(error => {
-        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-times-circle"></i> Erreur';
-        console.error("Transcription error:", error);
-      });
-    }
-
-    function submitDiagnostic() {
-      const diagnostic = document.getElementById("diagnosticInput").value;
-      if (!diagnostic) {
-        showMessage("diagMessage", "Veuillez entrer un diagnostic", "warning");
-        return;
-      }
-      showMessage("diagMessage", "", "");
-
-      fetch(`${BASE_URL}/webhook/doctor-submit-diagnostic`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: TOKEN },
-        body: JSON.stringify({ ipp: currentIPP, diagnostic })
-      })
-      .then(response => {
-        if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json();
-        } else {
-            return {};
-        }
-      })
-      .then((data) => {
-        showMessage("diagMessage", "<i class='fas fa-check-circle'></i> Diagnostic enregistré", "success");
-        console.log("Diagnostic submission response:", data);
-      })
-      .catch(error => {
-        showMessage("diagMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur enregistrement: ${error.message}`, "error");
-        console.error("Error submitting diagnostic:", error);
-      });
-    }
-
-    function submitPrescription() {
-      const prescription = document.getElementById("prescriptionInput").value;
-      if (!prescription) {
-        showMessage("validationMessage", "Veuillez entrer une prescription", "warning");
-        document.getElementById("aiSuggestion").style.display = "none";
-        return;
-      }
-      showMessage("validationMessage", "", "");
-      document.getElementById("aiSuggestion").style.display = "none";
-
-      fetch(`${BASE_URL}/webhook/doctor-submit-prescription`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: TOKEN },
-        body: JSON.stringify({ ipp: currentIPP, prescription })
-      })
-      .then(response => {
-        if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
-        return response.json();
-      })
-      .then(data => {
-        console.log("Raw data received from API:", JSON.stringify(data, null, 2));
-
-        if (data && data.success === true && data.suggestion) {
-            console.log("Data structure check PASSED (found data.success and data.suggestion). Attempting to show suggestion.");
-            aiData = data.suggestion;
-
-            document.getElementById("aiSuggestion").style.display = "block";
-            console.log("aiSuggestion display set to 'block'.");
-
-            document.getElementById("medicament").value = aiData.medicament || '';
-
-            // --- Convert DD/MM/YYYY to YYYY-MM-DD for date input ---
-            // *** THIS FUNCTION IS CORRECTED ***
-            const convertDate = (dateStr) => {
-                if (!dateStr || typeof dateStr !== 'string' || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
-                    console.warn(`Invalid or unexpected date format received in convertDate: "${dateStr}" (Type: ${typeof dateStr})`);
-                    return '';
-                }
-                const parts = dateStr.split('/');
-                if (parts.length !== 3) {
-                     console.warn(`Date string "${dateStr}" did not split into 3 parts.`);
-                     return '';
-                }
-                // CORRECT PARSING: Index 0 is Day, Index 1 is Month
-                const day = parseInt(parts[0], 10);
-                const month = parseInt(parts[1], 10);
-                const year = parseInt(parts[2], 10);
-
-                // Validation check using correct variables
-                if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
-                    // Keep the warning specific to parsed parts
-                    console.warn(`Parsed date parts seem invalid: D=${day}, M=${month}, Y=${year} from "${dateStr}"`);
-                    return '';
-                }
-
-                // Pad month and day with leading zero if necessary for YYYY-MM-DD format
-                const formattedDay = String(day).padStart(2, '0');
-                const formattedMonth = String(month).padStart(2, '0');
-                const formattedResult = `${year}-${formattedMonth}-${formattedDay}`;
-                console.log(`convertDate: Input="${dateStr}", Output="${formattedResult}"`);
-                return formattedResult;
-            };
-
-            // Set start date
-            console.log("START_DATE: Raw value =", aiData.start_date);
-            const formattedStartDate = convertDate(aiData.start_date);
-            console.log("START_DATE: Formatted value =", formattedStartDate);
-            document.getElementById("start_date").value = formattedStartDate;
-            console.log("START_DATE: Element value after setting =", document.getElementById("start_date").value);
-
-            // Set end date
-            console.log("END_DATE: Raw value =", aiData.end_date);
-            const formattedEndDate = convertDate(aiData.end_date); // Use the corrected function
-            console.log("END_DATE: Formatted value =", formattedEndDate);
-
-            const endDateElement = document.getElementById("end_date");
-            if (endDateElement) {
-                console.log("END_DATE: Element found. Attempting to set value...");
-                endDateElement.value = formattedEndDate;
-                console.log("END_DATE: Element value immediately after setting =", endDateElement.value);
-            } else {
-                console.error("!!! CRITICAL: Could not find HTML element with ID 'end_date' !!!");
-            }
-
-
-            if (aiData.schedule) {
-                document.getElementById("matin").checked = aiData.schedule.matin || false;
-                document.getElementById("apres_midi").checked = aiData.schedule.apres_midi || false;
-                document.getElementById("soir").checked = aiData.schedule.soir || false;
-                document.getElementById("nuit").checked = aiData.schedule.nuit || false;
-            } else {
-                console.warn("Schedule object missing in suggestion");
-                document.getElementById("matin").checked = false;
-                document.getElementById("apres_midi").checked = false;
-                document.getElementById("soir").checked = false;
-                document.getElementById("nuit").checked = false;
-            }
-
-            document.getElementById("aiSuggestion").scrollIntoView({ behavior: 'smooth' });
-
-        } else {
-            console.error("Data structure check FAILED.");
-            if (!data) console.error("Reason: Data object is null or undefined.");
-            else if (data.success !== true) console.error("Reason: data.success is not true. Value:", data.success);
-            else if (!data.suggestion) console.error("Reason: data.suggestion object is missing.");
-            else console.error("Reason: Unknown (check data structure).", data);
-
-            showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Réponse invalide ou échec de l'IA", "error");
-            document.getElementById("aiSuggestion").style.display = "none";
-        }
-      })
-      .catch(error => {
-        showMessage("validationMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur soumission IA: ${error.message}`, "error");
-        console.error("Error submitting prescription:", error);
-        document.getElementById("aiSuggestion").style.display = "none";
-      });
-    }
-
-    function validatePrescription() {
-      const medicament = document.getElementById("medicament").value;
-      const start_date = document.getElementById("start_date").value; // Reads YYYY-MM-DD
-      const end_date = document.getElementById("end_date").value;     // Reads YYYY-MM-DD
-
-      if (!medicament || !start_date || !end_date) {
-        showMessage("validationMessage", "Veuillez remplir tous les champs obligatoires (Médicament, Dates)", "warning");
-        return;
-      }
-      showMessage("validationMessage", "", "");
-
-      const schedule = {
-        matin: document.getElementById("matin").checked,
-        apres_midi: document.getElementById("apres_midi").checked,
-        soir: document.getElementById("soir").checked,
-        nuit: document.getElementById("nuit").checked
-      };
-
-      // --- Convert YYYY-MM-DD back to DD/MM/YYYY for the backend ---
-      // *** THIS FUNCTION IS CORRECTED ***
-      const convertDateToAPI = (dateStr) => {
-          if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-              console.warn(`Invalid YYYY-MM-DD format for API conversion: "${dateStr}"`);
-              return '';
-          }
-          const parts = dateStr.split('-'); // [YYYY, MM, DD]
-           if (parts.length !== 3) {
-             console.warn(`API Date string "${dateStr}" did not split into 3 parts.`);
-             return '';
-          }
-          // Format to DD/MM/YYYY
-          const formattedResult = `${parts[2]}/${parts[1]}/${parts[0]}`;
-          console.log(`convertDateToAPI: Input="${dateStr}", Output="${formattedResult}"`);
-          return formattedResult;
-      };
-      const apiStartDate = convertDateToAPI(start_date);
-      const apiEndDate = convertDateToAPI(end_date);
-      // --- End Date Conversion ---
-
-
-      fetch(`${BASE_URL}/webhook/doctor-validate-prescription`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: TOKEN },
-        body: JSON.stringify({
-          ipp: currentIPP,
-          final_prescription: document.getElementById("prescriptionInput").value,
-          start_date: apiStartDate, // Sending DD/MM/YYYY
-          end_date: apiEndDate,     // Sending DD/MM/YYYY
-          schedule,
-          medicament_name: medicament
+        .then(res => {
+            if (!res.ok) throw new Error(`Erreur réseau ${res.status}`);
+            return res.json();
         })
-      })
-      .then(response => {
-        if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
-         const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json();
-        } else {
-            return {};
-        }
-      })
-      .then((data) => {
-        showMessage("validationMessage", "<i class='fas fa-check-circle'></i> Prescription enregistrée avec succès", "success");
-        console.log("Validation response:", data);
-      })
-      .catch(error => {
-        showMessage("validationMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur validation: ${error.message}`, "error");
-        console.error("Error validating prescription:", error);
-      });
-    }
-
-    function showMessage(elementId, message, type) {
-      const messageElement = document.getElementById(elementId);
-      if (!messageElement) {
-          console.error(`Message element with ID "${elementId}" not found.`);
-          return;
-      }
-
-      messageElement.innerHTML = message || "";
-      messageElement.style.display = message ? "block" : "none";
-
-      messageElement.classList.remove("message-success", "message-warning", "message-error");
-
-      if (type === "success") {
-        messageElement.classList.add("message-success");
-      } else if (type === "warning") {
-        messageElement.classList.add("message-warning");
-      } else if (type === "error") {
-        messageElement.classList.add("message-error");
-      }
-
-      if (type === "success" && message) {
-        setTimeout(() => {
-          if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
-             messageElement.style.display = "none";
+        .then(data => {
+          // Handle potential variations in transcription response structure
+          let text = '';
+          if (Array.isArray(data) && data.length > 0) {
+              text = data[0]?.transcript || data[0]?.text || '';
+          } else if (typeof data === 'object' && data !== null) {
+              text = data.transcript || data.text || '';
           }
-        }, 5000);
-      }
+
+          if (!text) {
+            console.warn("Transcription result empty or in unexpected format:", data);
+            document.getElementById("observationStatus").innerHTML = '<i class="fas fa-exclamation-circle"></i> Vide';
+            return;
+          }
+
+          document.getElementById("observationInput").value = text;
+          document.getElementById("observationStatus").innerHTML = '<i class="fas fa-check"></i> Terminé';
+          // Optionally hide status after a delay
+          // setTimeout(() => {
+          //     document.getElementById("observationStatus").style.display = 'none';
+          // }, 3000);
+
+        })
+        .catch(err => {
+          console.error("Transcription error:", err);
+           document.getElementById("observationStatus").innerHTML = '<i class="fas fa-times-circle"></i> Erreur Transc.';
+           // Show persistent error in main message area
+           showMessage("obsMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur transcription: ${err.message}`, "error");
+
+        });
     }
 
+    function submitObservation() {
+      const observation = document.getElementById("observationInput").value.trim();
+      if (!observation) {
+         // Use the showMessage function for feedback
+         showMessage("obsMessage", "Veuillez entrer ou dicter une observation.", "warning");
+        return;
+      }
+      // Clear previous messages before submitting
+      showMessage("obsMessage", "", "");
+
+
+      fetch(`${BASE_URL}/webhook/nurse-submit-observation`, { // Using nurse endpoint
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: TOKEN
+        },
+        body: JSON.stringify({ ipp: currentIPP, observation })
+      })
+       .then(response => {
+            if (!response.ok) throw new Error(`Erreur réseau ${response.status}`);
+            // Check content type as response might be empty on success
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json();
+            }
+            return {}; // Return empty object if no JSON
+        })
+        .then((data) => { // data might be empty
+          // Use the showMessage function for success feedback
+          showMessage("obsMessage", "<i class='fas fa-check-circle'></i> Observation enregistrée avec succès.", "success");
+          console.log("Observation submission response:", data);
+          // Optionally clear the textarea after success
+          // document.getElementById("observationInput").value = '';
+        })
+        .catch(err => {
+          console.error("Erreur enregistrement observation:", err);
+          // Use the showMessage function for error feedback
+           showMessage("obsMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur enregistrement: ${err.message}`, "error");
+        });
+    }
+
+     // Added showMessage function (similar to Doctor's dashboard)
+     function showMessage(elementId, message, type) {
+        const messageElement = document.getElementById(elementId);
+        if (!messageElement) {
+            console.error(`Message element with ID "${elementId}" not found.`);
+            return;
+        }
+
+        messageElement.innerHTML = message || ""; // Ensure content is cleared if message is empty
+        messageElement.style.display = message ? "block" : "none"; // Show only if there is a message
+
+        // Remove any existing type classes first
+        messageElement.classList.remove("message-success", "message-warning", "message-error");
+         messageElement.className = "message"; // Reset class to base
+
+        // Add appropriate class based on type
+        if (type === "success") {
+            messageElement.classList.add("message-success");
+        } else if (type === "warning") {
+            messageElement.classList.add("message-warning");
+        } else if (type === "error") {
+            messageElement.classList.add("message-error");
+        }
+
+        // Auto-hide after 5 seconds ONLY for success messages
+        if (type === "success" && message) { // Only set timeout if it's a success message with content
+            setTimeout(() => {
+            // Check if the message is still the same success message before hiding
+            if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
+                messageElement.style.display = "none";
+            }
+            }, 5000);
+        }
+    }
   </script>
 </body>
 </html>
