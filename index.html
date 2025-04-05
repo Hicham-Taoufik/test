@@ -569,6 +569,7 @@
                     <div class="card-icon-action"><i class="fas fa-pen-alt"></i></div>
                 </div>
                 <div class="card-body">
+                    <!-- NOTE: novalidate disables default browser validation -->
                     <form id="createForm" novalidate>
                         <div class="form-grid">
                             <div class="input-group">
@@ -702,7 +703,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             // --- Configuration ---
             const baseUrl = "https://workflows.aphelionxinnovations.com"; // ADAPT: Your actual base URL
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiZmJmMmI1ZjctZTc3ZS00ZGZmLWJlN2UtN2ZlOGVkZmViZmY1IiwiZmlyc3ROYW1lIjoiTW91c3NhIiwibGFzdE5hbWUiOiJTYWlkaSIsInVzZXJuYW1lIjoic2FpZGkiLCJlbWFpbCI6Im1vdXNzYS5zYWlkaS4wMUBnbXppbC5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk1MjMyNn0.1s_IWO-h-AKwkP0LIX8mcjdeLRwsRtgbqAchIJSRVEA"; // ADAPT: Your actual token retrieval (e.g., sessionStorage.getItem('authToken'))
+            // IMPORTANT: Replace with secure token retrieval (e.g., from sessionStorage if login sets it)
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiZmJmMmI1ZjctZTc3ZS00ZGZmLWJlN2UtN2ZlOGVkZmViZmY1IiwiZmlyc3ROYW1lIjoiTW91c3NhIiwibGFzdE5hbWUiOiJTYWlkaSIsInVzZXJuYW1lIjoic2FpZGkiLCJlbWFpbCI6Im1vdXNzYS5zYWlkaS4wMUBnbXppbC5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk1MjMyNn0.1s_IWO-h-AKwkP0LIX8mcjdeLRwsRtgbqAchIJSRVEA"; // <<< ADAPT THIS LINE >>>
 
             // --- Element Selection ---
             const createForm = document.getElementById('createForm');
@@ -736,14 +738,8 @@
             const spinnerOverlay = document.querySelector('.spinner-overlay');
 
             // --- Helper Functions ---
-            const showSpinner = (button = null) => {
-                if (button) { button.classList.add('loading'); button.disabled = true; }
-                else if (spinnerOverlay) { spinnerOverlay.style.display = 'flex'; }
-            };
-            const hideSpinner = (button = null) => {
-                if (button) { button.classList.remove('loading'); button.disabled = false; }
-                else if (spinnerOverlay) { spinnerOverlay.style.display = 'none'; }
-            };
+            const showSpinner = (button = null) => { if (button) { button.classList.add('loading'); button.disabled = true; } else if (spinnerOverlay) { spinnerOverlay.style.display = 'flex'; } };
+            const hideSpinner = (button = null) => { if (button) { button.classList.remove('loading'); button.disabled = false; } else if (spinnerOverlay) { spinnerOverlay.style.display = 'none'; } };
             const showMessage = (element, message, type = 'error') => { if (!element) return; element.textContent = message; element.className = `message message-${type} show`; element.style.display = 'block'; };
             const clearMessage = (element) => { if (!element) return; element.textContent = ''; element.className = 'message'; element.style.display = 'none'; };
             const showError = (inputElement, messageElementId, message) => { const errorElement = document.getElementById(messageElementId); inputElement?.classList.add('invalid'); if (errorElement) { errorElement.textContent = message; errorElement.style.display = 'block'; } };
@@ -752,50 +748,53 @@
             const resetForm = (form) => { form.reset(); clearAllErrors(form); toggleMutuelleInput(); };
 
             // --- Validation Functions ---
-            const validateCreateForm = () => { /* ... (keep validation logic as before) ... */
+             const validateCreateForm = () => {
                 let isValid = true; clearAllErrors(createForm);
                 if (!nomInput.value.trim()) { showError(nomInput, 'nomError', 'Le nom est requis.'); isValid = false; }
                 if (!prenomInput.value.trim()) { showError(prenomInput, 'prenomError', 'Le prénom est requis.'); isValid = false; }
                 if (!cinInput.value.trim()) { showError(cinInput, 'cinError', 'Le CIN est requis.'); isValid = false; }
-                // else if (!/^[a-zA-Z]{1,2}\d+$/.test(cinInput.value.trim())) { showError(cinInput, 'cinError', 'Format CIN invalide (ex: AB123456).'); isValid = false; } // Example Format
+                // else if (!/^[a-zA-Z]{1,2}\d+$/.test(cinInput.value.trim())) { showError(cinInput, 'cinError', 'Format CIN invalide.'); isValid = false; }
                 if (!telephoneInput.value.trim()) { showError(telephoneInput, 'telephoneError', 'Le téléphone est requis.'); isValid = false; }
-                // else if (!/^0[567]\d{8}$/.test(telephoneInput.value.trim())) { showError(telephoneInput, 'telephoneError', 'Format téléphone invalide (0XXXXXXXXX).'); isValid = false; } // Example Format
+                // else if (!/^0[567]\d{8}$/.test(telephoneInput.value.trim())) { showError(telephoneInput, 'telephoneError', 'Format téléphone invalide.'); isValid = false; }
                 if (!dateNaissanceInput.value) { showError(dateNaissanceInput, 'dateNaissanceError', 'Date de naissance requise.'); isValid = false; }
                 if (!sexeInput.value) { showError(sexeInput, 'sexeError', 'Le sexe est requis.'); isValid = false; }
                 if (hasInsuranceCheckbox.checked && !mutuelleInput.value.trim()) { showError(mutuelleInput, 'mutuelleError', 'Le nom de la mutuelle est requis si coché.'); isValid = false; }
                 return isValid;
              };
-            const validateSearchForm = () => { /* ... (keep validation logic as before) ... */
+            const validateSearchForm = () => {
                 let isValid = true; clearError(getCinInput, 'searchCinError');
                 if (!getCinInput.value.trim()) { showError(getCinInput, 'searchCinError', 'Le CIN est requis pour la recherche.'); isValid = false; }
                 return isValid;
              };
 
             // --- API Call Functions ---
-            const createPatientAPI = async (patientData) => { /* ... (keep function, ADAPT endpoint/body/response check) ... */
-                const url = `${baseUrl}/webhook/create-patient`; // ADAPT endpoint
-                console.log("Creating patient with data:", patientData);
+            const createPatientAPI = async (patientData) => {
+                // ADAPT: Endpoint and expected request body structure
+                const url = `${baseUrl}/webhook/create-patient`; // <<< ADAPT endpoint
+                console.log("API Request: POST", url, "Data:", patientData);
                 const response = await fetch(url, { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(patientData) });
                 if (!response.ok) { const e = await response.json().catch(() => ({ message: `Erreur ${response.status}` })); throw new Error(e.message || `Erreur création: ${response.statusText}`); }
                 return await response.json();
             };
-            const searchPatientAPI = async (cin) => { /* ... (keep function, ADAPT endpoint/response handling) ... */
-                const url = `${baseUrl}/webhook/get-patient-by-cin?cin=${encodeURIComponent(cin)}`; // ADAPT endpoint
-                console.log("Searching patient with CIN:", cin);
+            const searchPatientAPI = async (cin) => {
+                // ADAPT: Endpoint and response structure handling
+                const url = `${baseUrl}/webhook/get-patient-by-cin?cin=${encodeURIComponent(cin)}`; // <<< ADAPT endpoint
+                 console.log("API Request: GET", url);
                 const response = await fetch(url, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } });
                 if (!response.ok) { if (response.status === 404) { return null; } const e = await response.json().catch(() => ({ message: `Erreur ${response.status}` })); throw new Error(e.message || `Erreur recherche: ${response.statusText}`); }
                 const data = await response.json();
-                // ADAPT HERE: Adjust based on actual API response structure
-                 if (Array.isArray(data) && data.length > 0) { return data[0]; }
-                 else if (typeof data === 'object' && data !== null && !Array.isArray(data)) { return data.patient || data; }
+                 // ADAPT: Handle potential nesting (e.g., data.patient, data[0], data[0].json)
+                 console.log("API Search Response Raw:", data);
+                 if (Array.isArray(data) && data.length > 0) { return data[0].json || data[0]; } // Handle n8n's possible [{json:{...}}] structure or just [{...}]
+                 else if (typeof data === 'object' && data !== null && !Array.isArray(data)) { return data.patient || data; } // Handle {patient:{...}} or {...}
                  else { return null; }
             };
 
             // --- UI Update Functions ---
-            const displayPatientResults = (patient) => { /* ... (keep function, ADAPT property names) ... */
+            const displayPatientResults = (patient) => {
                 if (!patient) { hidePatientResults(); showMessage(searchMessageDiv, "Patient non trouvé.", "warning"); return; }
                 console.log("Displaying patient data:", patient);
-                 // ADAPT HERE: Use actual property names from your API response
+                 // ADAPT: Use actual property names from *your* patient object structure
                 const ippValue = patient.ipp || patient.patient_ipp || 'N/A';
                 patientIPPResultSpan.textContent = ippValue; patientIPPResultSpan.dataset.ipp = ippValue;
                 patientNomResultSpan.textContent = patient.nom || 'N/A';
@@ -806,29 +805,62 @@
                 patientSexeResultSpan.textContent = patient.sexe === 'M' ? 'Homme' : (patient.sexe === 'F' ? 'Femme' : 'N/A');
                 patientMutuelleResultSpan.textContent = patient.mutuelle || 'Aucune';
                 patientAdresseResultSpan.textContent = patient.adresse ? `${patient.adresse}${patient.ville ? ', ' + patient.ville : ''}` : 'N/A';
-                getResultDiv.classList.add('show'); getResultDiv.style.display = 'block';
+                getResultDiv.style.display = 'block'; // Make visible first
+                requestAnimationFrame(() => { // Allow display block to apply
+                     getResultDiv.classList.add('show'); // Add class to trigger animation
+                });
             };
-            const hidePatientResults = () => { /* ... (keep function as before) ... */
-                getResultDiv.classList.remove('show'); setTimeout(() => { if (!getResultDiv.classList.contains('show')) { getResultDiv.style.display = 'none'; patientIPPResultSpan.textContent = '-'; patientIPPResultSpan.dataset.ipp = ''; patientNomResultSpan.textContent='-'; patientPrenomResultSpan.textContent='-'; patientCinResultSpan.textContent='-'; patientTelephoneResultSpan.textContent='-'; patientDateNaissanceResultSpan.textContent='-'; patientSexeResultSpan.textContent='-'; patientMutuelleResultSpan.textContent='-'; patientAdresseResultSpan.textContent='-'; } }, 300); };
-            const toggleMutuelleInput = () => { /* ... (keep function as before) ... */
-                 mutuelleInput.disabled = !hasInsuranceCheckbox.checked; if (!hasInsuranceCheckbox.checked) { mutuelleInput.value = ''; clearError(mutuelleInput, 'mutuelleError'); mutuelleInput.classList.remove('invalid'); } };
+            const hidePatientResults = () => {
+                getResultDiv.classList.remove('show');
+                setTimeout(() => {
+                     if (!getResultDiv.classList.contains('show')) {
+                         getResultDiv.style.display = 'none';
+                         patientIPPResultSpan.textContent = '-'; patientIPPResultSpan.dataset.ipp = '';
+                         patientNomResultSpan.textContent = '-'; patientPrenomResultSpan.textContent = '-';
+                         patientCinResultSpan.textContent = '-'; patientTelephoneResultSpan.textContent = '-';
+                         patientDateNaissanceResultSpan.textContent='-'; patientSexeResultSpan.textContent='-';
+                         patientMutuelleResultSpan.textContent='-'; patientAdresseResultSpan.textContent='-';
+                     }
+                }, 300); // Match transition duration
+             };
+            const toggleMutuelleInput = () => { mutuelleInput.disabled = !hasInsuranceCheckbox.checked; if (!hasInsuranceCheckbox.checked) { mutuelleInput.value = ''; clearError(mutuelleInput, 'mutuelleError'); mutuelleInput.classList.remove('invalid'); } };
 
             // --- Event Handlers ---
-            const handleCreateSubmit = async (event) => { /* ... (keep function, ADAPT success check) ... */
+            const handleCreateSubmit = async (event) => {
                  event.preventDefault(); clearMessage(createMessageDiv);
                  if (!validateCreateForm()) { showMessage(createMessageDiv, "Veuillez corriger les erreurs.", "error"); return; }
                  showSpinner(createPatientBtn);
                  const patientData = { nom: nomInput.value.trim(), prenom: prenomInput.value.trim(), cin: cinInput.value.trim(), telephone: telephoneInput.value.trim(), adresse: adresseInput.value.trim(), ville: villeInput.value.trim(), date_naissance: dateNaissanceInput.value, sexe: sexeInput.value, mutuelle: hasInsuranceCheckbox.checked ? mutuelleInput.value.trim() : null };
-                 try { const result = await createPatientAPI(patientData); console.log("Create Result:", result); if (result && (result.status === 'success' || result.message || result.ipp)) { showMessage(createMessageDiv, result.message || "Patient créé avec succès!", "success"); resetForm(createForm); } else { showMessage(createMessageDiv, result.message || "Erreur lors de la création.", "error"); } } catch (error) { console.error("Create Error:", error); showMessage(createMessageDiv, `Erreur: ${error.message}`, "error"); } finally { hideSpinner(createPatientBtn); } };
-            const handleSearchSubmit = async (event) => { /* ... (keep function as before) ... */
+                 try {
+                     const result = await createPatientAPI(patientData);
+                     console.log("Create Result:", result);
+                     // ADAPT: Success condition based on your API response
+                     if (result && (result.status === 'success' || result.message || result.ipp || result.patient_id)) {
+                         showMessage(createMessageDiv, result.message || "Patient créé avec succès!", "success");
+                         resetForm(createForm);
+                     } else {
+                         showMessage(createMessageDiv, result?.message || "Erreur inconnue lors de la création.", "error");
+                     }
+                 } catch (error) { console.error("Create Error:", error); showMessage(createMessageDiv, `Erreur: ${error.message}`, "error");
+                 } finally { hideSpinner(createPatientBtn); }
+            };
+            const handleSearchSubmit = async (event) => {
                  event.preventDefault(); clearMessage(searchMessageDiv); hidePatientResults();
                  if (!validateSearchForm()) { return; }
                  showSpinner(searchPatientBtn); const cinToSearch = getCinInput.value.trim();
-                 try { const patient = await searchPatientAPI(cinToSearch); if (patient) { displayPatientResults(patient); clearMessage(searchMessageDiv); } else { showMessage(searchMessageDiv, "Aucun patient trouvé avec ce CIN.", "warning"); } } catch (error) { console.error("Search Error:", error); showMessage(searchMessageDiv, `Erreur: ${error.message}`, "error"); } finally { hideSpinner(searchPatientBtn); } };
-            const handleGoToBilling = () => { /* ... (keep function, ADAPT billing page name) ... */
+                 try {
+                     const patient = await searchPatientAPI(cinToSearch);
+                     if (patient) { displayPatientResults(patient); clearMessage(searchMessageDiv); }
+                     else { showMessage(searchMessageDiv, "Aucun patient trouvé avec ce CIN.", "warning"); }
+                 } catch (error) { console.error("Search Error:", error); showMessage(searchMessageDiv, `Erreur: ${error.message}`, "error");
+                 } finally { hideSpinner(searchPatientBtn); }
+            };
+            const handleGoToBilling = () => {
                  const patientIPP = patientIPPResultSpan.dataset.ipp;
-                 if (patientIPP && patientIPP !== 'N/A') { window.location.href = `billing.html?ipp=${encodeURIComponent(patientIPP)}`; } // ADAPT 'billing.html'
-                 else { console.error("No IPP for billing"); alert("IPP patient manquant."); } };
+                 if (patientIPP && patientIPP !== 'N/A') {
+                     window.location.href = `billing.html?ipp=${encodeURIComponent(patientIPP)}`; // ADAPT 'billing.html'
+                 } else { console.error("No IPP for billing"); alert("IPP patient manquant."); }
+            };
 
             // --- Attach Event Listeners ---
             if(createForm) createForm.addEventListener('submit', handleCreateSubmit);
