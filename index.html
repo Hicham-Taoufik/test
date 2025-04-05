@@ -427,7 +427,7 @@
             <div class="input-group">
               <textarea id="diagnosticInput" placeholder="Entrez le diagnostic du patient..."></textarea>
             </div>
-            
+
             <div class="btn-group">
               <button class="btn btn-outline" onclick="startRecording('diagnosis')">
                 <i class="fas fa-microphone"></i> Démarrer
@@ -437,13 +437,13 @@
               </button>
               <span id="diagnosisStatus" class="status"></span>
             </div>
-            
+
             <div class="btn-group">
               <button class="btn btn-success" onclick="submitDiagnostic()">
                 <i class="fas fa-check-circle"></i> Enregistrer
               </button>
             </div>
-            
+
             <div id="diagMessage" class="message message-success"></div>
           </div>
         </div>
@@ -463,7 +463,7 @@
             <div class="input-group">
               <textarea id="prescriptionInput" placeholder="Ex: Amoxicillin 500mg 3x/jour pendant 5 jours..."></textarea>
             </div>
-            
+
             <div class="btn-group">
               <button class="btn btn-outline" onclick="startRecording('prescription')">
                 <i class="fas fa-microphone"></i> Démarrer
@@ -473,31 +473,31 @@
               </button>
               <span id="prescriptionStatus" class="status"></span>
             </div>
-            
+
             <div class="btn-group">
               <button class="btn btn-primary" onclick="submitPrescription()">
                 <i class="fas fa-robot"></i> Soumettre à l'IA
               </button>
             </div>
-            
+
             <div id="aiSuggestion" class="ai-suggestion" style="display: none;">
               <h3><i class="fas fa-lightbulb"></i> Suggestion IA</h3>
-              
+
               <div class="input-group">
                 <label>Médicament:</label>
                 <input type="text" id="medicament"/>
               </div>
-              
+
               <div class="input-group">
                 <label>Date de début:</label>
                 <input type="date" id="start_date"/>
               </div>
-              
+
               <div class="input-group">
                 <label>Date de fin:</label>
                 <input type="date" id="end_date"/>
               </div>
-              
+
               <div class="input-group">
                 <label>Horaires:</label>
                 <div class="checkbox-wrapper">
@@ -507,18 +507,18 @@
                   <label class="checkbox-item"><input type="checkbox" id="nuit"/> Nuit</label>
                 </div>
               </div>
-              
+
               <div class="total-amount">
                 <div class="total-amount-label">Total</div>
                 <div class="total-amount-value">0.00<span class="total-amount-currency">MAD</span></div>
               </div>
-              
+
               <div class="btn-group">
                 <button class="btn btn-success" onclick="validatePrescription()">
                   <i class="fas fa-check-double"></i> Valider la prescription
                 </button>
               </div>
-              
+
               <div id="validationMessage" class="message message-success"></div>
             </div>
           </div>
@@ -526,26 +526,8 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">
-          <i class="fas fa-history"></i> Historique des Consultations
-        </h2>
-        <div class="card-actions">
-          <i class="fas fa-clock"></i>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="tag-group">
-          <div class="tag"><i class="fas fa-calendar-check"></i> Aujourd'hui <span class="remove">×</span></div>
-          <div class="tag"><i class="fas fa-user-md"></i> Dr. Martin <span class="remove">×</span></div>
-        </div>
-        
-        <div style="text-align: center; color: var(--gray-500); padding: 20px;">
-          Aucune consultation antérieure pour ce patient
-        </div>
-      </div>
-    </div>
+    <!-- Consultation History Card Removed From Here -->
+
   </div>
 
   <script>
@@ -597,7 +579,7 @@
         `;
       })
       .catch(error => {
-        document.getElementById("patientInfo").innerHTML = 
+        document.getElementById("patientInfo").innerHTML =
           '<div class="message message-error" style="display:block">Erreur lors du chargement des informations du patient.</div>';
         console.error("Error loading patient data:", error);
       });
@@ -662,7 +644,7 @@
         showMessage("diagMessage", "Veuillez entrer un diagnostic", "warning");
         return;
       }
-      
+
       fetch(`${BASE_URL}/webhook/doctor-submit-diagnostic`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: TOKEN },
@@ -687,7 +669,7 @@
         showMessage("validationMessage", "Veuillez entrer une prescription", "warning");
         return;
       }
-      
+
       fetch(`${BASE_URL}/webhook/doctor-submit-prescription`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: TOKEN },
@@ -707,10 +689,10 @@
         document.getElementById("apres_midi").checked = aiData.schedule.apres_midi;
         document.getElementById("soir").checked = aiData.schedule.soir;
         document.getElementById("nuit").checked = aiData.schedule.nuit;
-        
+
         // Add some random value to total amount for demonstration
         document.querySelector(".total-amount-value").innerHTML = "350.00<span class='total-amount-currency'>MAD</span>";
-        
+
         // Scroll to AI suggestion
         document.getElementById("aiSuggestion").scrollIntoView({ behavior: 'smooth' });
       })
@@ -724,19 +706,19 @@
       const medicament = document.getElementById("medicament").value;
       const start_date = document.getElementById("start_date").value;
       const end_date = document.getElementById("end_date").value;
-      
+
       if (!medicament || !start_date || !end_date) {
         showMessage("validationMessage", "Veuillez remplir tous les champs obligatoires", "warning");
         return;
       }
-      
+
       const schedule = {
         matin: document.getElementById("matin").checked,
         apres_midi: document.getElementById("apres_midi").checked,
         soir: document.getElementById("soir").checked,
         nuit: document.getElementById("nuit").checked
       };
-      
+
       fetch(`${BASE_URL}/webhook/doctor-validate-prescription`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: TOKEN },
@@ -761,15 +743,15 @@
         console.error("Error validating prescription:", error);
       });
     }
-    
+
     function showMessage(elementId, message, type) {
       const messageElement = document.getElementById(elementId);
       messageElement.innerHTML = message;
       messageElement.style.display = "block";
-      
+
       // Remove any existing classes
       messageElement.className = "message";
-      
+
       // Add appropriate class based on type
       if (type === "success") {
         messageElement.classList.add("message-success");
@@ -778,7 +760,7 @@
       } else if (type === "error") {
         messageElement.classList.add("message-error");
       }
-      
+
       // Auto-hide after 5 seconds for success messages
       if (type === "success") {
         setTimeout(() => {
