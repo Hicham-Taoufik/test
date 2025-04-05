@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - Réception</title> <!-- Updated Title -->
+  <title>Dashboard - Réception</title>
   <!-- Using Consistent Fonts & Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
@@ -56,10 +56,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 0 30px 0; /* Adjusted padding */
-      margin-bottom: 0; /* Removed bottom margin */
+      padding: 0 0 30px 0;
+      margin-bottom: 30px;
       border-bottom: 1px solid var(--gray-200);
-       margin-bottom: 30px; /* Added margin back for spacing */
     }
 
     .header-title {
@@ -180,6 +179,15 @@
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(93, 116, 242, 0.1);
     }
+     /* Remove default date icon appearance if needed */
+     input[type="date"]::-webkit-calendar-picker-indicator {
+        /* Example: Hide default icon */
+        /* opacity: 0; */
+        /* Or style it */
+         opacity: 0.6;
+         cursor: pointer;
+    }
+
 
     /* Checkbox styling */
      .checkbox-label {
@@ -188,20 +196,25 @@
       gap: 8px;
       font-size: 0.9rem;
       color: var(--gray-700);
+       margin-bottom: 0; /* Remove bottom margin from label itself */
     }
     .checkbox-label input[type="checkbox"] {
         width: auto; /* Override default width */
         margin-right: 6px;
+        /* Make checkbox slightly larger */
+        width: 1em;
+        height: 1em;
     }
     .mutuelle-group {
         grid-column: span 2; /* Span across grid */
         display: flex;
         flex-direction: column; /* Stack elements */
         gap: 10px;
-    }
-    .mutuelle-checkbox-line {
-        display: flex;
-        align-items: center;
+        /* Align items in the checkbox line */
+        & > div:first-child { /* Target the line with checkbox */
+            display: flex;
+            align-items: center;
+        }
     }
 
 
@@ -220,7 +233,7 @@
       border-radius: var(--border-radius);
       border: none;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: background-color 0.2s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -283,14 +296,22 @@
     .message-warning { background: var(--warning-light); color: var(--warning); }
     .message-error { background: var(--danger-light); color: var(--danger); }
 
+    /* Style for the getResult div itself */
     #getResult {
         margin-top: 20px;
-        padding: 20px;
-        background-color: var(--gray-100); /* Lighter background */
-        border-radius: var(--border-radius);
-        border-left: 4px solid var(--primary); /* Accent border */
+        padding: 0; /* Remove padding if children have it */
+        background-color: transparent; /* Make background transparent */
+        border-radius: 0;
+        border-left: none; /* Remove border */
+        display: none; /* Hide initially, shown by JS */
     }
      /* Styling for patient result display */
+     .patient-result-container { /* New container for results */
+         background-color: var(--gray-100); /* Lighter background */
+         padding: 20px;
+         border-radius: var(--border-radius);
+         border-left: 4px solid var(--primary); /* Accent border */
+     }
     .patient-result-info {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -308,6 +329,7 @@
          margin: 0 auto 15px auto; /* Center and add bottom margin */
          border: 1px solid var(--gray-300);
          padding: 5px;
+         background: white; /* Ensure white background for QR code */
      }
 
     /* Responsive adjustments */
@@ -388,8 +410,8 @@
                  </div>
                  <!-- Mutuelle Grouping -->
                  <div class="input-group mutuelle-group">
-                    <div class="mutuelle-checkbox-line">
-                      <input type="checkbox" id="has_insurance" name="has_insurance" />
+                    <div> <!-- Container for checkbox and its label -->
+                      <input type="checkbox" id="has_insurance" name="has_insurance" style="width: auto; height: auto; margin-right: 8px;" />
                       <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label>
                     </div>
                     <input name="mutuelle" placeholder="Nom Mutuelle (si case cochée)" />
@@ -433,282 +455,9 @@
     </div> <!-- End flex-row -->
   </div> <!-- End container -->
 
-  <script>
-    const BASE_URL = 'https://workflows.aphelionxinnovations.com';
-    const TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiZmJmMmI1ZjctZTc3ZS00ZGZmLWJlN2UtN2ZlOGVkZmViZmY1IiwiZmlyc3ROYW1lIjoiTW91c3NhIiwibGFzdE5hbWUiOiJTYWlkaSIsInVzZXJuYW1lIjoic2FpZGkiLCJlbWFpbCI6Im1vdXNzYS5zYWlkaS4wMUBnbXppbC5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk1MjMyNn0.1s_IWO-h-AKwkP0LIX8mcjdeLRwsRtgbqAchIJSRVEA';
+   <!-- IMPORTANT: Place script tag just before closing body tag -->
+   <!-- Ensure the 'src' path ('script.js') is correct relative to this HTML file -->
+  <script src="script.js" defer></script>
 
-    const resultDiv = document.getElementById("getResult");
-    const messageDiv = document.getElementById("message");
-    const createForm = document.getElementById("createForm");
-
-    // Show Message Function (from other dashboards)
-    function showMessage(elementId, message, type) {
-        const messageElement = document.getElementById(elementId);
-        if (!messageElement) {
-            console.error(`Message element with ID "${elementId}" not found.`);
-            return;
-        }
-        // Clear previous content explicitly if used for results
-        if (elementId === 'getResult' && type !== 'result') {
-            messageElement.innerHTML = '';
-        }
-
-        messageElement.innerHTML = message || "";
-        messageElement.style.display = message ? "block" : "none";
-        messageElement.className = "message"; // Reset class
-
-        if (type === "success") messageElement.classList.add("message-success");
-        else if (type === "warning") messageElement.classList.add("message-warning");
-        else if (type === "error") messageElement.classList.add("message-error");
-        else messageElement.className = ""; // Reset class if just displaying result HTML
-
-        // Auto-hide for success messages
-        if (type === "success" && message) {
-            setTimeout(() => {
-                if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
-                   messageElement.style.display = "none";
-                }
-            }, 5000);
-        }
-    }
-
-
-    // Search and display patient info
-    function getPatient() {
-      const cin = document.getElementById("getCin").value.trim();
-      if (!cin) {
-          showMessage('getResult', 'Veuillez entrer un CIN pour rechercher.', 'warning');
-          return;
-      }
-      resultDiv.innerHTML = '<p style="text-align:center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Recherche...</p>'; // Loading indicator
-      resultDiv.style.display = 'block'; // Ensure div is visible
-      resultDiv.className = ""; // Reset message classes if any
-
-      const url = `${BASE_URL}/webhook/get-patient?cin=${cin}`;
-
-      fetch(url, { headers: { Authorization: TOKEN } })
-        .then(res => {
-            if (!res.ok) throw new Error(`Erreur ${res.status}: Patient non trouvé ou erreur réseau.`);
-            return res.json();
-        })
-        .then(data => {
-          if (!data || !data.nom) { // Double check data validity
-             throw new Error("Les données du patient reçues sont invalides.");
-          }
-
-          // Default QR code generation if not provided by API
-          const qr = data.qr_code || `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.ipp || data.cin)}`; // Use IPP if available for QR
-
-          // Format date nicely (handle potential null dates)
-          const formatDate = (dateString) => {
-              if (!dateString) return 'N/A';
-              try {
-                  return new Date(dateString).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
-              } catch (e) {
-                  return dateString; // Return original if parsing fails
-              }
-          };
-           const formatDateTime = (dateString) => {
-              if (!dateString) return 'N/A';
-              try {
-                  return new Date(dateString).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short'});
-              } catch (e) {
-                  return dateString;
-              }
-          };
-
-          // Use info-group structure for display
-          resultDiv.innerHTML = `
-            <div class="patient-result-header" style="margin-bottom: 15px;">
-                <h3 style="color: var(--primary); margin-bottom: 5px;"><i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}</h3>
-            </div>
-            <div class="patient-result-info">
-                <div class="info-group">
-                    <div class="info-label">IPP</div>
-                    <div class="info-value">${data.ipp || 'N/A'}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">CIN</div>
-                    <div class="info-value">${data.cin || 'N/A'}</div>
-                </div>
-                 <div class="info-group">
-                    <div class="info-label">Téléphone</div>
-                    <div class="info-value">${data.telephone || 'N/A'}</div>
-                </div>
-                 <div class="info-group">
-                    <div class="info-label">Date de Naissance</div>
-                    <div class="info-value">${formatDate(data.date_naissance)}</div>
-                </div>
-                 <div class="info-group">
-                    <div class="info-label">Sexe</div>
-                    <div class="info-value">${data.sexe === 'M' ? 'Homme' : data.sexe === 'F' ? 'Femme' : 'N/A'}</div>
-                </div>
-                 <div class="info-group">
-                    <div class="info-label">Mutuelle</div>
-                    <div class="info-value">${data.mutuelle || "Non"}</div>
-                </div>
-                 <div class="info-group" style="grid-column: span 2;"> <!-- Address spans 2 cols -->
-                    <div class="info-label">Adresse</div>
-                    <div class="info-value">${data.adresse || 'N/A'}, ${data.ville || ''}</div>
-                </div>
-                 <div class="info-group">
-                    <div class="info-label">Créé le</div>
-                    <div class="info-value">${formatDateTime(data.created_at)}</div>
-                </div>
-            </div>
-            <div class="patient-result-qr">
-              <img src="${qr}" alt="QR Code Patient" />
-              <button onclick="printQRCode('${qr}')" class="btn btn-secondary">
-                <i class="fas fa-print"></i> Imprimer QR Code
-              </button>
-            </div>
-          `;
-           // Use 'result' type for showMessage to just handle display block/none without adding message classes
-           showMessage('getResult', resultDiv.innerHTML, 'result');
-
-        })
-        .catch((err) => {
-          console.error("Error fetching patient:", err);
-          showMessage('getResult', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur lors de la récupération."}`, 'error');
-        });
-    }
-
-    // Print QR Code with logo (assuming logo.webp is in the same folder)
-    function printQRCode(qrUrl) {
-        const printWindow = window.open('', '_blank', 'width=600,height=600');
-        printWindow.document.write(`
-            <html>
-            <head>
-                <title>Imprimer le QR Code</title>
-                <style>
-                body { font-family: 'Inter', sans-serif; text-align: center; margin-top: 50px; }
-                img.logo { width: 80px; margin-bottom: 15px; }
-                img.qrcode { width: 250px; border: 1px solid #ccc; padding: 8px; }
-                @media print {
-                    body { margin: 0; } /* Adjust print margins */
-                    button { display: none; } /* Hide button when printing */
-                }
-                </style>
-            </head>
-            <body>
-                <img src="logo.webp" alt="Clinic Logo" class="logo" onerror="this.style.display='none'" /> <br/> <!-- Hide logo if it fails to load -->
-                <img src="${qrUrl}" alt="QR Code" class="qrcode" />
-                <br/><br/>
-                <button onclick="window.print()">Imprimer</button>
-                <script>
-                 // Give images time to load before printing
-                 let imagesLoaded = 0;
-                 const images = document.querySelectorAll('img');
-                 const totalImages = images.length;
-
-                 if (totalImages === 0) { // No images, print immediately
-                    window.print();
-                    window.onafterprint = () => window.close();
-                 } else {
-                    images.forEach(img => {
-                        if (img.complete) {
-                            imagesLoaded++;
-                        } else {
-                            img.onload = () => {
-                                imagesLoaded++;
-                                if (imagesLoaded === totalImages) {
-                                    window.print();
-                                    window.onafterprint = () => window.close();
-                                }
-                            };
-                             img.onerror = () => { // Handle image load errors
-                                imagesLoaded++;
-                                console.error("Failed to load image:", img.src);
-                                if (imagesLoaded === totalImages) {
-                                    window.print();
-                                    window.onafterprint = () => window.close();
-                                }
-                            };
-                        }
-                    });
-                    // Fallback timeout if images never load/error
-                    setTimeout(() => {
-                         if (imagesLoaded < totalImages) {
-                              console.warn("Printing before all images confirmed loaded.");
-                              window.print();
-                              window.onafterprint = () => window.close();
-                         }
-                    }, 2000); // 2 second timeout
-                 }
-
-
-                </script>
-            </body>
-            </html>
-        `);
-        printWindow.document.close(); // Important for some browsers
-    }
-
-
-    // Handle create patient form submission
-    createForm?.addEventListener("submit", function (e) {
-      e.preventDefault();
-      showMessage('message', '', ''); // Clear previous message
-
-      const form = e.target;
-      const hasInsurance = form.has_insurance.checked;
-      const mutuelleValue = form.mutuelle.value.trim();
-
-      if (hasInsurance && !mutuelleValue) {
-           showMessage('message', 'Veuillez entrer le nom de la mutuelle si la case est cochée.', 'warning');
-           return;
-      }
-
-      const payload = {
-        nom: form.nom.value.trim(),
-        prenom: form.prenom.value.trim(),
-        cin: form.cin.value.trim(),
-        telephone: form.telephone.value.trim(),
-        adresse: form.adresse.value.trim(),
-        ville: form.ville.value.trim(),
-        date_naissance: form.date_naissance.value, // Already YYYY-MM-DD
-        sexe: form.sexe.value,
-        // has_insurance: hasInsurance, // Usually not sent, determined by mutuelle presence
-        mutuelle: hasInsurance ? mutuelleValue : "" // Send empty string or null if no insurance
-      };
-
-      // Basic validation example (add more as needed)
-      if (!payload.nom || !payload.prenom || !payload.cin || !payload.telephone || !payload.date_naissance) {
-          showMessage('message', 'Veuillez remplir tous les champs obligatoires.', 'warning');
-          return;
-      }
-
-       // Show loading state on button? (Optional)
-       const submitButton = form.querySelector('button[type="submit"]');
-       const originalButtonText = submitButton.innerHTML;
-       submitButton.disabled = true;
-       submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
-
-      fetch(`${BASE_URL}/webhook/create-patient`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: TOKEN },
-        body: JSON.stringify(payload)
-      })
-      .then(res => {
-          if (!res.ok) throw new Error(`Erreur ${res.status}: Impossible de créer le patient.`);
-          return res.json();
-       })
-      .then(data => {
-        showMessage('message', '<i class="fas fa-check-circle"></i> Patient créé avec succès.', 'success');
-        form.reset(); // Clear the form
-        console.log("Create patient response:", data); // Log response
-      })
-      .catch((err) => {
-         console.error("Error creating patient:", err);
-         showMessage('message', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur lors de la création."}`, 'error');
-      })
-      .finally(() => {
-           // Restore button state
-           submitButton.disabled = false;
-           submitButton.innerHTML = originalButtonText;
-      });
-    });
-
-  </script>
 </body>
 </html>
