@@ -171,7 +171,19 @@
       background: white;
       transition: all 0.2s ease;
       font-family: 'Inter', sans-serif;
+      /* Appearance setting for date input */
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      position: relative; /* Needed for icon overlay if desired */
     }
+     /* Add specific styling for date inputs if needed, e.g., a calendar icon */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        /* Default icon styling, adjust as needed */
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
 
     textarea:focus, input[type="text"]:focus, input[type="date"]:focus {
       outline: none;
@@ -652,35 +664,38 @@
 
             document.getElementById("medicament").value = aiData.medicament || '';
 
-            // --- Convert MM/DD/YYYY to YYYY-MM-DD for date input ---
+            // --- Convert DD/MM/YYYY to YYYY-MM-DD for date input ---
+            // *** THIS FUNCTION IS CORRECTED ***
             const convertDate = (dateStr) => {
-                // Added detailed logging within the function
                 if (!dateStr || typeof dateStr !== 'string' || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
                     console.warn(`Invalid or unexpected date format received in convertDate: "${dateStr}" (Type: ${typeof dateStr})`);
-                    return ''; // Return empty string for invalid input
+                    return '';
                 }
                 const parts = dateStr.split('/');
                 if (parts.length !== 3) {
                      console.warn(`Date string "${dateStr}" did not split into 3 parts.`);
-                     return ''; // Return empty string if split fails
+                     return '';
                 }
-                 // Ensure parts are reasonable numbers (basic check)
-                const month = parseInt(parts[0], 10);
-                const day = parseInt(parts[1], 10);
+                // CORRECT PARSING: Index 0 is Day, Index 1 is Month
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10);
                 const year = parseInt(parts[2], 10);
-                if (isNaN(month) || isNaN(day) || isNaN(year) || month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > 2100) {
-                    console.warn(`Parsed date parts seem invalid: M=${month}, D=${day}, Y=${year} from "${dateStr}"`);
+
+                // Validation check using correct variables
+                if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
+                    // Keep the warning specific to parsed parts
+                    console.warn(`Parsed date parts seem invalid: D=${day}, M=${month}, Y=${year} from "${dateStr}"`);
                     return '';
                 }
+
                 // Pad month and day with leading zero if necessary for YYYY-MM-DD format
-                const formattedMonth = String(month).padStart(2, '0');
                 const formattedDay = String(day).padStart(2, '0');
+                const formattedMonth = String(month).padStart(2, '0');
                 const formattedResult = `${year}-${formattedMonth}-${formattedDay}`;
                 console.log(`convertDate: Input="${dateStr}", Output="${formattedResult}"`);
                 return formattedResult;
             };
 
-            // --- ADDED DETAILED LOGGING FOR DATES ---
             // Set start date
             console.log("START_DATE: Raw value =", aiData.start_date);
             const formattedStartDate = convertDate(aiData.start_date);
@@ -690,18 +705,17 @@
 
             // Set end date
             console.log("END_DATE: Raw value =", aiData.end_date);
-            const formattedEndDate = convertDate(aiData.end_date);
+            const formattedEndDate = convertDate(aiData.end_date); // Use the corrected function
             console.log("END_DATE: Formatted value =", formattedEndDate);
 
             const endDateElement = document.getElementById("end_date");
             if (endDateElement) {
                 console.log("END_DATE: Element found. Attempting to set value...");
                 endDateElement.value = formattedEndDate;
-                console.log("END_DATE: Element value immediately after setting =", endDateElement.value); // Read back value
+                console.log("END_DATE: Element value immediately after setting =", endDateElement.value);
             } else {
                 console.error("!!! CRITICAL: Could not find HTML element with ID 'end_date' !!!");
             }
-            // --- END OF DETAILED DATE LOGGING ---
 
 
             if (aiData.schedule) {
@@ -755,18 +769,20 @@
         nuit: document.getElementById("nuit").checked
       };
 
-      // --- Convert YYYY-MM-DD back to MM/DD/YYYY if needed by the backend ---
+      // --- Convert YYYY-MM-DD back to DD/MM/YYYY for the backend ---
+      // *** THIS FUNCTION IS CORRECTED ***
       const convertDateToAPI = (dateStr) => {
           if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
               console.warn(`Invalid YYYY-MM-DD format for API conversion: "${dateStr}"`);
               return '';
           }
-          const parts = dateStr.split('-');
+          const parts = dateStr.split('-'); // [YYYY, MM, DD]
            if (parts.length !== 3) {
              console.warn(`API Date string "${dateStr}" did not split into 3 parts.`);
              return '';
           }
-          const formattedResult = `${parts[1]}/${parts[2]}/${parts[0]}`; // Format to MM/DD/YYYY
+          // Format to DD/MM/YYYY
+          const formattedResult = `${parts[2]}/${parts[1]}/${parts[0]}`;
           console.log(`convertDateToAPI: Input="${dateStr}", Output="${formattedResult}"`);
           return formattedResult;
       };
@@ -781,8 +797,8 @@
         body: JSON.stringify({
           ipp: currentIPP,
           final_prescription: document.getElementById("prescriptionInput").value,
-          start_date: apiStartDate, // Sending MM/DD/YYYY
-          end_date: apiEndDate,     // Sending MM/DD/YYYY
+          start_date: apiStartDate, // Sending DD/MM/YYYY
+          end_date: apiEndDate,     // Sending DD/MM/YYYY
           schedule,
           medicament_name: medicament
         })
