@@ -4,26 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard - Médecin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-dark: #1e40af;
-      --secondary: #64748b;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --light: #f8fafc;
-      --dark: #1e293b;
-      --gray-100: #f1f5f9;
-      --gray-200: #e2e8f0;
-      --gray-300: #cbd5e1;
-      --border-radius: 10px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
-      --shadow-lg: 0 10px 15px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.05);
-      --transition: all 0.3s ease;
+      --primary: #5d74f2;
+      --primary-light: #ebeffe;
+      --success: #31c971;
+      --success-light: #e0fbea;
+      --warning: #ffb648;
+      --warning-light: #fff8ec;
+      --danger: #ff5a5a;
+      --danger-light: #ffeded;
+      --gray-100: #f9fafb;
+      --gray-200: #f1f3f9;
+      --gray-300: #e5e7eb;
+      --gray-400: #d1d5db;
+      --gray-500: #9ca3af;
+      --gray-600: #6b7280;
+      --gray-700: #4b5563;
+      --gray-800: #374151;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.04);
+      --border-radius: 8px;
     }
 
     * {
@@ -33,175 +36,147 @@
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background: #f8fafc;
-      color: var(--dark);
-      line-height: 1.6;
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      color: var(--gray-800);
+      line-height: 1.5;
       min-height: 100vh;
       padding: 0;
     }
 
     .container {
-      max-width: 1280px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
     }
 
     .header {
-      background: white;
-      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 20px 0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      margin-bottom: 30px;
     }
 
-    .header-content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .header-title {
+      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: 600;
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--dark);
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      font-size: 24px;
       color: var(--primary);
-    }
-
-    .logo-text {
-      font-size: 1.5rem;
       font-weight: 700;
-    }
-
-    main {
-      padding: 40px 0;
-    }
-
-    .section {
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-md);
-      padding: 25px;
-      margin-bottom: 30px;
-      transition: var(--transition);
-    }
-
-    .section:hover {
-      box-shadow: var(--shadow-lg);
-    }
-
-    .section-header {
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid var(--gray-200);
     }
 
-    .section-icon {
-      font-size: 1.5rem;
-      color: var(--primary);
-      margin-right: 12px;
-    }
-
-    .section-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--dark);
-      margin: 0;
+    .logo i {
+      margin-right: 8px;
     }
 
     .card {
-      padding: 20px;
-      background: var(--gray-100);
+      background: white;
       border-radius: var(--border-radius);
-      border-left: 4px solid var(--primary);
-      margin-top: 15px;
-      transition: var(--transition);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 25px;
     }
 
-    .card:hover {
-      transform: translateY(-2px);
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-200);
     }
 
-    .card h3 {
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-800);
       display: flex;
       align-items: center;
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-      color: var(--primary-dark);
     }
 
-    .card h3 i {
-      margin-right: 8px;
+    .card-title i {
+      margin-right: 10px;
+      color: var(--primary);
+    }
+
+    .card-actions {
+      color: white;
+      background: var(--primary);
+      border-radius: var(--border-radius);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-body {
+      padding: 20px;
     }
 
     .patient-info {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 15px;
-      margin-top: 10px;
     }
 
-    .patient-detail {
-      padding: 15px;
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-sm);
+    .info-group {
+      margin-bottom: 5px;
     }
 
-    .patient-detail strong {
-      display: block;
-      font-weight: 600;
-      color: var(--secondary);
-      font-size: 0.875rem;
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
       margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 0.9rem;
+      color: var(--gray-800);
+      font-weight: 500;
     }
 
     .flex-row {
       display: flex;
-      gap: 30px;
+      gap: 25px;
+      margin-bottom: 25px;
       flex-wrap: wrap;
     }
 
-    .half-width {
+    .flex-col {
       flex: 1;
       min-width: 320px;
     }
 
-    .form-group {
-      margin-bottom: 18px;
-    }
-
+    /* Form elements */
     label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--secondary);
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: var(--gray-600);
     }
 
     textarea, input[type="text"], input[type="date"] {
       width: 100%;
-      padding: 12px 15px;
-      font-size: 16px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
       border-radius: var(--border-radius);
       border: 1px solid var(--gray-300);
       background: white;
-      transition: var(--transition);
-      font-family: 'Poppins', sans-serif;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
     }
 
     textarea:focus, input[type="text"]:focus, input[type="date"]:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      box-shadow: 0 0 0 3px rgba(93, 116, 242, 0.1);
     }
 
     textarea {
@@ -209,57 +184,58 @@
       min-height: 120px;
     }
 
-    .checkbox-group {
+    .tag-group {
       display: flex;
+      gap: 10px;
       flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 10px;
+      margin: 15px 0;
     }
 
-    .checkbox-label {
-      display: flex;
+    .tag {
+      display: inline-flex;
       align-items: center;
+      padding: 6px 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .tag i {
+      margin-right: 4px;
+    }
+
+    .tag .remove {
+      margin-left: 6px;
       cursor: pointer;
-      user-select: none;
-      padding: 8px 15px;
-      background: var(--gray-100);
-      border-radius: 30px;
-      transition: var(--transition);
     }
 
-    .checkbox-label:hover {
-      background: var(--gray-200);
+    .input-group {
+      margin-bottom: 15px;
     }
 
-    .checkbox-label input[type="checkbox"] {
-      margin-right: 8px;
-      cursor: pointer;
-    }
-
-    .button-group {
+    .btn-group {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       margin-top: 15px;
-      flex-wrap: wrap;
     }
 
     .btn {
-      padding: 10px 20px;
-      border-radius: 30px;
-      border: none;
+      padding: 8px 16px;
+      font-size: 0.85rem;
       font-weight: 500;
+      border-radius: var(--border-radius);
+      border: none;
       cursor: pointer;
-      display: flex;
+      transition: all 0.2s ease;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: var(--transition);
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      gap: 8px;
     }
 
     .btn i {
-      font-size: 1rem;
+      margin-right: 6px;
     }
 
     .btn-primary {
@@ -268,19 +244,18 @@
     }
 
     .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
+      background: #4a62d8;
     }
 
     .btn-outline {
-      background: transparent;
-      border: 1px solid var(--primary);
+      background: white;
       color: var(--primary);
+      border: 1px solid var(--gray-300);
     }
 
     .btn-outline:hover {
-      background: var(--primary);
-      color: white;
+      border-color: var(--primary);
+      background: var(--primary-light);
     }
 
     .btn-success {
@@ -289,46 +264,117 @@
     }
 
     .btn-success:hover {
-      background: #0d9669;
-      transform: translateY(-2px);
+      background: #28a960;
     }
 
     .status {
       display: inline-flex;
       align-items: center;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      background: var(--gray-100);
-      color: var(--secondary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      background: var(--gray-200);
       margin-left: 10px;
     }
 
-    .message {
-      margin-top: 15px;
-      padding: 12px;
+    .checkbox-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      margin-right: 6px;
+    }
+
+    .ai-suggestion {
+      background: var(--primary-light);
       border-radius: var(--border-radius);
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    .ai-suggestion h3 {
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .ai-suggestion h3 i {
+      margin-right: 8px;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 15px;
+      font-size: 0.85rem;
       font-weight: 500;
       display: none;
     }
 
     .message-success {
-      background: rgba(16, 185, 129, 0.1);
+      background: var(--success-light);
       color: var(--success);
-      border-left: 4px solid var(--success);
     }
 
     .message-warning {
-      background: rgba(245, 158, 11, 0.1);
+      background: var(--warning-light);
       color: var(--warning);
-      border-left: 4px solid var(--warning);
     }
 
     .message-error {
-      background: rgba(239, 68, 68, 0.1);
+      background: var(--danger-light);
       color: var(--danger);
-      border-left: 4px solid var(--danger);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .badge-success {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .total-amount {
+      background: var(--primary);
+      color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .total-amount-label {
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+
+    .total-amount-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .total-amount-currency {
+      font-size: 0.8rem;
+      font-weight: 400;
+      margin-left: 4px;
     }
 
     @media (max-width: 768px) {
@@ -337,138 +383,170 @@
         gap: 20px;
       }
 
-      .half-width {
-        min-width: 100%;
-      }
-
       .patient-info {
-        grid-template-columns: 1fr;
-      }
-
-      .button-group {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="container header-content">
-      <a href="#" class="logo">
-        <i class="fas fa-heartbeat logo-icon"></i>
-        <span class="logo-text">Dashboard Médecin</span>
-      </a>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="section" id="patientSection">
-      <div class="section-header">
-        <i class="fas fa-user-circle section-icon"></i>
-        <h2 class="section-title">Informations du patient</h2>
+  <div class="container">
+    <div class="header">
+      <h1 class="header-title">Dashboard de Médecin</h1>
+      <div class="logo">
+        <i class="fas fa-hospital"></i> MediClinic
       </div>
-      <div id="patientInfo" class="patient-info">Chargement des informations...</div>
-    </section>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-user-circle"></i> Informations du Patient
+        </h2>
+        <div class="card-actions">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="patientInfo" class="patient-info">Chargement des informations...</div>
+      </div>
+    </div>
 
     <div class="flex-row">
-      <section class="section half-width">
-        <div class="section-header">
-          <i class="fas fa-stethoscope section-icon"></i>
-          <h2 class="section-title">Diagnostic</h2>
-        </div>
-        
-        <div class="form-group">
-          <textarea id="diagnosticInput" placeholder="Entrez le diagnostic du patient..."></textarea>
-        </div>
-        
-        <div class="button-group">
-          <button class="btn btn-outline" onclick="startRecording('diagnosis')">
-            <i class="fas fa-microphone"></i> Démarrer l'enregistrement
-          </button>
-          <button class="btn btn-outline" onclick="stopRecording('diagnosis')">
-            <i class="fas fa-stop-circle"></i> Arrêter & Transcrire
-          </button>
-          <span id="diagnosisStatus" class="status"></span>
-        </div>
-        
-        <div class="button-group">
-          <button class="btn btn-success" onclick="submitDiagnostic()">
-            <i class="fas fa-check-circle"></i> Enregistrer le diagnostic
-          </button>
-        </div>
-        
-        <div id="diagMessage" class="message message-success"></div>
-      </section>
-
-      <section class="section half-width">
-        <div class="section-header">
-          <i class="fas fa-prescription-bottle-alt section-icon"></i>
-          <h2 class="section-title">Prescription</h2>
-        </div>
-        
-        <div class="form-group">
-          <textarea id="prescriptionInput" placeholder="Ex: Amoxicillin 500mg 3x/jour pendant 5 jours..."></textarea>
-        </div>
-        
-        <div class="button-group">
-          <button class="btn btn-outline" onclick="startRecording('prescription')">
-            <i class="fas fa-microphone"></i> Démarrer l'enregistrement
-          </button>
-          <button class="btn btn-outline" onclick="stopRecording('prescription')">
-            <i class="fas fa-stop-circle"></i> Arrêter & Transcrire
-          </button>
-          <span id="prescriptionStatus" class="status"></span>
-        </div>
-        
-        <div class="button-group">
-          <button class="btn btn-primary" onclick="submitPrescription()">
-            <i class="fas fa-robot"></i> Soumettre à l'IA
-          </button>
-        </div>
-        
-        <div id="aiSuggestion" class="card" style="display: none;">
-          <h3><i class="fas fa-lightbulb"></i> Suggestion IA</h3>
-          
-          <div class="form-group">
-            <label>Médicament:</label>
-            <input type="text" id="medicament"/>
-          </div>
-          
-          <div class="form-group">
-            <label>Date de début:</label>
-            <input type="date" id="start_date"/>
-          </div>
-          
-          <div class="form-group">
-            <label>Date de fin:</label>
-            <input type="date" id="end_date"/>
-          </div>
-          
-          <div class="form-group">
-            <label>Horaires:</label>
-            <div class="checkbox-group">
-              <label class="checkbox-label"><input type="checkbox" id="matin"/> Matin</label>
-              <label class="checkbox-label"><input type="checkbox" id="apres_midi"/> Après-midi</label>
-              <label class="checkbox-label"><input type="checkbox" id="soir"/> Soir</label>
-              <label class="checkbox-label"><input type="checkbox" id="nuit"/> Nuit</label>
+      <div class="flex-col">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <i class="fas fa-stethoscope"></i> Diagnostic
+            </h2>
+            <div class="card-actions">
+              <i class="fas fa-notes-medical"></i>
             </div>
           </div>
-          
-          <div class="button-group">
-            <button class="btn btn-success" onclick="validatePrescription()">
-              <i class="fas fa-check-double"></i> Valider la prescription
-            </button>
+          <div class="card-body">
+            <div class="input-group">
+              <textarea id="diagnosticInput" placeholder="Entrez le diagnostic du patient..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+              <button class="btn btn-outline" onclick="startRecording('diagnosis')">
+                <i class="fas fa-microphone"></i> Démarrer
+              </button>
+              <button class="btn btn-outline" onclick="stopRecording('diagnosis')">
+                <i class="fas fa-stop-circle"></i> Arrêter
+              </button>
+              <span id="diagnosisStatus" class="status"></span>
+            </div>
+            
+            <div class="btn-group">
+              <button class="btn btn-success" onclick="submitDiagnostic()">
+                <i class="fas fa-check-circle"></i> Enregistrer
+              </button>
+            </div>
+            
+            <div id="diagMessage" class="message message-success"></div>
           </div>
-          
-          <div id="validationMessage" class="message message-success"></div>
         </div>
-      </section>
+      </div>
+
+      <div class="flex-col">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <i class="fas fa-prescription-bottle-alt"></i> Prescription
+            </h2>
+            <div class="card-actions">
+              <i class="fas fa-pills"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="input-group">
+              <textarea id="prescriptionInput" placeholder="Ex: Amoxicillin 500mg 3x/jour pendant 5 jours..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+              <button class="btn btn-outline" onclick="startRecording('prescription')">
+                <i class="fas fa-microphone"></i> Démarrer
+              </button>
+              <button class="btn btn-outline" onclick="stopRecording('prescription')">
+                <i class="fas fa-stop-circle"></i> Arrêter
+              </button>
+              <span id="prescriptionStatus" class="status"></span>
+            </div>
+            
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="submitPrescription()">
+                <i class="fas fa-robot"></i> Soumettre à l'IA
+              </button>
+            </div>
+            
+            <div id="aiSuggestion" class="ai-suggestion" style="display: none;">
+              <h3><i class="fas fa-lightbulb"></i> Suggestion IA</h3>
+              
+              <div class="input-group">
+                <label>Médicament:</label>
+                <input type="text" id="medicament"/>
+              </div>
+              
+              <div class="input-group">
+                <label>Date de début:</label>
+                <input type="date" id="start_date"/>
+              </div>
+              
+              <div class="input-group">
+                <label>Date de fin:</label>
+                <input type="date" id="end_date"/>
+              </div>
+              
+              <div class="input-group">
+                <label>Horaires:</label>
+                <div class="checkbox-wrapper">
+                  <label class="checkbox-item"><input type="checkbox" id="matin"/> Matin</label>
+                  <label class="checkbox-item"><input type="checkbox" id="apres_midi"/> Après-midi</label>
+                  <label class="checkbox-item"><input type="checkbox" id="soir"/> Soir</label>
+                  <label class="checkbox-item"><input type="checkbox" id="nuit"/> Nuit</label>
+                </div>
+              </div>
+              
+              <div class="total-amount">
+                <div class="total-amount-label">Total</div>
+                <div class="total-amount-value">0.00<span class="total-amount-currency">MAD</span></div>
+              </div>
+              
+              <div class="btn-group">
+                <button class="btn btn-success" onclick="validatePrescription()">
+                  <i class="fas fa-check-double"></i> Valider la prescription
+                </button>
+              </div>
+              
+              <div id="validationMessage" class="message message-success"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </main>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-history"></i> Historique des Consultations
+        </h2>
+        <div class="card-actions">
+          <i class="fas fa-clock"></i>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="tag-group">
+          <div class="tag"><i class="fas fa-calendar-check"></i> Aujourd'hui <span class="remove">×</span></div>
+          <div class="tag"><i class="fas fa-user-md"></i> Dr. Martin <span class="remove">×</span></div>
+        </div>
+        
+        <div style="text-align: center; color: var(--gray-500); padding: 20px;">
+          Aucune consultation antérieure pour ce patient
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     const BASE_URL = 'https://workflows.aphelionxinnovations.com';
@@ -492,35 +570,35 @@
       .then(data => {
         const patientInfoContainer = document.getElementById("patientInfo");
         patientInfoContainer.innerHTML = `
-          <div class="patient-detail">
-            <strong>Nom complet</strong>
-            ${data.prenom} ${data.nom}
+          <div class="info-group">
+            <div class="info-label">Nom</div>
+            <div class="info-value">${data.nom}</div>
           </div>
-          <div class="patient-detail">
-            <strong>IPP</strong>
-            ${data.ipp}
+          <div class="info-group">
+            <div class="info-label">Prénom</div>
+            <div class="info-value">${data.prenom}</div>
           </div>
-          <div class="patient-detail">
-            <strong>CIN</strong>
-            ${data.cin}
+          <div class="info-group">
+            <div class="info-label">CIN</div>
+            <div class="info-value">${data.cin}</div>
           </div>
-          <div class="patient-detail">
-            <strong>Téléphone</strong>
-            ${data.telephone}
+          <div class="info-group">
+            <div class="info-label">Téléphone</div>
+            <div class="info-value">${data.telephone}</div>
           </div>
-          <div class="patient-detail">
-            <strong>Adresse</strong>
-            ${data.adresse}
+          <div class="info-group">
+            <div class="info-label">Adresse</div>
+            <div class="info-value">${data.adresse}</div>
           </div>
-          <div class="patient-detail">
-            <strong>Mutuelle</strong>
-            ${data.mutuelle || 'Aucune'}
+          <div class="info-group">
+            <div class="info-label">Mutuelle</div>
+            <div class="info-value">${data.mutuelle || 'Aucune'}</div>
           </div>
         `;
       })
       .catch(error => {
         document.getElementById("patientInfo").innerHTML = 
-          '<div class="message message-error">Erreur lors du chargement des informations du patient.</div>';
+          '<div class="message message-error" style="display:block">Erreur lors du chargement des informations du patient.</div>';
         console.error("Error loading patient data:", error);
       });
     }
@@ -533,7 +611,7 @@
         mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
         document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enregistrement...';
       }).catch(error => {
-        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur d\'accès au micro';
+        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur micro';
         console.error("Error accessing microphone:", error);
       });
     }
@@ -566,7 +644,7 @@
       .then(data => {
         const text = Array.isArray(data) ? data[0]?.text || data[0]?.transcript : data?.text || data?.transcript;
         if (!text) {
-          document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-circle"></i> Transcription vide';
+          document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-circle"></i> Vide';
           return;
         }
         document.getElementById(field === 'diagnosis' ? 'diagnosticInput' : 'prescriptionInput').value = text;
@@ -595,7 +673,7 @@
         return response.json();
       })
       .then(() => {
-        showMessage("diagMessage", "<i class='fas fa-check-circle'></i> Diagnostic enregistré avec succès", "success");
+        showMessage("diagMessage", "<i class='fas fa-check-circle'></i> Diagnostic enregistré", "success");
       })
       .catch(error => {
         showMessage("diagMessage", "<i class='fas fa-exclamation-triangle'></i> Erreur lors de l'enregistrement", "error");
@@ -629,6 +707,9 @@
         document.getElementById("apres_midi").checked = aiData.schedule.apres_midi;
         document.getElementById("soir").checked = aiData.schedule.soir;
         document.getElementById("nuit").checked = aiData.schedule.nuit;
+        
+        // Add some random value to total amount for demonstration
+        document.querySelector(".total-amount-value").innerHTML = "350.00<span class='total-amount-currency'>MAD</span>";
         
         // Scroll to AI suggestion
         document.getElementById("aiSuggestion").scrollIntoView({ behavior: 'smooth' });
@@ -673,7 +754,7 @@
         return response.json();
       })
       .then(() => {
-        showMessage("validationMessage", "<i class='fas fa-check-circle'></i> Prescription enregistrée avec succès", "success");
+        showMessage("validationMessage", "<i class='fas fa-check-circle'></i> Prescription enregistrée", "success");
       })
       .catch(error => {
         showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Erreur lors de l'enregistrement", "error");
