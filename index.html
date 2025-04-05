@@ -184,32 +184,7 @@
       min-height: 120px;
     }
 
-    .tag-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin: 15px 0;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 12px;
-      background: var(--primary-light);
-      color: var(--primary);
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-
-    .tag i {
-      margin-right: 4px;
-    }
-
-    .tag .remove {
-      margin-left: 6px;
-      cursor: pointer;
-    }
+    /* Removed .tag-group and .tag styles as the related HTML is gone */
 
     .input-group {
       margin-bottom: 15px;
@@ -337,45 +312,8 @@
       color: var(--danger);
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-
-    .badge-success {
-      background: var(--success-light);
-      color: var(--success);
-    }
-
-    .total-amount {
-      background: var(--primary);
-      color: white;
-      padding: 20px;
-      border-radius: var(--border-radius);
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .total-amount-label {
-      font-size: 0.85rem;
-      margin-bottom: 10px;
-    }
-
-    .total-amount-value {
-      font-size: 1.8rem;
-      font-weight: 700;
-    }
-
-    .total-amount-currency {
-      font-size: 0.8rem;
-      font-weight: 400;
-      margin-left: 4px;
-    }
+    /* Removed .badge and .badge-success styles as no longer needed */
+    /* Removed .total-amount styles as the related HTML is gone */
 
     @media (max-width: 768px) {
       .flex-row {
@@ -508,10 +446,7 @@
                 </div>
               </div>
 
-              <div class="total-amount">
-                <div class="total-amount-label">Total</div>
-                <div class="total-amount-value">0.00<span class="total-amount-currency">MAD</span></div>
-              </div>
+              <!-- Total Amount Div Removed From Here -->
 
               <div class="btn-group">
                 <button class="btn btn-success" onclick="validatePrescription()">
@@ -554,23 +489,23 @@
         patientInfoContainer.innerHTML = `
           <div class="info-group">
             <div class="info-label">Nom</div>
-            <div class="info-value">${data.nom}</div>
+            <div class="info-value">${data.nom || 'N/A'}</div>
           </div>
           <div class="info-group">
             <div class="info-label">Prénom</div>
-            <div class="info-value">${data.prenom}</div>
+            <div class="info-value">${data.prenom || 'N/A'}</div>
           </div>
           <div class="info-group">
             <div class="info-label">CIN</div>
-            <div class="info-value">${data.cin}</div>
+            <div class="info-value">${data.cin || 'N/A'}</div>
           </div>
           <div class="info-group">
             <div class="info-label">Téléphone</div>
-            <div class="info-value">${data.telephone}</div>
+            <div class="info-value">${data.telephone || 'N/A'}</div>
           </div>
           <div class="info-group">
             <div class="info-label">Adresse</div>
-            <div class="info-value">${data.adresse}</div>
+            <div class="info-value">${data.adresse || 'N/A'}</div>
           </div>
           <div class="info-group">
             <div class="info-label">Mutuelle</div>
@@ -666,9 +601,16 @@
     function submitPrescription() {
       const prescription = document.getElementById("prescriptionInput").value;
       if (!prescription) {
+        // Use validationMessage for prescription-related errors
         showMessage("validationMessage", "Veuillez entrer une prescription", "warning");
+        // Hide the AI suggestion box if the input is empty
+        document.getElementById("aiSuggestion").style.display = "none";
         return;
       }
+      // Clear previous messages
+      showMessage("validationMessage", "", "");
+      document.getElementById("aiSuggestion").style.display = "none"; // Hide initially
+
 
       fetch(`${BASE_URL}/webhook/doctor-submit-prescription`, {
         method: "POST",
@@ -676,39 +618,67 @@
         body: JSON.stringify({ ipp: currentIPP, prescription })
       })
       .then(response => {
-        if (!response.ok) throw new Error('Erreur réseau');
+        if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
         return response.json();
       })
       .then(data => {
-        aiData = data.suggestion;
-        document.getElementById("aiSuggestion").style.display = "block";
-        document.getElementById("medicament").value = aiData.medicament;
-        document.getElementById("start_date").value = aiData.start_date;
-        document.getElementById("end_date").value = aiData.end_date;
-        document.getElementById("matin").checked = aiData.schedule.matin;
-        document.getElementById("apres_midi").checked = aiData.schedule.apres_midi;
-        document.getElementById("soir").checked = aiData.schedule.soir;
-        document.getElementById("nuit").checked = aiData.schedule.nuit;
+          // *** MODIFIED PART ***
+          // Check if data exists, is an array, and has the 'output' property
+          if (data && Array.isArray(data) && data.length > 0 && data[0].output) {
+            aiData = data[0].output; // <<< CORRECT WAY TO ACCESS DATA
 
-        // Add some random value to total amount for demonstration
-        document.querySelector(".total-amount-value").innerHTML = "350.00<span class='total-amount-currency'>MAD</span>";
+            document.getElementById("aiSuggestion").style.display = "block";
+            document.getElementById("medicament").value = aiData.medicament || ''; // Add fallback for safety
 
-        // Scroll to AI suggestion
-        document.getElementById("aiSuggestion").scrollIntoView({ behavior: 'smooth' });
+            // --- Convert MM/DD/YYYY to YYYY-MM-DD for date input ---
+            const convertDate = (dateStr) => {
+                if (!dateStr || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return ''; // Validate format
+                const parts = dateStr.split('/');
+                return `${parts[2]}-${parts[0]}-${parts[1]}`; // Format to YYYY-MM-DD
+            };
+            document.getElementById("start_date").value = convertDate(aiData.start_date);
+            document.getElementById("end_date").value = convertDate(aiData.end_date);
+            // --- End Date Conversion ---
+
+            // Check if schedule exists before accessing its properties
+            if (aiData.schedule) {
+              document.getElementById("matin").checked = aiData.schedule.matin || false;
+              document.getElementById("apres_midi").checked = aiData.schedule.apres_midi || false;
+              document.getElementById("soir").checked = aiData.schedule.soir || false;
+              document.getElementById("nuit").checked = aiData.schedule.nuit || false;
+            } else {
+              // Optionally clear checkboxes if schedule is missing
+              document.getElementById("matin").checked = false;
+              document.getElementById("apres_midi").checked = false;
+              document.getElementById("soir").checked = false;
+              document.getElementById("nuit").checked = false;
+            }
+
+            // Scroll to AI suggestion
+            document.getElementById("aiSuggestion").scrollIntoView({ behavior: 'smooth' });
+
+          } else {
+            // Handle case where data structure is not as expected
+            console.error("Unexpected API response structure:", data);
+            showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Réponse inattendue de l'IA", "error");
+            document.getElementById("aiSuggestion").style.display = "none"; // Hide suggestion if data is bad
+          }
+          // *** END OF MODIFIED PART ***
       })
       .catch(error => {
-        showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Erreur lors de la soumission", "error");
+        showMessage("validationMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur lors de la soumission: ${error.message}`, "error");
         console.error("Error submitting prescription:", error);
+        document.getElementById("aiSuggestion").style.display = "none"; // Ensure it's hidden on error
       });
     }
 
     function validatePrescription() {
       const medicament = document.getElementById("medicament").value;
-      const start_date = document.getElementById("start_date").value;
-      const end_date = document.getElementById("end_date").value;
+      const start_date = document.getElementById("start_date").value; // Reads YYYY-MM-DD
+      const end_date = document.getElementById("end_date").value;     // Reads YYYY-MM-DD
 
       if (!medicament || !start_date || !end_date) {
-        showMessage("validationMessage", "Veuillez remplir tous les champs obligatoires", "warning");
+        showMessage("validationMessage", "Veuillez remplir tous les champs obligatoires (Médicament, Dates)", "warning");
         return;
       }
 
@@ -719,38 +689,58 @@
         nuit: document.getElementById("nuit").checked
       };
 
+      // --- Convert YYYY-MM-DD back to MM/DD/YYYY if needed by the backend ---
+      const convertDateToAPI = (dateStr) => {
+          if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return ''; // Validate format
+          const parts = dateStr.split('-');
+          return `${parts[1]}/${parts[2]}/${parts[0]}`; // Format to MM/DD/YYYY
+      };
+
+      const apiStartDate = convertDateToAPI(start_date);
+      const apiEndDate = convertDateToAPI(end_date);
+      // --- End Date Conversion ---
+
+
       fetch(`${BASE_URL}/webhook/doctor-validate-prescription`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: TOKEN },
         body: JSON.stringify({
           ipp: currentIPP,
           final_prescription: document.getElementById("prescriptionInput").value,
-          start_date,
-          end_date,
+          // Send the original format expected by your API if needed
+          start_date: apiStartDate,
+          end_date: apiEndDate,
+          // If API expects YYYY-MM-DD directly, use:
+          // start_date: start_date,
+          // end_date: end_date,
           schedule,
           medicament_name: medicament
         })
       })
       .then(response => {
-        if (!response.ok) throw new Error('Erreur réseau');
+        if (!response.ok) throw new Error(`Erreur réseau: ${response.statusText}`);
         return response.json();
       })
       .then(() => {
-        showMessage("validationMessage", "<i class='fas fa-check-circle'></i> Prescription enregistrée", "success");
+        showMessage("validationMessage", "<i class='fas fa-check-circle'></i> Prescription enregistrée avec succès", "success");
+         // Optionally hide the suggestion box after successful validation
+         // document.getElementById("aiSuggestion").style.display = "none";
       })
       .catch(error => {
-        showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Erreur lors de l'enregistrement", "error");
+        showMessage("validationMessage", `<i class='fas fa-exclamation-triangle'></i> Erreur lors de l'enregistrement: ${error.message}`, "error");
         console.error("Error validating prescription:", error);
       });
     }
 
     function showMessage(elementId, message, type) {
       const messageElement = document.getElementById(elementId);
-      messageElement.innerHTML = message;
-      messageElement.style.display = "block";
+      if (!messageElement) return; // Exit if element doesn't exist
 
-      // Remove any existing classes
-      messageElement.className = "message";
+      messageElement.innerHTML = message;
+      messageElement.style.display = message ? "block" : "none"; // Show only if there is a message
+
+      // Remove any existing type classes first
+      messageElement.classList.remove("message-success", "message-warning", "message-error");
 
       // Add appropriate class based on type
       if (type === "success") {
@@ -761,13 +751,22 @@
         messageElement.classList.add("message-error");
       }
 
-      // Auto-hide after 5 seconds for success messages
+      // Auto-hide after 5 seconds ONLY for success messages
       if (type === "success") {
         setTimeout(() => {
-          messageElement.style.display = "none";
+          // Check if the message is still the same success message before hiding
+          if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
+             messageElement.style.display = "none";
+          }
         }, 5000);
       }
     }
+
+    // --- Added Date Input Formatting Logic ---
+    // Ensure date inputs accept YYYY-MM-DD but display correctly based on browser locale (usually)
+    // This part doesn't actively change display but sets the correct 'type="date"' behavior.
+    // The conversion logic added in submitPrescription and validatePrescription handles the MM/DD/YYYY <-> YYYY-MM-DD part.
+
   </script>
 </body>
 </html>
