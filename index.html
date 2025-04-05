@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Médecin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --border-radius: 10px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.05);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header {
+      background: white;
+      box-shadow: var(--shadow-sm);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      font-size: 24px;
+      color: var(--primary);
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    main {
+      padding: 40px 0;
+    }
+
+    .section {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+      padding: 25px;
+      margin-bottom: 30px;
+      transition: var(--transition);
+    }
+
+    .section:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .section-icon {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-right: 12px;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin: 0;
+    }
+
+    .card {
+      padding: 20px;
+      background: var(--gray-100);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--primary);
+      margin-top: 15px;
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card h3 {
+      display: flex;
+      align-items: center;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: var(--primary-dark);
+    }
+
+    .card h3 i {
+      margin-right: 8px;
+    }
+
+    .patient-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .patient-detail {
+      padding: 15px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .patient-detail strong {
+      display: block;
+      font-weight: 600;
+      color: var(--secondary);
+      font-size: 0.875rem;
+      margin-bottom: 4px;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .half-width {
+      flex: 1;
+      min-width: 320px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--secondary);
+    }
+
+    textarea, input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 16px;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--gray-300);
+      background: white;
+      transition: var(--transition);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    textarea:focus, input[type="text"]:focus, input[type="date"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 8px 15px;
+      background: var(--gray-100);
+      border-radius: 30px;
+      transition: var(--transition);
+    }
+
+    .checkbox-label:hover {
+      background: var(--gray-200);
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      gap: 8px;
+    }
+
+    .btn i {
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #0d9669;
+      transform: translateY(-2px);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: var(--gray-100);
+      color: var(--secondary);
+      margin-left: 10px;
+    }
+
+    .message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      display: none;
+    }
+
+    .message-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border-left: 4px solid var(--success);
+    }
+
+    .message-warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+      border-left: 4px solid var(--warning);
+    }
+
+    .message-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border-left: 4px solid var(--danger);
+    }
+
+    @media (max-width: 768px) {
+      .flex-row {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .half-width {
+        min-width: 100%;
+      }
+
+      .patient-info {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-content">
+      <a href="#" class="logo">
+        <i class="fas fa-heartbeat logo-icon"></i>
+        <span class="logo-text">Dashboard Médecin</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section" id="patientSection">
+      <div class="section-header">
+        <i class="fas fa-user-circle section-icon"></i>
+        <h2 class="section-title">Informations du patient</h2>
+      </div>
+      <div id="patientInfo" class="patient-info">Chargement des informations...</div>
+    </section>
+
+    <div class="flex-row">
+      <section class="section half-width">
+        <div class="section-header">
+          <i class="fas fa-stethoscope section-icon"></i>
+          <h2 class="section-title">Diagnostic</h2>
+        </div>
+        
+        <div class="form-group">
+          <textarea id="diagnosticInput" placeholder="Entrez le diagnostic du patient..."></textarea>
+        </div>
+        
+        <div class="button-group">
+          <button class="btn btn-outline" onclick="startRecording('diagnosis')">
+            <i class="fas fa-microphone"></i> Démarrer l'enregistrement
+          </button>
+          <button class="btn btn-outline" onclick="stopRecording('diagnosis')">
+            <i class="fas fa-stop-circle"></i> Arrêter & Transcrire
+          </button>
+          <span id="diagnosisStatus" class="status"></span>
+        </div>
+        
+        <div class="button-group">
+          <button class="btn btn-success" onclick="submitDiagnostic()">
+            <i class="fas fa-check-circle"></i> Enregistrer le diagnostic
+          </button>
+        </div>
+        
+        <div id="diagMessage" class="message message-success"></div>
+      </section>
+
+      <section class="section half-width">
+        <div class="section-header">
+          <i class="fas fa-prescription-bottle-alt section-icon"></i>
+          <h2 class="section-title">Prescription</h2>
+        </div>
+        
+        <div class="form-group">
+          <textarea id="prescriptionInput" placeholder="Ex: Amoxicillin 500mg 3x/jour pendant 5 jours..."></textarea>
+        </div>
+        
+        <div class="button-group">
+          <button class="btn btn-outline" onclick="startRecording('prescription')">
+            <i class="fas fa-microphone"></i> Démarrer l'enregistrement
+          </button>
+          <button class="btn btn-outline" onclick="stopRecording('prescription')">
+            <i class="fas fa-stop-circle"></i> Arrêter & Transcrire
+          </button>
+          <span id="prescriptionStatus" class="status"></span>
+        </div>
+        
+        <div class="button-group">
+          <button class="btn btn-primary" onclick="submitPrescription()">
+            <i class="fas fa-robot"></i> Soumettre à l'IA
+          </button>
+        </div>
+        
+        <div id="aiSuggestion" class="card" style="display: none;">
+          <h3><i class="fas fa-lightbulb"></i> Suggestion IA</h3>
+          
+          <div class="form-group">
+            <label>Médicament:</label>
+            <input type="text" id="medicament"/>
+          </div>
+          
+          <div class="form-group">
+            <label>Date de début:</label>
+            <input type="date" id="start_date"/>
+          </div>
+          
+          <div class="form-group">
+            <label>Date de fin:</label>
+            <input type="date" id="end_date"/>
+          </div>
+          
+          <div class="form-group">
+            <label>Horaires:</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" id="matin"/> Matin</label>
+              <label class="checkbox-label"><input type="checkbox" id="apres_midi"/> Après-midi</label>
+              <label class="checkbox-label"><input type="checkbox" id="soir"/> Soir</label>
+              <label class="checkbox-label"><input type="checkbox" id="nuit"/> Nuit</label>
+            </div>
+          </div>
+          
+          <div class="button-group">
+            <button class="btn btn-success" onclick="validatePrescription()">
+              <i class="fas fa-check-double"></i> Valider la prescription
+            </button>
+          </div>
+          
+          <div id="validationMessage" class="message message-success"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const BASE_URL = 'https://workflows.aphelionxinnovations.com';
+    const TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Replace with your actual token
+    let currentIPP = null;
+    let mediaRecorder;
+    let audioChunks = [];
+    let aiData = {};
+
+    window.onload = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentIPP = urlParams.get("ipp");
+      if (currentIPP) loadPatient(currentIPP);
+    };
+
+    function loadPatient(ipp) {
+      fetch(`${BASE_URL}/webhook/doctor-get-patient?ipp=${ipp}`, {
+        headers: { Authorization: TOKEN }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const patientInfoContainer = document.getElementById("patientInfo");
+        patientInfoContainer.innerHTML = `
+          <div class="patient-detail">
+            <strong>Nom complet</strong>
+            ${data.prenom} ${data.nom}
+          </div>
+          <div class="patient-detail">
+            <strong>IPP</strong>
+            ${data.ipp}
+          </div>
+          <div class="patient-detail">
+            <strong>CIN</strong>
+            ${data.cin}
+          </div>
+          <div class="patient-detail">
+            <strong>Téléphone</strong>
+            ${data.telephone}
+          </div>
+          <div class="patient-detail">
+            <strong>Adresse</strong>
+            ${data.adresse}
+          </div>
+          <div class="patient-detail">
+            <strong>Mutuelle</strong>
+            ${data.mutuelle || 'Aucune'}
+          </div>
+        `;
+      })
+      .catch(error => {
+        document.getElementById("patientInfo").innerHTML = 
+          '<div class="message message-error">Erreur lors du chargement des informations du patient.</div>';
+        console.error("Error loading patient data:", error);
+      });
+    }
+
+    function startRecording(field) {
+      audioChunks = [];
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enregistrement...';
+      }).catch(error => {
+        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur d\'accès au micro';
+        console.error("Error accessing microphone:", error);
+      });
+    }
+
+    function stopRecording(field) {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
+          sendAudioToAI(blob, field);
+          document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Transcription...';
+        };
+      }
+    }
+
+    function sendAudioToAI(blob, field) {
+      const endpoint = field === 'diagnosis'
+        ? `${BASE_URL}/webhook/transcribe-diagnosis`
+        : `${BASE_URL}/webhook/transcribe-prescription`;
+
+      const formData = new FormData();
+      formData.append("audio", blob, `${field}.webm`);
+
+      fetch(endpoint, {
+        method: "POST",
+        headers: { Authorization: TOKEN },
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const text = Array.isArray(data) ? data[0]?.text || data[0]?.transcript : data?.text || data?.transcript;
+        if (!text) {
+          document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-exclamation-circle"></i> Transcription vide';
+          return;
+        }
+        document.getElementById(field === 'diagnosis' ? 'diagnosticInput' : 'prescriptionInput').value = text;
+        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-check"></i> Terminé';
+      })
+      .catch(error => {
+        document.getElementById(`${field}Status`).innerHTML = '<i class="fas fa-times-circle"></i> Erreur';
+        console.error("Transcription error:", error);
+      });
+    }
+
+    function submitDiagnostic() {
+      const diagnostic = document.getElementById("diagnosticInput").value;
+      if (!diagnostic) {
+        showMessage("diagMessage", "Veuillez entrer un diagnostic", "warning");
+        return;
+      }
+      
+      fetch(`${BASE_URL}/webhook/doctor-submit-diagnostic`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: TOKEN },
+        body: JSON.stringify({ ipp: currentIPP, diagnostic })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Erreur réseau');
+        return response.json();
+      })
+      .then(() => {
+        showMessage("diagMessage", "<i class='fas fa-check-circle'></i> Diagnostic enregistré avec succès", "success");
+      })
+      .catch(error => {
+        showMessage("diagMessage", "<i class='fas fa-exclamation-triangle'></i> Erreur lors de l'enregistrement", "error");
+        console.error("Error submitting diagnostic:", error);
+      });
+    }
+
+    function submitPrescription() {
+      const prescription = document.getElementById("prescriptionInput").value;
+      if (!prescription) {
+        showMessage("validationMessage", "Veuillez entrer une prescription", "warning");
+        return;
+      }
+      
+      fetch(`${BASE_URL}/webhook/doctor-submit-prescription`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: TOKEN },
+        body: JSON.stringify({ ipp: currentIPP, prescription })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Erreur réseau');
+        return response.json();
+      })
+      .then(data => {
+        aiData = data.suggestion;
+        document.getElementById("aiSuggestion").style.display = "block";
+        document.getElementById("medicament").value = aiData.medicament;
+        document.getElementById("start_date").value = aiData.start_date;
+        document.getElementById("end_date").value = aiData.end_date;
+        document.getElementById("matin").checked = aiData.schedule.matin;
+        document.getElementById("apres_midi").checked = aiData.schedule.apres_midi;
+        document.getElementById("soir").checked = aiData.schedule.soir;
+        document.getElementById("nuit").checked = aiData.schedule.nuit;
+        
+        // Scroll to AI suggestion
+        document.getElementById("aiSuggestion").scrollIntoView({ behavior: 'smooth' });
+      })
+      .catch(error => {
+        showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Erreur lors de la soumission", "error");
+        console.error("Error submitting prescription:", error);
+      });
+    }
+
+    function validatePrescription() {
+      const medicament = document.getElementById("medicament").value;
+      const start_date = document.getElementById("start_date").value;
+      const end_date = document.getElementById("end_date").value;
+      
+      if (!medicament || !start_date || !end_date) {
+        showMessage("validationMessage", "Veuillez remplir tous les champs obligatoires", "warning");
+        return;
+      }
+      
+      const schedule = {
+        matin: document.getElementById("matin").checked,
+        apres_midi: document.getElementById("apres_midi").checked,
+        soir: document.getElementById("soir").checked,
+        nuit: document.getElementById("nuit").checked
+      };
+      
+      fetch(`${BASE_URL}/webhook/doctor-validate-prescription`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: TOKEN },
+        body: JSON.stringify({
+          ipp: currentIPP,
+          final_prescription: document.getElementById("prescriptionInput").value,
+          start_date,
+          end_date,
+          schedule,
+          medicament_name: medicament
+        })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Erreur réseau');
+        return response.json();
+      })
+      .then(() => {
+        showMessage("validationMessage", "<i class='fas fa-check-circle'></i> Prescription enregistrée avec succès", "success");
+      })
+      .catch(error => {
+        showMessage("validationMessage", "<i class='fas fa-exclamation-triangle'></i> Erreur lors de l'enregistrement", "error");
+        console.error("Error validating prescription:", error);
+      });
+    }
+    
+    function showMessage(elementId, message, type) {
+      const messageElement = document.getElementById(elementId);
+      messageElement.innerHTML = message;
+      messageElement.style.display = "block";
+      
+      // Remove any existing classes
+      messageElement.className = "message";
+      
+      // Add appropriate class based on type
+      if (type === "success") {
+        messageElement.classList.add("message-success");
+      } else if (type === "warning") {
+        messageElement.classList.add("message-warning");
+      } else if (type === "error") {
+        messageElement.classList.add("message-error");
+      }
+      
+      // Auto-hide after 5 seconds for success messages
+      if (type === "success") {
+        setTimeout(() => {
+          messageElement.style.display = "none";
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>
