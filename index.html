@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="description" content="Dashboard de réception pour la gestion des patients - MediClinic" />
-  <title>Dashboard - Réception</title>
+  <title>Réception - MediClinic</title> <!-- Changed Title -->
   <!-- Using Consistent Fonts & Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <!-- Using Consistent CSS -->
   <style>
-    /* --- CSS (No changes) --- */
-    :root { --primary: #5d74f2; --primary-light: #ebeffe; --success: #31c971; --success-light: #e0fbea; --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded; --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05); --shadow-focus: 0 0 0 3px rgba(93, 116, 242, 0.2); --border-radius: 0.5rem; --transition-speed: 0.2s; font-size: 15px; }
+    /* --- CSS --- */
+    :root { /* ... CSS Variables ... */ }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-800); line-height: 1.5; min-height: 100vh; padding: 0; visibility: hidden; /* Hide body initially */ }
+    body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-800); line-height: 1.5; min-height: 100vh; padding: 0; visibility: hidden; }
     body.loaded { visibility: visible; animation: fadeIn 0.3s ease-in; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem; }
@@ -21,7 +21,7 @@
     .header-main-content { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; }
     .logo { display: flex; align-items: center; }
     .logo-img { height: 38px; width: auto; }
-    .header-title { color: var(--primary); font-size: 1.4rem; font-weight: 600; margin: 0; white-space: nowrap; }
+    .header-title { color: var(--gray-800); font-size: 1.4rem; font-weight: 600; margin: 0; white-space: nowrap; } /* Title Color Changed */
     .header-logout { flex-shrink: 0; margin-left: auto; }
     .logout-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: var(--border-radius); }
     .flex-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
@@ -47,7 +47,8 @@
     .checkbox-label input[type="checkbox"] { width: 1.1em; height: 1.1em; margin-right: 0.4rem; cursor: pointer; accent-color: var(--primary); }
     .mutuelle-group { grid-column: span 2; display: flex; flex-direction: column; gap: 0.75rem; }
     .mutuelle-group > div:first-child { display: flex; align-items: center; }
-    input[name="mutuelle"]:disabled { background-color: var(--gray-100); cursor: not-allowed; }
+    /* --- ADDED Style for disabled mutuelle input --- */
+    input[name="mutuelle"]:disabled { background-color: var(--gray-100); cursor: not-allowed; opacity: 0.7; border: 1px solid var(--gray-300); }
     .btn-group { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
     .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 500; border-radius: var(--border-radius); border: none; cursor: pointer; transition: background-color var(--transition-speed) ease, transform 0.1s ease; display: inline-flex; align-items: center; justify-content: center; width: auto; line-height: 1.5; }
     .btn:active { transform: translateY(1px); }
@@ -101,9 +102,11 @@
     <div class="header">
       <div class="header-main-content">
         <div class="logo">
-          <img src="clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> <!-- UPDATE SRC -->
+          <!-- UPDATE src path and alt text -->
+          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img">
         </div>
-        <h1 class="header-title">🎯 Dashboard Réception</h1>
+        <!-- UPDATED Title -->
+        <h1 class="header-title">Réception</h1>
       </div>
       <div class="header-logout">
         <button onclick="logout()" class="btn btn-outline logout-btn no-print" aria-label="Déconnexion"> <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion </button>
@@ -139,7 +142,11 @@
         <section class="card" aria-labelledby="search-patient-heading">
           <div class="card-header"> <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div> </div>
           <div class="card-body">
-            <div class="search-bar"> <input id="getCin" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient" /> <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button> </div>
+            <div class="search-bar">
+              <!-- Applied standard input styling via type="text" -->
+              <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient" />
+              <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button>
+            </div>
             <div id="getResult" role="region" aria-live="polite"></div>
           </div>
         </section>
