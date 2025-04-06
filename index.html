@@ -1,878 +1,472 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Réception - MediClinic</title>
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-    <!-- Embedded Styles -->
-    <style>
-        /* --- Global Variables & Reset --- */
-        :root {
-            --primary: #5d74f2; /* Vibrant but professional blue */
-            --primary-dark: #4a62d8;
-            --primary-light: #ebeffe;
-            --success: #31c971; /* Clear green */
-            --success-dark: #28a960;
-            --success-light: #e0fbea;
-            --warning: #ffb648; /* Soft orange */
-            --warning-dark: #f5a623;
-            --warning-light: #fff8ec;
-            --danger: #ff5a5a; /* Clear red */
-            --danger-dark: #e04343;
-            --danger-light: #ffeded;
-            --gray-100: #f9fafb; /* Lightest gray bg */
-            --gray-200: #f1f3f9; /* Lighter gray borders/bg */
-            --gray-300: #e5e7eb; /* Light gray borders */
-            --gray-400: #d1d5db; /* Medium gray borders/icons */
-            --gray-500: #9ca3af; /* Medium gray text */
-            --gray-600: #6b7280; /* Darker gray text/labels */
-            --gray-700: #4b5563; /* Dark gray text */
-            --gray-800: #374151; /* Darkest gray text */
-            --white: #ffffff;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04); /* Refined shadow */
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-            --border-radius-sm: 4px;
-            --border-radius: 8px;
-            --border-radius-lg: 12px;
-            --transition-speed: 0.2s;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--gray-100);
-            color: var(--gray-800);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 0;
-            font-size: 15px; /* Base font size */
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* --- Layout & Container --- */
-        .container {
-            max-width: 1300px; /* Slightly wider */
-            margin: 0 auto;
-            padding: 30px 20px; /* More vertical padding */
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 25px;
-            margin-bottom: 35px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .header-title {
-            color: var(--primary);
-            font-size: 1.75rem; /* Larger title */
-            font-weight: 700;
-        }
-
-        .logo {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .main-content {
-            display: flex;
-            gap: 30px; /* Increased gap */
-            flex-wrap: wrap; /* Allow wrapping */
-        }
-
-        /* --- Card Styling --- */
-        .card {
-            background: var(--white);
-            border-radius: var(--border-radius-lg); /* Softer radius */
-            box-shadow: var(--shadow-md);
-            overflow: hidden; /* Important for border-radius */
-            margin-bottom: 30px;
-            transition: box-shadow var(--transition-speed) ease, transform var(--transition-speed) ease;
-            flex: 1; /* Allow cards to grow */
-            min-width: 400px; /* Adjust minimum width */
-            display: flex; /* Enable flex column */
-            flex-direction: column;
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px); /* Slight lift on hover */
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 24px; /* More padding */
-            border-bottom: 1px solid var(--gray-200);
-            background-color: var(--white); /* Ensure header bg */
-            flex-shrink: 0; /* Prevent header shrinking */
-        }
-
-        .card-title {
-            font-size: 1.1rem; /* Slightly larger */
-            font-weight: 600;
-            color: var(--gray-800);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-title i {
-            color: var(--primary);
-            font-size: 1rem; /* Adjust icon size */
-        }
-
-        .card-icon-action {
-            color: var(--primary);
-            background: var(--primary-light);
-            border-radius: 50%; /* Circular icon background */
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-
-        .card-body {
-            padding: 24px; /* Consistent padding */
-            flex-grow: 1; /* Allow body to take remaining space */
-        }
-
-        /* Specific card sizing */
-        .create-patient-card {
-           flex-basis: 55%; /* Give create card slightly more initial space */
-        }
-        .search-patient-card {
-           flex-basis: 40%;
-        }
-
-
-        /* --- Form Elements --- */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 18px 20px; /* Row and column gap */
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px; /* Space between label and input */
-        }
-
-        label {
-            font-size: 0.875rem; /* 14px */
-            font-weight: 500;
-            color: var(--gray-700);
-        }
-
-        label .required {
-            color: var(--danger);
-            margin-left: 2px;
-        }
-
-        input[type="text"],
-        input[type="date"],
-        input[type="tel"],
-        select {
-            width: 100%;
-            padding: 10px 14px;
-            font-size: 0.9375rem; /* 15px */
-            border-radius: var(--border-radius);
-            border: 1px solid var(--gray-300);
-            background: var(--white);
-            transition: all var(--transition-speed) ease;
-            font-family: inherit; /* Use body font */
-            color: var(--gray-800);
-            height: 42px; /* Consistent height */
-        }
-        input::placeholder {
-            color: var(--gray-400);
-            opacity: 1;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(93, 116, 242, 0.2); /* Subtle focus ring */
-        }
-
-        input[type="date"] {
-           position: relative;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            opacity: 0.6;
-            cursor: pointer;
-            transition: opacity var(--transition-speed) ease;
-            padding: 5px;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator:hover {
-            opacity: 1;
-        }
-        input[type="date"]:focus::-webkit-input-placeholder { color: transparent; }
-
-
-        select {
-            cursor: pointer;
-            appearance: none; /* Remove default arrow */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%239ca3af'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 1em;
-            padding-right: 36px; /* Make space for arrow */
-        }
-
-        /* Checkbox styling */
-        .mutuelle-group {
-            grid-column: span 2;
-            display: flex;
-            flex-direction: column;
-            gap: 12px; /* Space between checkbox line and input */
-        }
-
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 5px; /* Align better with other fields */
-        }
-
-        .checkbox-label {
-            margin-bottom: 0; /* Reset margin */
-            font-weight: 400; /* Normal weight */
-            color: var(--gray-700);
-            cursor: pointer;
-            user-select: none; /* Prevent text selection */
-        }
-
-        #has_insurance {
-            width: 1.1em;
-            height: 1.1em;
-            cursor: pointer;
-            accent-color: var(--primary); /* Modern way to color checkbox */
-            margin: 0; /* Reset margin */
-            flex-shrink: 0; /* Prevent shrinking */
-        }
-
-        #mutuelle[disabled] {
-            background-color: var(--gray-200);
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        /* Utility for spanning grid columns */
-        .grid-span-2 {
-            grid-column: span 2;
-        }
-
-        /* --- Buttons --- */
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-         .btn {
-            position: relative; /* For spinner */
-            padding: 10px 18px; /* Slightly larger */
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: var(--border-radius);
-            border: 1px solid transparent; /* Base border */
-            cursor: pointer;
-            transition: all var(--transition-speed) ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none; /* Remove underline from potential links */
-            white-space: nowrap; /* Prevent wrapping */
-        }
-
-        .btn i {
-            margin-right: 8px;
-            font-size: 0.9em; /* Relative icon size */
-        }
-
-         /* Button loading state */
-        .btn .spinner { display: none; } /* Hide spinner span by default */
-        .btn.loading i { display: none; } /* Hide icon when loading */
-        .btn.loading .spinner { display: inline-block; } /* Show spinner span */
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important; /* Prevent hover transform */
-        }
-
-        .btn-primary { background: var(--primary); color: var(--white); }
-        .btn-primary:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-1px); }
-
-        .btn-success { background: var(--success); color: var(--white); }
-        .btn-success:hover:not(:disabled) { background: var(--success-dark); transform: translateY(-1px); }
-
-        .btn-secondary { background: var(--gray-600); color: var(--white); }
-        .btn-secondary:hover:not(:disabled) { background: var(--gray-700); transform: translateY(-1px); }
-
-        .btn-outline {
-            background: var(--white);
-            color: var(--gray-700);
-            border-color: var(--gray-300);
-        }
-        .btn-outline:hover:not(:disabled) {
-            border-color: var(--gray-400);
-            background: var(--gray-100);
-            color: var(--gray-800);
-        }
-        .btn-outline[disabled] {
-            color: var(--gray-400);
-            border-color: var(--gray-200);
-            background: var(--gray-100);
-        }
-
-
-        .form-actions {
-            grid-column: span 2;
-            margin-top: 10px; /* Space above button */
-        }
-
-        /* --- Search Bar --- */
-        .search-bar {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end; /* Align items to bottom */
-            margin-bottom: 25px;
-        }
-        .search-bar .input-group {
-            flex-grow: 1; /* Input takes available space */
-            margin-bottom: 0; /* Reset margin */
-            gap: 4px; /* Smaller gap */
-        }
-        .search-bar .search-button {
-            height: 42px; /* Match input height approx */
-            white-space: nowrap;
-            flex-shrink: 0; /* Prevent button shrinking */
-        }
-
-
-        /* --- Message/Result Styling --- */
-        .message {
-            padding: 12px 16px;
-            border-radius: var(--border-radius);
-            margin-top: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: none; /* Hidden by default */
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
-        }
-        .message.show {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .message-success { background: var(--success-light); color: var(--success-dark); border-left: 4px solid var(--success); }
-        .message-warning { background: var(--warning-light); color: var(--warning-dark); border-left: 4px solid var(--warning); }
-        .message-error { background: var(--danger-light); color: var(--danger-dark); border-left: 4px solid var(--danger); }
-        .create-patient-card .message { grid-column: span 2; } /* Message in create form spans grid */
-
-        /* Validation Error Styling */
-        .error-message {
-            color: var(--danger);
-            font-size: 0.8rem;
-            margin-top: 4px; /* Space below input */
-            min-height: 1.2em; /* Reserve space */
-            display: none; /* Initially hidden */
-        }
-        input.invalid, select.invalid {
-            border-color: var(--danger) !important; /* Force border color */
-            background-color: var(--danger-light);
-        }
-        input.invalid:focus, select.invalid:focus {
-             border-color: var(--danger) !important;
-             box-shadow: 0 0 0 3px rgba(255, 90, 90, 0.2) !important;
-        }
-        .input-group input.invalid + .error-message,
-        .input-group select.invalid + .error-message {
-            display: block; /* Show error message */
-        }
-
-
-        /* --- Patient Result Display --- */
-        #getResult {
-            margin-top: 25px;
-            opacity: 0;
-            transform: scale(0.98);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            display: none; /* JS controls display */
-        }
-        #getResult.show {
-            display: block;
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .patient-result-container {
-            background-color: var(--primary-light); /* Subtle background */
-            padding: 24px;
-            border-radius: var(--border-radius-lg);
-            border: 1px solid var(--gray-200);
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .result-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 18px;
-            border-bottom: 1px solid var(--gray-300);
-            padding-bottom: 10px;
-        }
-
-        .patient-result-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjust minmax */
-            gap: 12px 18px; /* Row and column gap */
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            font-size: 0.95rem;
-            color: var(--gray-800);
-            background-color: var(--white); /* Give items a background */
-            padding: 8px 12px;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid var(--gray-200);
-            word-break: break-word; /* Prevent long text overflow */
-        }
-
-        .info-label {
-            font-weight: 500;
-            color: var(--gray-600);
-            margin-right: 8px;
-        }
-
-        .patient-result-actions {
-            border-top: 1px solid var(--gray-200);
-            padding-top: 20px;
-            margin-top: 10px;
-        }
-
-        /* --- Spinner Styles --- */
-        .spinner-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* Ensure it's on top */
-        }
-        .spinner-icon {
-            border: 4px solid var(--gray-200);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        /* Spinner inside button */
-        .btn .spinner::after {
-            content: '';
-            display: inline-block;
-            width: 1em; /* Size relative to button text */
-            height: 1em;
-            border: 2px solid currentColor;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            vertical-align: middle;
-            margin-left: 8px; /* Space from text if icon hidden */
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-
-        /* --- Responsive Adjustments --- */
-        @media (max-width: 1100px) { /* Adjust breakpoint for card stacking */
-            .create-patient-card, .search-patient-card {
-                flex-basis: 100%;
-                min-width: auto;
-            }
-        }
-        @media (max-width: 768px) {
-            .container { padding: 20px 15px; }
-            .header-title { font-size: 1.5rem; }
-            .logo { font-size: 1.1rem; }
-            .main-content { gap: 25px; }
-            .card { min-width: auto; }
-            .card-body { padding: 20px; }
-            .form-grid { grid-template-columns: 1fr; } /* Single column form */
-            .grid-span-2 { grid-column: span 1; } /* Reset span */
-            .patient-result-info { grid-template-columns: 1fr; } /* Single column results */
-            .search-bar { flex-direction: column; align-items: stretch; }
-            .search-bar .search-button { width: 100%; }
-            .btn-group { flex-wrap: wrap; } /* Allow buttons to wrap */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Réception</title>
+  <!-- Using Consistent Fonts & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Using Consistent CSS -->
+  <style>
+      /* --- CSS remains exactly the same as your previous Reception version --- */
+    :root {
+      --primary: #5d74f2; --primary-light: #ebeffe; --success: #31c971; --success-light: #e0fbea; --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded; --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --border-radius: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-800); line-height: 1.5; min-height: 100vh; padding: 0; visibility: hidden; /* Hide body initially */ }
+    body.loaded { visibility: visible; /* Show body once JS check passes */ }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 0 0 30px 0; margin-bottom: 30px; border-bottom: 1px solid var(--gray-200); }
+    .header-title { color: var(--primary); font-size: 1.5rem; font-weight: 600; }
+    .logo { color: var(--primary); font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; }
+    .logo i { margin-right: 8px; }
+    .card { background: white; border-radius: var(--border-radius); box-shadow: var(--shadow-md); overflow: hidden; margin-bottom: 25px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--gray-200); }
+    .card-title { font-size: 1rem; font-weight: 600; color: var(--gray-800); display: flex; align-items: center; }
+    .card-title i { margin-right: 10px; color: var(--primary); }
+    .card-actions { color: white; background: var(--primary); border-radius: var(--border-radius); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .card-body { padding: 20px; }
+    .flex-row { display: flex; gap: 25px; margin-bottom: 25px; flex-wrap: wrap; }
+    .flex-col { flex: 1; min-width: 350px; }
+    label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--gray-600); }
+    .input-group { margin-bottom: 15px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    input[type="text"], input[type="date"], input[type="tel"], select { width: 100%; padding: 10px 12px; font-size: 0.9rem; border-radius: var(--border-radius); border: 1px solid var(--gray-300); background: white; transition: all 0.2s ease; font-family: 'Inter', sans-serif; }
+    input[type="text"]:focus, input[type="date"]:focus, input[type="tel"]:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(93, 116, 242, 0.1); }
+    input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
+    .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--gray-700); margin-bottom: 0; }
+    .checkbox-label input[type="checkbox"] { width: 1em; height: 1em; margin-right: 6px; }
+    .mutuelle-group { grid-column: span 2; display: flex; flex-direction: column; gap: 10px; }
+    .mutuelle-group > div:first-child { display: flex; align-items: center; }
+    .btn-group { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-start; }
+    .btn { padding: 8px 16px; font-size: 0.85rem; font-weight: 500; border-radius: var(--border-radius); border: none; cursor: pointer; transition: background-color 0.2s ease; display: inline-flex; align-items: center; justify-content: center; }
+    .btn i { margin-right: 6px; }
+    .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: #4a62d8; }
+    .btn-success { background: var(--success); color: white; } .btn-success:hover { background: #28a960; }
+    .btn-secondary { background: var(--gray-600); color: white; } .btn-secondary:hover { background: var(--gray-700); }
+    .btn-outline { background: white; color: var(--primary); border: 1px solid var(--gray-300); } .btn-outline:hover { border-color: var(--primary); background: var(--primary-light); }
+    .btn:disabled { background-color: var(--gray-300); cursor: not-allowed; }
+    .form-submit-button { grid-column: span 2; }
+    .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+    .search-bar input { flex-grow: 1; }
+    .message { padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 0.85rem; font-weight: 500; display: none; grid-column: span 2; }
+    .message-success { background: var(--success-light); color: var(--success); }
+    .message-warning { background: var(--warning-light); color: var(--warning); }
+    .message-error { background: var(--danger-light); color: var(--danger); }
+    #getResult { margin-top: 20px; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; }
+    .patient-result-container { background-color: var(--gray-100); padding: 20px; border-radius: var(--border-radius); border-left: 4px solid var(--primary); }
+    .patient-result-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 15px; margin-bottom: 15px; }
+    .patient-result-info .info-group { margin-bottom: 0; }
+    .info-group { margin-bottom: 5px; }
+    .info-label { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 4px; }
+    .info-value { font-size: 0.9rem; color: var(--gray-800); font-weight: 500; }
+    .patient-result-qr { text-align: center; margin-top: 20px; }
+    .patient-result-qr img { max-width: 200px; display: block; margin: 0 auto 15px auto; border: 1px solid var(--gray-300); padding: 5px; background: white; }
+    @media (max-width: 768px) { .flex-row { flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .mutuelle-group, .form-submit-button, .message { grid-column: span 1; } .patient-result-info { grid-template-columns: 1fr; } }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <h1 class="header-title">🎯 Dashboard Réception</h1>
-            <div class="logo">
-                <i class="fas fa-clinic-medical"></i> MediClinic
-            </div>
-        </header>
+<!-- Body starts hidden, made visible by JS after token check -->
+<body >
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="header-title">🎯 Dashboard Réception</h1>
+      <div class="logo">
+        <i class="fas fa-clinic-medical"></i> MediClinic
+        <!-- Added Logout Button -->
+        <button onclick="logout()" style="margin-left: 20px; padding: 5px 10px; cursor: pointer;" title="Déconnexion" class="btn btn-outline">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+      </div>
+    </div>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Create Patient Card -->
-            <section class="card create-patient-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-user-plus"></i> Créer un Nouveau Patient</h2>
-                    <div class="card-icon-action"><i class="fas fa-pen-alt"></i></div>
-                </div>
-                <div class="card-body">
-                    <!-- NOTE: novalidate disables default browser validation -->
-                    <form id="createForm" novalidate>
-                        <div class="form-grid">
-                            <div class="input-group">
-                                <label for="nom">Nom <span class="required">*</span></label>
-                                <input type="text" id="nom" name="nom" placeholder="Nom de famille" required autocomplete="family-name"/>
-                                <div class="error-message" id="nomError"></div>
-                            </div>
-                            <div class="input-group">
-                                <label for="prenom">Prénom <span class="required">*</span></label>
-                                <input type="text" id="prenom" name="prenom" placeholder="Prénom" required autocomplete="given-name"/>
-                                 <div class="error-message" id="prenomError"></div>
-                            </div>
-                            <div class="input-group">
-                                <label for="cin">CIN <span class="required">*</span></label>
-                                <input type="text" id="cin" name="cin" placeholder="Ex: AB123456" required autocomplete="off"/>
-                                 <div class="error-message" id="cinError"></div>
-                            </div>
-                            <div class="input-group">
-                                <label for="telephone">Téléphone <span class="required">*</span></label>
-                                <input type="tel" id="telephone" name="telephone" placeholder="Ex: 06XXXXXXXX" required autocomplete="tel"/>
-                                 <div class="error-message" id="telephoneError"></div>
-                            </div>
-                            <div class="input-group grid-span-2">
-                                <label for="adresse">Adresse</label>
-                                <input type="text" id="adresse" name="adresse" placeholder="Adresse complète" autocomplete="street-address"/>
-                                 <div class="error-message" id="adresseError"></div>
-                            </div>
-                            <div class="input-group">
-                                <label for="ville">Ville</label>
-                                <input type="text" id="ville" name="ville" placeholder="Ville" autocomplete="address-level2"/>
-                                 <div class="error-message" id="villeError"></div>
-                            </div>
-                             <div class="input-group">
-                                <label for="date_naissance">Date de Naissance <span class="required">*</span></label>
-                                <input type="date" id="date_naissance" name="date_naissance" required max="9999-12-31"/> <!-- Added max date -->
-                                 <div class="error-message" id="dateNaissanceError"></div>
-                            </div>
-                            <div class="input-group">
-                                <label for="sexe">Sexe <span class="required">*</span></label>
-                                <select id="sexe" name="sexe" required>
-                                    <option value="" disabled selected>Sélectionner...</option>
-                                    <option value="M">Homme</option>
-                                    <option value="F">Femme</option>
-                                </select>
-                                <div class="error-message" id="sexeError"></div>
-                            </div>
-                            <!-- Mutuelle Grouping -->
-                            <div class="input-group mutuelle-group grid-span-2">
-                                <div class="checkbox-wrapper">
-                                    <input type="checkbox" id="has_insurance" name="has_insurance" />
-                                    <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label>
-                                </div>
-                                <input type="text" id="mutuelle" name="mutuelle" placeholder="Nom Mutuelle (si applicable)" disabled autocomplete="off"/>
-                                <div class="error-message" id="mutuelleError"></div>
-                            </div>
-                            <!-- Submit button -->
-                            <div class="form-actions grid-span-2">
-                                <button type="submit" class="btn btn-success" id="createPatientBtn">
-                                    <i class="fas fa-plus-circle"></i> Créer Patient
-                                    <span class="spinner"></span> <!-- Spinner for loading -->
-                                </button>
-                            </div>
-                        </div>
-                         <!-- Message Area -->
-                         <div id="createMessage" class="message" aria-live="polite"></div>
-                    </form>
-                </div>
-            </section>
+    <!-- Main Content Area -->
+    <div class="flex-row">
 
-            <!-- Search Patient Card -->
-            <section class="card search-patient-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-search"></i> Rechercher un Patient</h2>
-                    <div class="card-icon-action"><i class="fas fa-users"></i></div>
+      <!-- Create Patient Card -->
+      <div class="flex-col">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><i class="fas fa-user-plus"></i> Créer un Patient</h2>
+            <div class="card-actions"><i class="fas fa-pen"></i></div>
+          </div>
+          <div class="card-body">
+            <form id="createForm">
+              <div class="form-grid">
+                <div class="input-group">
+                  <label for="nom">Nom</label>
+                  <input id="nom" name="nom" placeholder="Nom de famille" required />
                 </div>
-                <div class="card-body">
-                     <form id="searchForm" novalidate>
-                        <div class="search-bar">
-                            <div class="input-group">
-                                <label for="getCin">Recherche par CIN</label>
-                                <input type="text" id="getCin" name="getCin" placeholder="Entrer le CIN du patient" required />
-                                <div class="error-message" id="searchCinError"></div>
-                            </div>
-                            <button type="submit" class="btn btn-primary search-button" id="searchPatientBtn">
-                                <i class="fas fa-search"></i> Rechercher
-                                <span class="spinner"></span> <!-- Spinner -->
-                            </button>
-                        </div>
-                     </form>
-                     <!-- Message Area for Search -->
-                     <div id="searchMessage" class="message" aria-live="polite"></div>
-
-                    <!-- Result Area -->
-                    <div id="getResult" class="patient-result-wrapper" style="display: none;">
-                       <div class="patient-result-container">
-                            <h3 class="result-title">Informations du Patient Trouvé</h3>
-                            <div class="patient-result-info">
-                                <div class="info-item"><span class="info-label">IPP:</span> <span id="patientIPPResult" data-ipp="">-</span></div>
-                                <div class="info-item"><span class="info-label">Nom:</span> <span id="patientNomResult">-</span></div>
-                                <div class="info-item"><span class="info-label">Prénom:</span> <span id="patientPrenomResult">-</span></div>
-                                <div class="info-item"><span class="info-label">CIN:</span> <span id="patientCinResult">-</span></div>
-                                <div class="info-item"><span class="info-label">Téléphone:</span> <span id="patientTelephoneResult">-</span></div>
-                                <div class="info-item"><span class="info-label">Date Naissance:</span> <span id="patientDateNaissanceResult">-</span></div>
-                                <div class="info-item"><span class="info-label">Sexe:</span> <span id="patientSexeResult">-</span></div>
-                                <div class="info-item"><span class="info-label">Mutuelle:</span> <span id="patientMutuelleResult">-</span></div>
-                                <div class="info-item grid-span-2"><span class="info-label">Adresse:</span> <span id="patientAdresseResult">-</span></div>
-                            </div>
-                            <div class="patient-result-actions btn-group">
-                                <button id="goToBillingBtn" class="btn btn-primary">
-                                    <i class="fas fa-file-invoice-dollar"></i> Aller à la Facturation
-                                </button>
-                                <button id="editPatientBtn" class="btn btn-outline" disabled title="Fonctionnalité future">
-                                    <i class="fas fa-edit"></i> Modifier
-                                </button>
-                           </div>
-                       </div>
+                <div class="input-group">
+                   <label for="prenom">Prénom</label>
+                  <input id="prenom" name="prenom" placeholder="Prénom" required />
+                </div>
+                <div class="input-group">
+                  <label for="cin">CIN</label>
+                  <input id="cin" name="cin" placeholder="Carte d'Identité Nationale" required />
+                </div>
+                 <div class="input-group">
+                  <label for="telephone">Téléphone</label>
+                  <input id="telephone" name="telephone" type="tel" placeholder="Numéro de téléphone" required />
+                </div>
+                 <div class="input-group">
+                  <label for="adresse">Adresse</label>
+                  <input id="adresse" name="adresse" placeholder="Adresse complète" required />
+                </div>
+                 <div class="input-group">
+                  <label for="ville">Ville</label>
+                  <input id="ville" name="ville" placeholder="Ville" required />
+                </div>
+                 <div class="input-group">
+                   <label for="date_naissance">Date de Naissance</label>
+                  <input id="date_naissance" name="date_naissance" type="date" required />
+                </div>
+                 <div class="input-group">
+                   <label for="sexe">Sexe</label>
+                  <select id="sexe" name="sexe">
+                    <option value="M">Homme</option>
+                    <option value="F">Femme</option>
+                  </select>
+                 </div>
+                 <!-- Mutuelle Grouping -->
+                 <div class="input-group mutuelle-group">
+                    <div> <!-- Container for checkbox and its label -->
+                      <input type="checkbox" id="has_insurance" name="has_insurance" style="width: auto; height: auto; margin-right: 8px;" />
+                      <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label>
                     </div>
+                    <input name="mutuelle" placeholder="Nom Mutuelle (si case cochée)" />
+                 </div>
+                  <!-- Submit button -->
+                <div class="form-submit-button">
+                   <button type="submit" class="btn btn-success">
+                       <i class="fas fa-plus-circle"></i> Créer Patient
+                   </button>
                 </div>
-            </section>
-        </main> <!-- End main-content -->
-
-        <!-- Loading Spinner Overlay -->
-        <div class="spinner-overlay" style="display: none;">
-            <div class="spinner-icon"></div>
+                <!-- Message Area -->
+                <div id="message" class="message"></div>
+              </div>
+            </form>
+              <!-- Added DIV for Create Result -->
+             <div id="createResult" style="display: none; margin-top: 20px; text-align: center; background-color: var(--success-light); padding: 15px; border-radius: var(--border-radius); border-left: 4px solid var(--success);">
+                <p id="createResultMessage" style="color: var(--success); font-weight: 500; margin-bottom: 15px;"></p>
+                <img id="createQrCodeImage" src="" alt="QR Code Patient" style="max-width: 180px; display: block; margin: 0 auto 15px auto; border: 1px solid var(--gray-300); padding: 5px; background: white;" />
+                <button id="createPrintButton" class="btn btn-secondary">
+                    <i class="fas fa-print"></i> Imprimer QR Code
+                </button>
+            </div>
+          </div>
         </div>
+      </div>
 
-    </div> <!-- End container -->
+      <!-- Search Patient Card -->
+      <div class="flex-col">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><i class="fas fa-search"></i> Rechercher un Patient</h2>
+             <div class="card-actions"><i class="fas fa-users"></i></div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <input id="getCin" placeholder="Entrer le CIN du patient" />
+              <button onclick="getPatient()" class="btn btn-primary">
+                <i class="fas fa-search"></i> Rechercher
+              </button>
+            </div>
+            <!-- Result Area -->
+            <div id="getResult">
+              <!-- Patient details will be injected here by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- Embedded JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Configuration ---
-            const baseUrl = "https://workflows.aphelionxinnovations.com"; // ADAPT: Your actual base URL
-            // IMPORTANT: Replace with secure token retrieval (e.g., from sessionStorage if login sets it)
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiZmJmMmI1ZjctZTc3ZS00ZGZmLWJlN2UtN2ZlOGVkZmViZmY1IiwiZmlyc3ROYW1lIjoiTW91c3NhIiwibGFzdE5hbWUiOiJTYWlkaSIsInVzZXJuYW1lIjoic2FpZGkiLCJlbWFpbCI6Im1vdXNzYS5zYWlkaS4wMUBnbXppbC5jb20iLCJwYXNzd29yZCI6ImFkbWluMTIzNCIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk1MjMyNn0.1s_IWO-h-AKwkP0LIX8mcjdeLRwsRtgbqAchIJSRVEA"; // <<< ADAPT THIS LINE >>>
+    </div> <!-- End flex-row -->
+  </div> <!-- End container -->
 
-            // --- Element Selection ---
-            const createForm = document.getElementById('createForm');
-            const nomInput = document.getElementById('nom');
-            const prenomInput = document.getElementById('prenom');
-            const cinInput = document.getElementById('cin');
-            const telephoneInput = document.getElementById('telephone');
-            const adresseInput = document.getElementById('adresse');
-            const villeInput = document.getElementById('ville');
-            const dateNaissanceInput = document.getElementById('date_naissance');
-            const sexeInput = document.getElementById('sexe');
-            const hasInsuranceCheckbox = document.getElementById('has_insurance');
-            const mutuelleInput = document.getElementById('mutuelle');
-            const createPatientBtn = document.getElementById('createPatientBtn');
-            const createMessageDiv = document.getElementById('createMessage');
-            const searchForm = document.getElementById('searchForm');
-            const getCinInput = document.getElementById('getCin');
-            const searchPatientBtn = document.getElementById('searchPatientBtn');
-            const searchMessageDiv = document.getElementById('searchMessage');
-            const getResultDiv = document.getElementById('getResult');
-            const patientIPPResultSpan = document.getElementById('patientIPPResult');
-            const patientNomResultSpan = document.getElementById('patientNomResult');
-            const patientPrenomResultSpan = document.getElementById('patientPrenomResult');
-            const patientCinResultSpan = document.getElementById('patientCinResult');
-            const patientTelephoneResultSpan = document.getElementById('patientTelephoneResult');
-            const patientDateNaissanceResultSpan = document.getElementById('patientDateNaissanceResult');
-            const patientSexeResultSpan = document.getElementById('patientSexeResult');
-            const patientMutuelleResultSpan = document.getElementById('patientMutuelleResult');
-            const patientAdresseResultSpan = document.getElementById('patientAdresseResult');
-            const goToBillingBtn = document.getElementById('goToBillingBtn');
-            const spinnerOverlay = document.querySelector('.spinner-overlay');
+  <script>
+    // --- Start Embedded Javascript ---
+    const BASE_URL = 'https://workflows.aphelionxinnovations.com';
+    // REMOVED const TOKEN = 'Bearer ...';
 
-            // --- Helper Functions ---
-            const showSpinner = (button = null) => { if (button) { button.classList.add('loading'); button.disabled = true; } else if (spinnerOverlay) { spinnerOverlay.style.display = 'flex'; } };
-            const hideSpinner = (button = null) => { if (button) { button.classList.remove('loading'); button.disabled = false; } else if (spinnerOverlay) { spinnerOverlay.style.display = 'none'; } };
-            const showMessage = (element, message, type = 'error') => { if (!element) return; element.textContent = message; element.className = `message message-${type} show`; element.style.display = 'block'; };
-            const clearMessage = (element) => { if (!element) return; element.textContent = ''; element.className = 'message'; element.style.display = 'none'; };
-            const showError = (inputElement, messageElementId, message) => { const errorElement = document.getElementById(messageElementId); inputElement?.classList.add('invalid'); if (errorElement) { errorElement.textContent = message; errorElement.style.display = 'block'; } };
-            const clearError = (inputElement, messageElementId) => { const errorElement = document.getElementById(messageElementId); inputElement?.classList.remove('invalid'); if (errorElement) { errorElement.textContent = ''; errorElement.style.display = 'none'; } };
-            const clearAllErrors = (form) => { form.querySelectorAll('input.invalid, select.invalid').forEach(el => el.classList.remove('invalid')); form.querySelectorAll('.error-message').forEach(el => { el.textContent = ''; el.style.display = 'none'; }); };
-            const resetForm = (form) => { form.reset(); clearAllErrors(form); toggleMutuelleInput(); };
+    // Define QR Target Base URL (MUST BE CONSISTENT ACROSS DASHBOARDS)
+    const QR_TARGET_BASE_URL = 'app://medilink/patient'; // Or 'https://yourclinic.com/app/view' - CHOOSE ONE
 
-            // --- Validation Functions ---
-             const validateCreateForm = () => {
-                let isValid = true; clearAllErrors(createForm);
-                if (!nomInput.value.trim()) { showError(nomInput, 'nomError', 'Le nom est requis.'); isValid = false; }
-                if (!prenomInput.value.trim()) { showError(prenomInput, 'prenomError', 'Le prénom est requis.'); isValid = false; }
-                if (!cinInput.value.trim()) { showError(cinInput, 'cinError', 'Le CIN est requis.'); isValid = false; }
-                // else if (!/^[a-zA-Z]{1,2}\d+$/.test(cinInput.value.trim())) { showError(cinInput, 'cinError', 'Format CIN invalide.'); isValid = false; }
-                if (!telephoneInput.value.trim()) { showError(telephoneInput, 'telephoneError', 'Le téléphone est requis.'); isValid = false; }
-                // else if (!/^0[567]\d{8}$/.test(telephoneInput.value.trim())) { showError(telephoneInput, 'telephoneError', 'Format téléphone invalide.'); isValid = false; }
-                if (!dateNaissanceInput.value) { showError(dateNaissanceInput, 'dateNaissanceError', 'Date de naissance requise.'); isValid = false; }
-                if (!sexeInput.value) { showError(sexeInput, 'sexeError', 'Le sexe est requis.'); isValid = false; }
-                if (hasInsuranceCheckbox.checked && !mutuelleInput.value.trim()) { showError(mutuelleInput, 'mutuelleError', 'Le nom de la mutuelle est requis si coché.'); isValid = false; }
-                return isValid;
-             };
-            const validateSearchForm = () => {
-                let isValid = true; clearError(getCinInput, 'searchCinError');
-                if (!getCinInput.value.trim()) { showError(getCinInput, 'searchCinError', 'Le CIN est requis pour la recherche.'); isValid = false; }
-                return isValid;
-             };
+    // Get references to frequently used elements
+    const resultDiv = document.getElementById("getResult");
+    const messageDiv = document.getElementById("message");
+    const createForm = document.getElementById("createForm");
+    const createResultDiv = document.getElementById("createResult");
 
-            // --- API Call Functions ---
-            const createPatientAPI = async (patientData) => {
-                // ADAPT: Endpoint and expected request body structure
-                const url = `${baseUrl}/webhook/create-patient`; // <<< ADAPT endpoint
-                console.log("API Request: POST", url, "Data:", patientData);
-                const response = await fetch(url, { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(patientData) });
-                if (!response.ok) { const e = await response.json().catch(() => ({ message: `Erreur ${response.status}` })); throw new Error(e.message || `Erreur création: ${response.statusText}`); }
-                return await response.json();
-            };
-            const searchPatientAPI = async (cin) => {
-                // ADAPT: Endpoint and response structure handling
-                const url = `${baseUrl}/webhook/get-patient?cin=${encodeURIComponent(cin)}`; // <<< ADAPT endpoint
-                 console.log("API Request: GET", url);
-                const response = await fetch(url, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } });
-                if (!response.ok) { if (response.status === 404) { return null; } const e = await response.json().catch(() => ({ message: `Erreur ${response.status}` })); throw new Error(e.message || `Erreur recherche: ${response.statusText}`); }
-                const data = await response.json();
-                 // ADAPT: Handle potential nesting (e.g., data.patient, data[0], data[0].json)
-                 console.log("API Search Response Raw:", data);
-                 if (Array.isArray(data) && data.length > 0) { return data[0].json || data[0]; } // Handle n8n's possible [{json:{...}}] structure or just [{...}]
-                 else if (typeof data === 'object' && data !== null && !Array.isArray(data)) { return data.patient || data; } // Handle {patient:{...}} or {...}
-                 else { return null; }
-            };
+     // --- ADDED: fetchWithAuth Helper Function ---
+    function fetchWithAuth(url, options = {}) {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            console.error('Reception: Auth token not found. Redirecting to login.');
+            alert('Session expirée ou non connecté. Veuillez vous reconnecter.');
+            window.location.href = '/login.html';
+            return Promise.reject(new Error('Authentication token not found.'));
+        }
+        const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+        if (options.body && !(options.body instanceof FormData)) {
+            headers['Content-Type'] = 'application/json';
+        } else if (options.body instanceof FormData) {
+             delete headers['Content-Type'];
+        }
+        return fetch(url, { ...options, headers: headers })
+            .then(response => {
+                if (response.status === 401 || response.status === 403) {
+                     console.error('Reception: Auth error:', response.status);
+                     localStorage.removeItem('authToken');
+                     alert('Session expirée ou invalide. Veuillez vous reconnecter.');
+                     window.location.href = '/login.html';
+                     throw new Error(`Authentication failed: ${response.status}`);
+                }
+                 if (!response.ok) {
+                     return response.text().then(text => {
+                        throw new Error(`Erreur réseau ${response.status}: ${text || response.statusText}`);
+                    });
+                 }
+                return response;
+            });
+    }
+    // --- END: fetchWithAuth Helper Function ---
 
-            // --- UI Update Functions ---
-            const displayPatientResults = (patient) => {
-                if (!patient) { hidePatientResults(); showMessage(searchMessageDiv, "Patient non trouvé.", "warning"); return; }
-                console.log("Displaying patient data:", patient);
-                 // ADAPT: Use actual property names from *your* patient object structure
-                const ippValue = patient.ipp || patient.patient_ipp || 'N/A';
-                patientIPPResultSpan.textContent = ippValue; patientIPPResultSpan.dataset.ipp = ippValue;
-                patientNomResultSpan.textContent = patient.nom || 'N/A';
-                patientPrenomResultSpan.textContent = patient.prenom || 'N/A';
-                patientCinResultSpan.textContent = patient.cin || 'N/A';
-                patientTelephoneResultSpan.textContent = patient.telephone || 'N/A';
-                patientDateNaissanceResultSpan.textContent = patient.date_naissance ? new Date(patient.date_naissance).toLocaleDateString('fr-FR') : 'N/A';
-                patientSexeResultSpan.textContent = patient.sexe === 'M' ? 'Homme' : (patient.sexe === 'F' ? 'Femme' : 'N/A');
-                patientMutuelleResultSpan.textContent = patient.mutuelle || 'Aucune';
-                patientAdresseResultSpan.textContent = patient.adresse ? `${patient.adresse}${patient.ville ? ', ' + patient.ville : ''}` : 'N/A';
-                getResultDiv.style.display = 'block'; // Make visible first
-                requestAnimationFrame(() => { // Allow display block to apply
-                     getResultDiv.classList.add('show'); // Add class to trigger animation
-                });
-            };
-            const hidePatientResults = () => {
-                getResultDiv.classList.remove('show');
-                setTimeout(() => {
-                     if (!getResultDiv.classList.contains('show')) {
-                         getResultDiv.style.display = 'none';
-                         patientIPPResultSpan.textContent = '-'; patientIPPResultSpan.dataset.ipp = '';
-                         patientNomResultSpan.textContent = '-'; patientPrenomResultSpan.textContent = '-';
-                         patientCinResultSpan.textContent = '-'; patientTelephoneResultSpan.textContent = '-';
-                         patientDateNaissanceResultSpan.textContent='-'; patientSexeResultSpan.textContent='-';
-                         patientMutuelleResultSpan.textContent='-'; patientAdresseResultSpan.textContent='-';
-                     }
-                }, 300); // Match transition duration
-             };
-            const toggleMutuelleInput = () => { mutuelleInput.disabled = !hasInsuranceCheckbox.checked; if (!hasInsuranceCheckbox.checked) { mutuelleInput.value = ''; clearError(mutuelleInput, 'mutuelleError'); mutuelleInput.classList.remove('invalid'); } };
+    // --- ADDED: Logout Function ---
+    function logout() {
+        localStorage.removeItem('authToken');
+        alert('Vous avez été déconnecté.');
+        window.location.href = '/login.html'; // Redirect to login
+    }
+    // --- END: Logout Function ---
 
-            // --- Event Handlers ---
-            const handleCreateSubmit = async (event) => {
-                 event.preventDefault(); clearMessage(createMessageDiv);
-                 if (!validateCreateForm()) { showMessage(createMessageDiv, "Veuillez corriger les erreurs.", "error"); return; }
-                 showSpinner(createPatientBtn);
-                 const patientData = { nom: nomInput.value.trim(), prenom: prenomInput.value.trim(), cin: cinInput.value.trim(), telephone: telephoneInput.value.trim(), adresse: adresseInput.value.trim(), ville: villeInput.value.trim(), date_naissance: dateNaissanceInput.value, sexe: sexeInput.value, mutuelle: hasInsuranceCheckbox.checked ? mutuelleInput.value.trim() : null };
-                 try {
-                     const result = await createPatientAPI(patientData);
-                     console.log("Create Result:", result);
-                     // ADAPT: Success condition based on your API response
-                     if (result && (result.status === 'success' || result.message || result.ipp || result.patient_id)) {
-                         showMessage(createMessageDiv, result.message || "Patient créé avec succès!", "success");
-                         resetForm(createForm);
-                     } else {
-                         showMessage(createMessageDiv, result?.message || "Erreur inconnue lors de la création.", "error");
-                     }
-                 } catch (error) { console.error("Create Error:", error); showMessage(createMessageDiv, `Erreur: ${error.message}`, "error");
-                 } finally { hideSpinner(createPatientBtn); }
-            };
-            const handleSearchSubmit = async (event) => {
-                 event.preventDefault(); clearMessage(searchMessageDiv); hidePatientResults();
-                 if (!validateSearchForm()) { return; }
-                 showSpinner(searchPatientBtn); const cinToSearch = getCinInput.value.trim();
-                 try {
-                     const patient = await searchPatientAPI(cinToSearch);
-                     if (patient) { displayPatientResults(patient); clearMessage(searchMessageDiv); }
-                     else { showMessage(searchMessageDiv, "Aucun patient trouvé avec ce CIN.", "warning"); }
-                 } catch (error) { console.error("Search Error:", error); showMessage(searchMessageDiv, `Erreur: ${error.message}`, "error");
-                 } finally { hideSpinner(searchPatientBtn); }
-            };
-            const handleGoToBilling = () => {
-                 const patientIPP = patientIPPResultSpan.dataset.ipp;
-                 if (patientIPP && patientIPP !== 'N/A') {
-                     window.location.href = `billing.html?ipp=${encodeURIComponent(patientIPP)}`; // ADAPT 'billing.html'
-                 } else { console.error("No IPP for billing"); alert("IPP patient manquant."); }
-            };
+    // --- ADDED: window.onload Check ---
+    window.onload = () => {
+      if (!localStorage.getItem('authToken')) {
+          console.log("Reception Dash: No auth token found on load, redirecting to login.");
+          window.location.href = '/login.html';
+          return; // Stop execution, body remains hidden
+      }
+      // If token exists, make body visible
+       document.body.classList.add('loaded'); // Use class to make visible
+      console.log("Reception dashboard loaded with valid token.");
+      // Add any specific onload actions for Reception here if needed
+    };
+    // --- END: window.onload Check ---
 
-            // --- Attach Event Listeners ---
-            if(createForm) createForm.addEventListener('submit', handleCreateSubmit);
-            if(searchForm) searchForm.addEventListener('submit', handleSearchSubmit);
-            if(hasInsuranceCheckbox) hasInsuranceCheckbox.addEventListener('change', toggleMutuelleInput);
-            if(goToBillingBtn) goToBillingBtn.addEventListener('click', handleGoToBilling);
 
-            // --- Initial Setup ---
-            toggleMutuelleInput(); // Set initial state
-            console.log("Reception Dashboard script loaded.");
+    // Show Message Function (adapted for results)
+    function showMessage(elementId, message, type) {
+        const messageElement = document.getElementById(elementId);
+        if (!messageElement) { console.error(`Msg Element "${elementId}" not found.`); return; }
+
+        messageElement.innerHTML = message || "";
+        messageElement.style.display = message ? "block" : "none";
+
+        if (type === 'result') { messageElement.className = ""; }
+        else {
+             messageElement.className = "message";
+             if (type === "success") messageElement.classList.add("message-success");
+             else if (type === "warning") messageElement.classList.add("message-warning");
+             else if (type === "error") messageElement.classList.add("message-error");
+        }
+
+        // Special handling for createResult div styling
+        if(elementId === 'createResult' && type !== 'result') {
+             const colorVar = type === 'success' ? 'var(--success)' : type === 'warning' ? 'var(--warning)' : 'var(--danger)';
+             const lightColorVar = type === 'success' ? 'var(--success-light)' : type === 'warning' ? 'var(--warning-light)' : 'var(--danger-light)';
+             messageElement.style.backgroundColor = lightColorVar;
+             messageElement.style.borderColor = colorVar;
+             messageElement.style.borderLeft = `4px solid ${colorVar}`;
+             messageElement.style.textAlign = 'center';
+             messageElement.style.marginTop = '20px';
+             messageElement.style.padding = '15px';
+             messageElement.style.borderRadius = 'var(--border-radius)';
+
+             // Hide QR placeholders if showing only a message
+             messageElement.querySelector('#createResultMessage').style.color = colorVar;
+             const img = messageElement.querySelector('#createQrCodeImage');
+             const btn = messageElement.querySelector('#createPrintButton');
+             if (img) img.style.display = 'none';
+             if (btn) btn.style.display = 'none';
+
+        } else if (elementId === 'createResult' && type === 'result') {
+            // Apply success styling when showing result
+             messageElement.style.backgroundColor = 'var(--success-light)';
+             messageElement.style.borderColor = 'var(--success)';
+             messageElement.style.borderLeft = `4px solid var(--success)`;
+             messageElement.style.textAlign = 'center';
+             messageElement.style.marginTop = '20px';
+             messageElement.style.padding = '15px';
+             messageElement.style.borderRadius = 'var(--border-radius)';
+              messageElement.querySelector('#createResultMessage').style.color = 'var(--success)';
+              const img = messageElement.querySelector('#createQrCodeImage');
+              const btn = messageElement.querySelector('#createPrintButton');
+              if (img) img.style.display = 'block'; // Ensure visible
+              if (btn) btn.style.display = 'inline-block'; // Ensure visible
+        }
+
+
+        if (elementId === 'message' && type === "success" && message) {
+            setTimeout(() => {
+                if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) {
+                   messageElement.style.display = "none";
+                }
+            }, 5000);
+        }
+    }
+
+     // Function to generate QR code image URL and target URL
+    function generateQrData(ipp) {
+        if (!ipp) { console.error("IPP missing for QR data."); return null; }
+        const qrTargetUrl = `${QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
+        const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrTargetUrl)}`;
+        console.log("QR Target:", qrTargetUrl); console.log("QR Image:", qrImageUrl);
+        return { qrTargetUrl, qrImageUrl };
+    }
+
+
+    // Search and display patient info
+    function getPatient() {
+      const cin = document.getElementById("getCin").value.trim();
+      if (!cin) {
+          showMessage('getResult', '<div class="message message-warning" style="display:block;"><i class="fas fa-exclamation-triangle"></i> Veuillez entrer un CIN pour rechercher.</div>', 'result');
+          return;
+      }
+      resultDiv.innerHTML = '<div class="patient-result-container" style="text-align:center; padding: 20px;"><p><i class="fas fa-spinner fa-spin"></i> Recherche...</p></div>';
+      resultDiv.style.display = 'block';
+      resultDiv.className = "";
+
+      const url = `${BASE_URL}/webhook/get-patient?cin=${cin}`;
+
+       // Use fetchWithAuth
+      fetchWithAuth(url) // No options needed for GET
+        .then(res => {
+            // Auth check done in helper
+            return res.json();
+        })
+        .then(data => {
+          if (!data || !data.nom || !data.ipp) {
+             throw new Error("Données patient invalides ou IPP manquant.");
+          }
+
+          const qrData = generateQrData(data.ipp);
+          if (!qrData) throw new Error("Impossible de générer QR code.");
+          const { qrImageUrl } = qrData;
+
+          const formatDate = (d) => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'}) : 'N/A';
+          const formatDateTime = (d) => d ? new Date(d).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short'}) : 'N/A';
+
+          const resultHTML = `
+            <div class="patient-result-container">
+                <div style="margin-bottom: 15px;"><h3 style="color: var(--primary);"><i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}</h3></div>
+                <div class="patient-result-info">
+                     <div class="info-group"> <div class="info-label">IPP</div> <div class="info-value">${data.ipp || 'N/A'}</div> </div>
+                     <div class="info-group"> <div class="info-label">CIN</div> <div class="info-value">${data.cin || 'N/A'}</div> </div>
+                     <div class="info-group"> <div class="info-label">Téléphone</div> <div class="info-value">${data.telephone || 'N/A'}</div> </div>
+                     <div class="info-group"> <div class="info-label">Naissance</div> <div class="info-value">${formatDate(data.date_naissance)}</div> </div>
+                     <div class="info-group"> <div class="info-label">Sexe</div> <div class="info-value">${data.sexe === 'M' ? 'Homme' : 'Femme'}</div> </div>
+                     <div class="info-group"> <div class="info-label">Mutuelle</div> <div class="info-value">${data.mutuelle || "Non"}</div> </div>
+                     <div class="info-group" style="grid-column: span 2;"> <div class="info-label">Adresse</div> <div class="info-value">${data.adresse || 'N/A'}, ${data.ville || ''}</div> </div>
+                     <div class="info-group"> <div class="info-label">Créé le</div> <div class="info-value">${formatDateTime(data.created_at)}</div> </div>
+                </div>
+                <div class="patient-result-qr">
+                  <img src="${qrImageUrl}" alt="QR Code Patient" />
+                  <button onclick="printQRCode('${qrImageUrl}')" class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer QR Code</button>
+                </div>
+            </div>`;
+           showMessage('getResult', resultHTML, 'result');
+        })
+        .catch((err) => {
+          console.error("Error fetching patient:", err);
+           if (!err.message.startsWith('Authentication failed')) {
+               showMessage('getResult', `<div class="message message-error" style="display:block;"><i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur lors de la récupération."}</div>`, 'result');
+           }
         });
-    </script>
+    }
+
+    // Print QR Code function
+    function printQRCode(qrImageUrl) {
+         const printWindow = window.open('', '_blank', 'width=600,height=600');
+         if (!printWindow) { alert('Veuillez autoriser les pop-ups pour imprimer.'); return; }
+        printWindow.document.write(`
+            <!DOCTYPE html><html><head><meta charset="UTF-8"><title>Imprimer QR</title>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/>
+            <style>body{font-family:'Inter',sans-serif;text-align:center;margin-top:30px} img.logo{display:block;width:80px;margin:0 auto 15px auto} img.qrcode{display:block;width:250px;margin:0 auto 20px auto;border:1px solid #eee;padding:8px;background:white} button{display:none;} @media print{body{margin:10mm;-webkit-print-color-adjust:exact;print-color-adjust:exact} img.logo{margin-bottom:10px} img.qrcode{margin-bottom:10px}}</style>
+            </head><body><img src="logo.webp" alt="Logo" class="logo" onerror="this.style.display='none'" /><img src="${qrImageUrl}" alt="QR Code" class="qrcode" /><script>let p=false;const a=()=>{if(!p){window.print();p=true;window.onafterprint=()=>window.close();setTimeout(()=>window.close(),1000)}};let i=document.querySelectorAll('img'),l=0,e=0,t=i.length;if(t===0)a();else{i.forEach(m=>{const c=()=>{if(l+e===t)a()};if(m.complete)l++,c();else{m.onload=()=>{l++;c()};m.onerror=()=>{e++;c()}}});setTimeout(()=>{if(!p)a()},3000)}<\/script></body></html>`);
+        printWindow.document.close();
+    }
+
+
+    // Handle create patient form submission
+    createForm?.addEventListener("submit", function (e) {
+      e.preventDefault();
+      showMessage('message', '', '');
+      showMessage('createResult', '', ''); // Clear previous create result
+
+      const form = e.target;
+      const hasInsurance = form.has_insurance.checked;
+      const mutuelleValue = form.mutuelle.value.trim();
+
+      if (hasInsurance && !mutuelleValue) {
+           showMessage('message', '<i class="fas fa-exclamation-triangle"></i> Veuillez entrer le nom de la mutuelle si la case est cochée.', 'warning');
+           return;
+      }
+      const payload = {
+        nom: form.nom.value.trim(), prenom: form.prenom.value.trim(), cin: form.cin.value.trim(), telephone: form.telephone.value.trim(), adresse: form.adresse.value.trim(), ville: form.ville.value.trim(), date_naissance: form.date_naissance.value, sexe: form.sexe.value, mutuelle: hasInsurance ? mutuelleValue : null
+      };
+      if (!payload.nom || !payload.prenom || !payload.cin || !payload.telephone || !payload.date_naissance) {
+          showMessage('message', '<i class="fas fa-exclamation-triangle"></i> Veuillez remplir tous les champs obligatoires.', 'warning');
+          return;
+      }
+
+       const submitButton = form.querySelector('button[type="submit"]');
+       const originalButtonText = submitButton.innerHTML;
+       submitButton.disabled = true; submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
+
+       // Use fetchWithAuth
+      fetchWithAuth(`${BASE_URL}/webhook/create-patient`, {
+        method: "POST",
+        // Headers handled by fetchWithAuth
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+          // Auth check done in helper
+           return res.json(); // Assuming API returns JSON even on error for detail
+      })
+      .then(data => {
+         // ** CRITICAL: API MUST return the IPP **
+        if (!data || !data.ipp) { throw new Error("IPP manquant dans la réponse de création."); }
+        console.log("Create patient response:", data);
+
+        const qrData = generateQrData(data.ipp);
+        if (!qrData) { throw new Error("Impossible de générer QR code après création."); }
+        const { qrImageUrl } = qrData;
+
+        // Display success and QR code in the dedicated div
+        document.getElementById('createResultMessage').innerHTML = `<i class="fas fa-check-circle"></i> Patient (${payload.prenom} ${payload.nom}) créé. IPP: ${data.ipp}`;
+        document.getElementById('createQrCodeImage').src = qrImageUrl;
+        const printButton = document.getElementById('createPrintButton');
+        printButton.onclick = () => printQRCode(qrImageUrl);
+
+        showMessage('createResult', createResultDiv.innerHTML, 'result'); // Show the createResult div with its content
+
+        form.reset();
+      })
+      .catch((err) => {
+         console.error("Error creating patient:", err);
+         if (!err.message.startsWith('Authentication failed')) {
+            showMessage('message', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur lors de la création."}`, 'error');
+         }
+         showMessage('createResult', '', ''); // Hide create result on error
+      })
+      .finally(() => {
+           submitButton.disabled = false; submitButton.innerHTML = originalButtonText;
+      });
+    });
+
+    // --- End Embedded Javascript ---
+   </script>
 
 </body>
 </html>
