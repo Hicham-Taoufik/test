@@ -2,45 +2,30 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <!-- Ensure viewport prevents zooming on mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="description" content="Dashboard de réception pour la gestion des patients - MediClinic" />
   <title>Dashboard - Réception</title>
-  <!-- Fonts & Icons -->
+  <!-- Using Consistent Fonts & Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-  <!-- CSS -->
+  <!-- Using Consistent CSS -->
   <style>
-    /* --- Enhanced CSS --- */
-    :root {
-      --primary: #5d74f2; --primary-light: #ebeffe; --primary-dark: #4a62d8;
-      --success: #31c971; --success-light: #e0fbea; --success-dark: #28a960;
-      --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded;
-      --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05);
-      --shadow-focus: 0 0 0 3px rgba(93, 116, 242, 0.2);
-      --border-radius: 0.5rem; /* Slightly softer radius */
-      --transition-speed: 0.2s;
-      font-size: 15px; /* Base font size for rem units */
-    }
+    /* --- CSS (No changes) --- */
+    :root { --primary: #5d74f2; --primary-light: #ebeffe; --success: #31c971; --success-light: #e0fbea; --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded; --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05); --shadow-focus: 0 0 0 3px rgba(93, 116, 242, 0.2); --border-radius: 0.5rem; --transition-speed: 0.2s; font-size: 15px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-800); line-height: 1.5; min-height: 100vh; padding: 0; visibility: hidden; }
+    body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-800); line-height: 1.5; min-height: 100vh; padding: 0; visibility: hidden; /* Hide body initially */ }
     body.loaded { visibility: visible; animation: fadeIn 0.3s ease-in; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    /* Layout */
     .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem; }
-    .header { display: flex; align-items: center; padding-bottom: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--gray-200); }
+    .header { display: flex; align-items: center; padding: 15px 0; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--gray-200); }
     .header-main-content { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; }
     .logo { display: flex; align-items: center; }
     .logo-img { height: 38px; width: auto; }
     .header-title { color: var(--primary); font-size: 1.4rem; font-weight: 600; margin: 0; white-space: nowrap; }
-    .header-logout { flex-shrink: 0; margin-left: auto; } /* Pushes button right on wrap */
+    .header-logout { flex-shrink: 0; margin-left: auto; }
     .logout-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: var(--border-radius); }
     .flex-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .flex-col { flex: 1; min-width: 320px; } /* Adjust min-width as needed */
-
-    /* Cards */
+    .flex-col { flex: 1; min-width: 320px; }
     .card { background: white; border-radius: var(--border-radius); box-shadow: var(--shadow-md); overflow: hidden; margin-bottom: 1.5rem; transition: box-shadow var(--transition-speed) ease; }
     .card:hover { box-shadow: var(--shadow-lg); }
     .card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); }
@@ -48,15 +33,13 @@
     .card-title i { margin-right: 0.6rem; color: var(--primary); font-size: 1.1rem; }
     .card-actions { color: white; background: var(--primary); border-radius: 0.5rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
     .card-body { padding: 1.25rem; }
-
-    /* Forms */
     label { display: block; margin-bottom: 0.4rem; font-size: 0.8rem; color: var(--gray-600); font-weight: 500; }
     .input-group { margin-bottom: 1rem; position: relative; }
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
     input[type="text"], input[type="date"], input[type="tel"], input[type="email"], select { width: 100%; padding: 0.7rem 0.9rem; font-size: 0.9rem; border-radius: var(--border-radius); border: 1px solid var(--gray-300); background: white; transition: all var(--transition-speed) ease; font-family: 'Inter', sans-serif; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: var(--shadow-focus); }
-    .input-error { border-color: var(--danger) !important; } /* Use important to override focus */
-    .input-error:focus { box-shadow: 0 0 0 3px rgba(255, 90, 90, 0.2); } /* Red focus shadow */
+    .input-error { border-color: var(--danger) !important; }
+    .input-error:focus { box-shadow: 0 0 0 3px rgba(255, 90, 90, 0.2); }
     .error-text { color: var(--danger); font-size: 0.75rem; margin-top: 4px; display: none; }
     .input-group.has-error .error-text { display: block; }
     input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
@@ -65,8 +48,6 @@
     .mutuelle-group { grid-column: span 2; display: flex; flex-direction: column; gap: 0.75rem; }
     .mutuelle-group > div:first-child { display: flex; align-items: center; }
     input[name="mutuelle"]:disabled { background-color: var(--gray-100); cursor: not-allowed; }
-
-    /* Buttons */
     .btn-group { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
     .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 500; border-radius: var(--border-radius); border: none; cursor: pointer; transition: background-color var(--transition-speed) ease, transform 0.1s ease; display: inline-flex; align-items: center; justify-content: center; width: auto; line-height: 1.5; }
     .btn:active { transform: translateY(1px); }
@@ -77,50 +58,41 @@
     .btn-outline { background: white; color: var(--primary); border: 1px solid var(--gray-300); } .btn-outline:hover { border-color: var(--primary); background: var(--primary-light); }
     .btn:disabled { background-color: var(--gray-300); cursor: not-allowed; opacity: 0.7; }
     .form-submit-button { grid-column: span 2; }
-
-    /* Search & Results */
     .search-bar { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; }
     .search-bar input { flex-grow: 1; }
-    #getResult { margin-top: 1.25rem; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; }
-    .patient-result-container { background-color: var(--gray-100); padding: 1.25rem; border-radius: var(--border-radius); border-left: 4px solid var(--primary); animation: slideIn 0.3s ease-out; }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .patient-result-info { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem 1rem; margin-bottom: 1rem; }
-    .patient-result-info .info-group { margin-bottom: 0; }
-    .patient-result-qr { text-align: center; margin-top: 1.25rem; }
-    .patient-result-qr img { max-width: 180px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; transition: transform 0.3s ease; }
-    .patient-result-qr img:hover { transform: scale(1.03); }
-
-    /* Create Result */
-    #createResult { display: none; margin-top: 1.25rem; text-align: center; background-color: var(--success-light); padding: 1rem; border-radius: var(--border-radius); border-left: 4px solid var(--success); animation: fadeIn 0.3s ease; }
-    #createResult p { color: var(--success-dark); font-weight: 500; margin-bottom: 1rem;}
-    #createResult img { max-width: 160px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; }
-
-    /* Messages & Toasts */
     .message { padding: 0.8rem 1rem; border-radius: 6px; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; display: none; grid-column: span 2; animation: fadeIn 0.3s ease; word-break: break-word; }
     .message-success { background: var(--success-light); color: var(--success-dark); border-left: 4px solid var(--success); }
     .message-warning { background: var(--warning-light); color: var(--warning); border-left: 4px solid var(--warning); }
     .message-error { background: var(--danger-light); color: var(--danger); border-left: 4px solid var(--danger); }
-    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--gray-800); color: white; padding: 0.8rem 1.25rem; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; z-index: 1000; transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1); } /* Smoother transition */
+    #getResult { margin-top: 1.25rem; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; }
+    .patient-result-container { background-color: var(--gray-100); padding: 1.25rem; border-radius: var(--border-radius); border-left: 4px solid var(--primary); animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .patient-result-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem 1rem; margin-bottom: 1rem; }
+    .patient-result-info .info-group { margin-bottom: 0; }
+    .info-group { margin-bottom: 5px; }
+    .info-label { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 4px; }
+    .info-value { font-size: 0.9rem; color: var(--gray-800); font-weight: 500; }
+    .patient-result-qr { text-align: center; margin-top: 1.25rem; }
+    .patient-result-qr img { max-width: 180px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; transition: transform 0.3s ease; }
+    .patient-result-qr img:hover { transform: scale(1.03); }
+    #createResult { display: none; margin-top: 1.25rem; text-align: center; background-color: var(--success-light); padding: 1rem; border-radius: var(--border-radius); border-left: 4px solid var(--success); animation: fadeIn 0.3s ease; }
+    #createResult p { color: var(--success-dark); font-weight: 500; margin-bottom: 1rem;}
+    #createResult img { max-width: 160px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; }
+    .loading-spinner { display: inline-block; width: 1em; height: 1em; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; margin-left: -2px; margin-right: 8px; }
+    .btn .loading-spinner { border-top-color: white; }
+    .btn-outline .loading-spinner { border-top-color: var(--primary); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--gray-800); color: white; padding: 0.8rem 1.25rem; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; z-index: 1000; transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1); }
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.success { background-color: var(--success-dark); }
     .toast.error { background-color: var(--danger); }
     .toast i { margin-right: 0.75rem; }
-
-    /* Loading & Skeleton */
-    .loading-spinner { display: inline-block; width: 1em; height: 1em; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; margin-left: -2px; margin-right: 8px; }
-    .btn .loading-spinner { border-top-color: white; } /* Spinner inside button */
-    .btn-outline .loading-spinner { border-top-color: var(--primary); } /* Spinner inside outline button */
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Accessibility */
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
-    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; box-shadow: none; /* Override default focus shadow if needed */ }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; box-shadow: none; }
     .skip-link { position: absolute; left: -9999px; z-index: 999; padding: 1em; background-color: white; color: var(--primary); opacity: 0; }
     .skip-link:focus { left: 50%; transform: translateX(-50%); opacity: 1; }
-
-    /* Responsive Design */
     @media (max-width: 768px) { .flex-row { flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .mutuelle-group, .form-submit-button, .message { grid-column: span 1; } .patient-result-info { grid-template-columns: 1fr; } .header { flex-direction: column; align-items: flex-start; gap: 15px; } .header-main-content { width: 100%; } .header-logout { width: 100%; margin-left: 0; } .logout-btn { width: 100%; justify-content: center; } .search-bar { flex-direction: column; } .search-bar .btn { width: 100%; } }
-    @media (max-width: 480px) { .app-container { padding: 1rem; } .header-title { font-size: 1.2rem; } .card-body { padding: 1rem; } .btn { padding: 0.6rem 1rem; font-size: 0.8rem; } .patient-info { grid-template-columns: 1fr; } /* Single column always on mobile */ .btn-group { gap: 0.5rem; } }
+    @media (max-width: 480px) { .app-container { padding: 1rem; } .header-title { font-size: 1.2rem; } .card-body { padding: 1rem; } .btn { padding: 0.6rem 1rem; font-size: 0.8rem; } .patient-info { grid-template-columns: 1fr; } .btn-group { gap: 0.5rem; } }
   </style>
 </head>
 <body >
@@ -141,10 +113,7 @@
     <main id="main-content" class="flex-row">
       <div class="flex-col">
         <section class="card" aria-labelledby="create-patient-heading">
-          <div class="card-header">
-            <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient</h2>
-            <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div>
-          </div>
+          <div class="card-header"> <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div> </div>
           <div class="card-body">
             <form id="createForm" novalidate>
               <div class="form-grid">
@@ -161,45 +130,35 @@
                 <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
             </form>
-            <div id="createResult" role="status" aria-live="polite">
-                <p id="createResultMessage"></p> <img id="createQrCodeImage" src="" alt="" loading="lazy" /> <button id="createPrintButton" class="btn btn-secondary"> <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code </button>
-            </div>
+            <div id="createResult" role="status" aria-live="polite"> <p id="createResultMessage"></p> <img id="createQrCodeImage" src="" alt="" loading="lazy" /> <button id="createPrintButton" class="btn btn-secondary"> <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code </button> </div>
           </div>
         </section>
       </div>
 
       <div class="flex-col">
         <section class="card" aria-labelledby="search-patient-heading">
-          <div class="card-header">
-            <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2>
-            <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div>
-          </div>
+          <div class="card-header"> <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div> </div>
           <div class="card-body">
-            <div class="search-bar">
-              <input id="getCin" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient" />
-              <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button>
-            </div>
+            <div class="search-bar"> <input id="getCin" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient" /> <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button> </div>
             <div id="getResult" role="region" aria-live="polite"></div>
           </div>
         </section>
       </div>
     </main> <!-- End flex-row -->
 
-    <!-- Toast Notification Placeholder -->
     <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
-
   </div> <!-- End container -->
 
   <script>
     // --- Configuration & Constants ---
-    const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, MESSAGE_DISPLAY_TIME: 7000, /* Longer display for form messages */ TOAST_DISPLAY_TIME: 4000 /* Longer toast */ };
+    const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, MESSAGE_DISPLAY_TIME: 7000, TOAST_DISPLAY_TIME: 4000 };
     const DOM = { body: document.body, resultDiv: document.getElementById("getResult"), messageDiv: document.getElementById("message"), createForm: document.getElementById("createForm"), createResultDiv: document.getElementById("createResult"), searchButton: document.getElementById("searchBtn"), cinInput: document.getElementById("getCin"), hasInsuranceCheckbox: document.getElementById("has_insurance"), mutuelleInput: document.getElementById("mutuelle"), mutuelleInputContainer: document.getElementById("mutuelle-input-container"), createPatientBtn: document.getElementById("createPatientBtn"), createResultMessage: document.getElementById("createResultMessage"), createQrCodeImage: document.getElementById("createQrCodeImage"), createPrintButton: document.getElementById("createPrintButton"), toast: document.getElementById("toast") };
     let currentIPP = null; let currentPatientInfo = null; let sessionTimeoutId = null;
 
     // --- Utility Functions ---
     function showToast(message, type = 'success') { if (!message || !DOM.toast) return; const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; DOM.toast.innerHTML = `${icon} ${message}`; DOM.toast.className = `toast ${type}`; DOM.toast.classList.add('show'); setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); }
     function sanitizeInput(input) { if (!input) return ''; const temp = document.createElement('div'); temp.textContent = input; return temp.innerHTML; }
-    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } if (elementId === 'getResult' && type !== 'result') el.innerHTML = ''; if (elementId === 'createResult' && type !== 'result') el.innerHTML = ''; const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const icon = statusIcons[type] || statusIcons['info']; const iconHtml = message && type !== 'result' ? `<i class="${icon} me-2" aria-hidden="true"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; if (type === 'result') { el.className = ""; } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { /* Styles... */ } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message) { setTimeout(() => { if (el.innerHTML.includes(message)) { el.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
+    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } if (elementId === 'getResult' && type !== 'result') el.innerHTML = ''; if (elementId === 'createResult' && type !== 'result') el.innerHTML = ''; const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const icon = statusIcons[type] || statusIcons['info']; const iconHtml = message && type !== 'result' ? `<i class="${icon} me-2" aria-hidden="true"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; if (type === 'result') { el.className = ""; } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); el.style.backgroundColor = baseBg; el.style.borderLeft = `4px solid ${baseBorder}`; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message) { setTimeout(() => { if (el.innerHTML.includes(message)) { el.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
 
     // --- Authentication & Session ---
     function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No token.');alert('Session expirée.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Auth error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide.');redirectToLogin();throw new Error(`Auth failed:${r.status}`);} if(!r.ok){return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);});} return r;}); }
@@ -208,69 +167,11 @@
     function resetSessionTimeout() { if (sessionTimeoutId) clearTimeout(sessionTimeoutId); sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT); }
 
     // --- Form Validation ---
-    function validateField(input, validationFn, errorMessage) {
-        const value = input.value.trim();
-        const group = input.closest('.input-group');
-        if (!group) return true; // Cannot validate if structure is wrong
-        
-        const isValid = validationFn(value);
-        
-        group.classList.toggle('has-error', !isValid);
-        input.classList.toggle('input-error', !isValid);
-        const errorDiv = group.querySelector('.error-text');
-        if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage;
-        
-        return isValid;
-    }
-
-    function validateCreateForm() {
-        let isFormValid = true;
-        showMessage('message', '', ''); // Clear general message
-
-        // Required text fields
-        isFormValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis");
-        isFormValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis");
-        // Basic CIN example (2 letters + 5-6 digits) - Adjust regex for actual format!
-        isFormValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)");
-        // Basic Moroccan phone example (05/06/07 + 8 digits) - Adjust regex!
-        isFormValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx");
-        isFormValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise");
-        isFormValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise");
-        isFormValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise");
-        isFormValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise");
-
-        // Mutuelle validation
-        const mutuelleGroup = DOM.mutuelleInput.closest('.input-group');
-        if (DOM.hasInsuranceCheckbox.checked) {
-            isFormValid &= validateField(DOM.mutuelleInput, val => val.length > 0, "Nom mutuelle requis si coché");
-        } else {
-            // Clear potential error if unchecked
-            if(mutuelleGroup) mutuelleGroup.classList.remove('has-error');
-            DOM.mutuelleInput.classList.remove('input-error');
-            const errorDiv = mutuelleGroup?.querySelector('.error-text');
-            if(errorDiv) errorDiv.textContent = '';
-        }
-
-        if (!isFormValid) {
-            showMessage('message', 'Veuillez corriger les erreurs.', 'error');
-            // Focus first invalid field
-             const firstError = DOM.createForm.querySelector('.input-error');
-             if(firstError) firstError.focus();
-        }
-
-        return !!isFormValid; // Ensure boolean return
-    }
+    function validateField(input, validationFn, errorMessage) { const value = input.value.trim(); const group = input.closest('.input-group'); if (!group) return true; const isValid = validationFn(value); group.classList.toggle('has-error', !isValid); input.classList.toggle('input-error', !isValid); const errorDiv = group.querySelector('.error-text'); if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage; return isValid; }
+    function validateCreateForm() { let isValid = true; showMessage('message', '', ''); DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); DOM.createForm.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error')); isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis"); isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis"); isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)"); isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx"); isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise"); isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise"); isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise"); isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise"); const mutuelleGroup = DOM.mutuelleInput.closest('.input-group'); if (DOM.hasInsuranceCheckbox.checked) { isValid &= validateField(DOM.mutuelleInput, val => val.length > 0, "Nom mutuelle requis si coché"); } else { if(mutuelleGroup) mutuelleGroup.classList.remove('has-error'); DOM.mutuelleInput.classList.remove('input-error'); const errorDiv = mutuelleGroup?.querySelector('.error-text'); if(errorDiv) errorDiv.textContent = ''; } if (!isValid) { showMessage('message', 'Veuillez corriger les erreurs.', 'error'); const firstError = DOM.createForm.querySelector('.input-error'); if(firstError) firstError.focus(); } return !!isValid; }
 
     // --- API Service ---
-    const apiService = {
-        async fetchPatient(patientCin) { /* ... uses fetchWithAuth ... */ },
-        async createPatient(payload) { /* ... uses fetchWithAuth ... */ }
-        // Add other needed API calls
-    };
-    // Redefine API Service functions using fetchWithAuth
-    apiService.fetchPatient = async (cin) => { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`); return await res.json(); } catch (e) { console.error("Pat fetch err:", e); throw e; } };
-    apiService.createPatient = async (payload) => { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) }); return await res.json(); } catch (e) { console.error("Pat create err:", e); throw e; } };
-
+    const apiService = { async fetchPatient(cin) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`); return await res.json(); } catch (e) { console.error("Pat fetch err:", e); throw e; } }, async createPatient(payload) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) }); return await res.json(); } catch (e) { console.error("Pat create err:", e); throw e; } }};
 
     // --- QR Code Functions ---
     function generateQrData(ipp) { if (!ipp) { console.error("IPP missing QR."); return null; } const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`; const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`; console.log("QR Target:", qrTargetUrl); console.log("QR Image:", qrImageUrl); return { qrTargetUrl, qrImageUrl }; }
@@ -291,9 +192,8 @@
     window.onload = () => {
       if (!localStorage.getItem(CONFIG.TOKEN_KEY)) { console.log("Reception: No token."); redirectToLogin(); return; }
       DOM.body.classList.add('loaded'); console.log("Reception: Authenticated.");
-      resetSessionTimeout(); // Start session timer
-      handleMutuelleChange(); // Set initial mutuelle input state
-      // Add listeners for activity to reset timeout
+      resetSessionTimeout();
+      handleMutuelleChange();
       ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => document.addEventListener(event, resetSessionTimeout, { passive: true }));
     };
 
