@@ -9,7 +9,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <!-- Using Consistent CSS -->
   <style>
-      /* --- CSS remains exactly the same as your previous Reception version --- */
+    /* --- CSS remains exactly the same --- */
     :root {
       --primary: #5d74f2; --primary-light: #ebeffe; --success: #31c971; --success-light: #e0fbea; --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded; --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --border-radius: 8px;
     }
@@ -145,6 +145,9 @@
     const BASE_URL = 'https://workflows.aphelionxinnovations.com';
     const QR_TARGET_BASE_URL = 'app://medilink/patient'; // Or 'https://yourclinic.com/app/view' - CHOOSE
 
+    // *** ADD ABSOLUTE URL for the Login Page ***
+    const LOGIN_PAGE_URL = 'https://hicham-taoufik.github.io/login/'; // Crucial for cross-repo redirect
+
     // Get references to frequently used elements
     const resultDiv = document.getElementById("getResult");
     const messageDiv = document.getElementById("message");
@@ -157,8 +160,8 @@
         if (!token) {
             console.error('Reception: Auth token not found. Redirecting to login.');
             alert('Session expirée ou non connecté. Veuillez vous reconnecter.');
-            // *** PATH CORRECTED ***
-            window.location.href = '/test/login/'; // Root-relative path to login
+            // *** USE ABSOLUTE LOGIN URL ***
+            window.location.href = LOGIN_PAGE_URL;
             return Promise.reject(new Error('Authentication token not found.'));
         }
         const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
@@ -168,8 +171,8 @@
             .then(response => {
                 if (response.status === 401 || response.status === 403) {
                      console.error('Reception: Auth error:', response.status); localStorage.removeItem('authToken'); alert('Session expirée ou invalide. Veuillez vous reconnecter.');
-                     // *** PATH CORRECTED ***
-                     window.location.href = '/test/login/'; // Root-relative path to login
+                     // *** USE ABSOLUTE LOGIN URL ***
+                     window.location.href = LOGIN_PAGE_URL;
                      throw new Error(`Authentication failed: ${response.status}`);
                 }
                  if (!response.ok) { return response.text().then(text => { throw new Error(`Erreur ${response.status}: ${text || response.statusText}`); }); }
@@ -182,8 +185,8 @@
     function logout() {
         localStorage.removeItem('authToken');
         alert('Vous avez été déconnecté.');
-        // *** PATH CORRECTED ***
-        window.location.href = '/test/login/'; // Root-relative path to login
+        // *** USE ABSOLUTE LOGIN URL ***
+        window.location.href = LOGIN_PAGE_URL;
     }
     // --- END: Logout Function ---
 
@@ -191,8 +194,8 @@
     window.onload = () => {
       if (!localStorage.getItem('authToken')) {
           console.log("Reception Dash: No auth token found on load, redirecting to login.");
-           // *** PATH CORRECTED ***
-          window.location.href = '/test/login/'; // Root-relative path to login
+           // *** USE ABSOLUTE LOGIN URL ***
+          window.location.href = LOGIN_PAGE_URL;
           return;
       }
       document.body.classList.add('loaded');
@@ -201,28 +204,19 @@
     // --- END: window.onload Check ---
 
 
-    // --- Show Message Function ---
-    function showMessage(elementId, message, type) {
-        const messageElement = document.getElementById(elementId);
-        if (!messageElement) { console.error(`Msg Element "${elementId}" not found.`); return; }
-        if (elementId === 'getResult' && type !== 'result') { messageElement.innerHTML = ''; }
-        if (elementId === 'createResult' && type !== 'result') { messageElement.innerHTML = ''; }
-        messageElement.innerHTML = message || ""; messageElement.style.display = message ? "block" : "none";
-        if (type === 'result') { messageElement.className = ""; } else { messageElement.className = "message"; if (type === "success") messageElement.classList.add("message-success"); else if (type === "warning") messageElement.classList.add("message-warning"); else if (type === "error") messageElement.classList.add("message-error"); }
-        if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); messageElement.style.backgroundColor = baseBg; messageElement.style.borderLeft = `4px solid ${baseBorder}`; messageElement.style.textAlign = 'center'; messageElement.style.marginTop = '20px'; messageElement.style.padding = '15px'; messageElement.style.borderRadius = 'var(--border-radius)'; const msgP = messageElement.querySelector('#createResultMessage'); const img = messageElement.querySelector('#createQrCodeImage'); const btn = messageElement.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; }
-        if (elementId === 'message' && type === "success" && message) { setTimeout(() => { if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) { messageElement.style.display = "none"; } }, 5000); }
-    }
+    // --- Show Message Function --- (No changes needed inside this function)
+    function showMessage(elementId, message, type) { const messageElement = document.getElementById(elementId); if (!messageElement) { console.error(`Msg Element "${elementId}" not found.`); return; } if (elementId === 'getResult' && type !== 'result') { messageElement.innerHTML = ''; } if (elementId === 'createResult' && type !== 'result') { messageElement.innerHTML = ''; } messageElement.innerHTML = message || ""; messageElement.style.display = message ? "block" : "none"; if (type === 'result') { messageElement.className = ""; } else { messageElement.className = "message"; if (type === "success") messageElement.classList.add("message-success"); else if (type === "warning") messageElement.classList.add("message-warning"); else if (type === "error") messageElement.classList.add("message-error"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); messageElement.style.backgroundColor = baseBg; messageElement.style.borderLeft = `4px solid ${baseBorder}`; messageElement.style.textAlign = 'center'; messageElement.style.marginTop = '20px'; messageElement.style.padding = '15px'; messageElement.style.borderRadius = 'var(--border-radius)'; const msgP = messageElement.querySelector('#createResultMessage'); const img = messageElement.querySelector('#createQrCodeImage'); const btn = messageElement.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (elementId === 'message' && type === "success" && message) { setTimeout(() => { if (messageElement.classList.contains("message-success") && messageElement.innerHTML === message) { messageElement.style.display = "none"; } }, 5000); } }
 
-    // --- Generate QR Data Function ---
+    // --- Generate QR Data Function --- (No changes needed inside this function)
     function generateQrData(ipp) { if (!ipp) { console.error("IPP missing for QR data."); return null; } const qrTargetUrl = `${QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`; const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrTargetUrl)}`; console.log("QR Target:", qrTargetUrl); console.log("QR Image:", qrImageUrl); return { qrTargetUrl, qrImageUrl }; }
 
-    // --- Search Patient Function ---
+    // --- Search Patient Function --- (No changes needed inside this function)
     function getPatient() { const cin = document.getElementById("getCin").value.trim(); if (!cin) { showMessage('getResult', '<div class="message message-warning" style="display:block;"><i class="fas fa-exclamation-triangle"></i> Entrez CIN.</div>', 'result'); return; } resultDiv.innerHTML = '<div class="patient-result-container" style="text-align:center; padding: 20px;"><p><i class="fas fa-spinner fa-spin"></i> Recherche...</p></div>'; resultDiv.style.display = 'block'; resultDiv.className = ""; const url = `${BASE_URL}/webhook/get-patient?cin=${cin}`; fetchWithAuth(url) .then(res => res.json()) .then(data => { if (!data || !data.nom || !data.ipp) { throw new Error("Données patient invalides/IPP manquant."); } const qrData = generateQrData(data.ipp); if (!qrData) throw new Error("Erreur QR code."); const { qrImageUrl } = qrData; const formatDate = (d) => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'}) : 'N/A'; const formatDateTime = (d) => d ? new Date(d).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short'}) : 'N/A'; const resultHTML = `<div class="patient-result-container"><div style="margin-bottom: 15px;"><h3 style="color: var(--primary);"><i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}</h3></div><div class="patient-result-info"><div class="info-group"><div class="info-label">IPP</div><div class="info-value">${data.ipp||'N/A'}</div></div><div class="info-group"><div class="info-label">CIN</div><div class="info-value">${data.cin||'N/A'}</div></div><div class="info-group"><div class="info-label">Téléphone</div><div class="info-value">${data.telephone||'N/A'}</div></div><div class="info-group"><div class="info-label">Naissance</div><div class="info-value">${formatDate(data.date_naissance)}</div></div><div class="info-group"><div class="info-label">Sexe</div><div class="info-value">${data.sexe==='M'?'Homme':'Femme'}</div></div><div class="info-group"><div class="info-label">Mutuelle</div><div class="info-value">${data.mutuelle||"Non"}</div></div><div class="info-group" style="grid-column:span 2;"><div class="info-label">Adresse</div><div class="info-value">${data.adresse||'N/A'}, ${data.ville||''}</div></div><div class="info-group"><div class="info-label">Créé le</div><div class="info-value">${formatDateTime(data.created_at)}</div></div></div><div class="patient-result-qr"><img src="${qrImageUrl}" alt="QR Code Patient" /><button onclick="printQRCode('${qrImageUrl}')" class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer QR Code</button></div></div>`; showMessage('getResult', resultHTML, 'result'); }) .catch((err) => { console.error("Error fetching:", err); if (!err.message.startsWith('Auth')) { showMessage('getResult', `<div class="message message-error" style="display:block;"><i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur récupération."}</div>`, 'result'); }}); }
 
-    // --- Print QR Code Function ---
+    // --- Print QR Code Function --- (No changes needed inside this function)
     function printQRCode(qrImageUrl) { const printWindow = window.open('', '_blank', 'width=400,height=450'); if (!printWindow) { alert('Veuillez autoriser les pop-ups.'); return; } printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Imprimer QR</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/><style>body{font-family:'Inter',sans-serif;text-align:center;margin:0;padding-top:20px} img.logo{display:block;width:60px;margin:0 auto 10px auto} img.qrcode{display:block;width:200px;height:200px;margin:0 auto 15px auto;border:1px solid #eee;padding:5px;background:white} button{display:none;} @media print{body{margin:5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact} img.logo, img.qrcode{margin-bottom:8px}}</style></head><body><img src="logo.webp" alt="Logo" class="logo" onerror="this.style.display='none'" /><img src="${qrImageUrl}" alt="QR Code" class="qrcode" /><script>let p=false;const a=()=>{if(!p){window.print();p=true;window.onafterprint=()=>window.close();setTimeout(()=>window.close(),1500)}};let i=document.querySelectorAll('img'),l=0,e=0,t=i.length;if(t===0)a();else{i.forEach(m=>{const c=()=>{if(l+e===t)a()};if(m.complete)l++,c();else{m.onload=()=>{l++;c()};m.onerror=()=>{e++;c()}}});setTimeout(()=>{if(!p)a()},3000)}<\/script></body></html>`); printWindow.document.close(); }
 
-    // --- Create Patient Form Handler ---
+    // --- Create Patient Form Handler --- (No changes needed inside this function)
     createForm?.addEventListener("submit", function (e) { e.preventDefault(); showMessage('message', '', ''); showMessage('createResult', '', ''); const form = e.target; const hasInsurance = form.has_insurance.checked; const mutuelleValue = form.mutuelle.value.trim(); if (hasInsurance && !mutuelleValue) { showMessage('message', '<i class="fas fa-exclamation-triangle"></i> Entrez nom mutuelle.', 'warning'); return; } const payload = { nom: form.nom.value.trim(), prenom: form.prenom.value.trim(), cin: form.cin.value.trim(), telephone: form.telephone.value.trim(), adresse: form.adresse.value.trim(), ville: form.ville.value.trim(), date_naissance: form.date_naissance.value, sexe: form.sexe.value, mutuelle: hasInsurance ? mutuelleValue : null }; if (!payload.nom || !payload.prenom || !payload.cin || !payload.telephone || !payload.date_naissance) { showMessage('message', '<i class="fas fa-exclamation-triangle"></i> Remplir champs obligatoires.', 'warning'); return; } const submitButton = form.querySelector('button[type="submit"]'); const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...'; fetchWithAuth(`${BASE_URL}/webhook/create-patient`, { method: "POST", body: JSON.stringify(payload) }) .then(res => res.json()) .then(data => { if (!data || !data.ipp) { throw new Error("IPP manquant - création échouée?"); } console.log("Create patient response:", data); const qrData = generateQrData(data.ipp); if (!qrData) { throw new Error("Erreur QR code post-création."); } const { qrImageUrl } = qrData; document.getElementById('createResultMessage').innerHTML = `<i class="fas fa-check-circle"></i> Patient (${payload.prenom} ${payload.nom}) créé. IPP: ${data.ipp}`; document.getElementById('createQrCodeImage').src = qrImageUrl; const printButton = document.getElementById('createPrintButton'); printButton.onclick = () => printQRCode(qrImageUrl); showMessage('createResult', createResultDiv.innerHTML, 'result'); form.reset(); }) .catch((err) => { console.error("Error creating:", err); if (!err.message.startsWith('Auth')) { showMessage('message', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur création."}`, 'error'); } showMessage('createResult', '', ''); }) .finally(() => { submitButton.disabled = false; submitButton.innerHTML = originalButtonText; }); });
 
     // --- End Embedded Javascript ---
