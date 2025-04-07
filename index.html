@@ -62,6 +62,7 @@
     .message-success { background: var(--success-light); color: var(--success-dark); border-left: 4px solid var(--success); }
     .message-warning { background: var(--warning-light); color: var(--warning); border-left: 4px solid var(--warning); }
     .message-error { background: var(--danger-light); color: var(--danger); border-left: 4px solid var(--danger); }
+    .message-info { background: var(--primary-light); color: var(--primary-dark); border-left: 4px solid var(--primary);} /* Added info style */
     #getResult { margin-top: 1.25rem; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; }
     .patient-result-container { background-color: var(--gray-100); padding: 1.25rem; border-radius: var(--border-radius); border-left: 4px solid var(--primary); animation: slideIn 0.3s ease-out; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -99,7 +100,7 @@
     <div class="header">
       <div class="header-main-content">
         <div class="logo">
-          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> <!-- UPDATE SRC -->
+          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img">
         </div>
         <h1 class="header-title">Réception</h1>
       </div>
@@ -165,7 +166,7 @@
     // --- Utility Functions ---
     function showToast(message, type = 'success') { if (!message || !DOM.toast) return; const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; DOM.toast.innerHTML = `${icon} ${message}`; DOM.toast.className = `toast ${type}`; DOM.toast.classList.add('show'); setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); }
     function sanitizeInput(input) { if (!input) return ''; const temp = document.createElement('div'); temp.textContent = input; return temp.innerHTML; }
-    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } if (elementId === 'getResult' && type !== 'result') el.innerHTML = ''; if (elementId === 'createResult' && type !== 'result') el.innerHTML = ''; const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const icon = statusIcons[type] || statusIcons['info']; const iconHtml = message && type !== 'result' ? `<i class="${icon} me-2" aria-hidden="true"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; if (type === 'result') { el.className = ""; } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); el.style.backgroundColor = baseBg; el.style.borderLeft = `4px solid ${baseBorder}`; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { if (el.innerHTML.includes(message)) { el.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
+    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } el.innerHTML = message || ""; el.style.display = message ? "block" : "none"; el.className = ""; // Reset class first if (type === 'result') { /* No special class for result containers */ } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); el.style.backgroundColor = baseBg; el.style.borderLeft = `4px solid ${baseBorder}`; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { if (el.innerHTML.includes(message)) { el.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
 
     // --- Authentication & Session ---
     function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No token.');alert('Session expirée.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Auth error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide.');redirectToLogin();throw new Error(`Auth failed:${r.status}`);} if(!r.ok){return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);});} return r;}); }
@@ -186,7 +187,59 @@
 
     // --- Event Handlers ---
     async function handlePatientSearch() { const cin = DOM.cinInput.value.trim(); if (!cin) { showMessage('getResult', '<div class="message message-warning" style="display:block;"><i class="fas fa-exclamation-triangle"></i> CIN requis.</div>', 'result'); return; } DOM.resultDiv.innerHTML = '<div class="patient-result-container" style="text-align:center; padding: 20px;"><p><i class="fas fa-spinner fa-spin"></i> Recherche...</p></div>'; DOM.resultDiv.style.display = 'block'; DOM.resultDiv.className = ""; try { const data = await apiService.fetchPatient(cin); if (!data || !data.nom || !data.ipp) { throw new Error("Patient non trouvé ou données invalides."); } currentIPP = data.ipp; currentPatientInfo = data; const qrData = generateQrData(data.ipp); if (!qrData) throw new Error("Erreur QR code."); const { qrImageUrl } = qrData; const formatDate = (d) => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('fr-FR') : '-'; const formatDateTime = (d) => d ? new Date(d).toLocaleString('fr-FR',{dateStyle:'medium',timeStyle:'short'}) : '-'; const resultHTML = `<div class="patient-result-container"><div style="margin-bottom:1rem;"><h3 style="color:var(--primary);"><i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}</h3></div><div class="patient-result-info"><div class="info-group"><div class="info-label">IPP</div><div class="info-value">${data.ipp||'-'}</div></div><div class="info-group"><div class="info-label">CIN</div><div class="info-value">${data.cin||'-'}</div></div><div class="info-group"><div class="info-label">Téléphone</div><div class="info-value">${data.telephone||'-'}</div></div><div class="info-group"><div class="info-label">Naissance</div><div class="info-value">${formatDate(data.date_naissance)}</div></div><div class="info-group"><div class="info-label">Sexe</div><div class="info-value">${data.sexe==='M'?'Homme':'Femme'}</div></div><div class="info-group"><div class="info-label">Mutuelle</div><div class="info-value">${data.mutuelle||"Non"}</div></div><div class="info-group" style="grid-column:span 2;"><div class="info-label">Adresse</div><div class="info-value">${data.adresse||'-'}, ${data.ville||''}</div></div><div class="info-group"><div class="info-label">Créé le</div><div class="info-value">${formatDateTime(data.created_at)}</div></div></div><div class="patient-result-qr"><img src="${qrImageUrl}" alt="QR Code Patient" /><button onclick="printQRCode('${qrImageUrl}')" class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer QR Code</button></div></div>`; showMessage('getResult', resultHTML, 'result'); } catch(err) { console.error("Error fetching:", err); if (!err.message.startsWith('Auth')) { showMessage('getResult', `<div class="message message-error" style="display:block;"><i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur récupération."}</div>`, 'result'); } } }
-    async function handleCreatePatient(event) { event.preventDefault(); showMessage('message', '', ''); showMessage('createResult', '', ''); if (!validateCreateForm()) return; const form = event.target; const hasInsurance = DOM.hasInsuranceCheckbox.checked; const mutuelleValue = DOM.mutuelleInput.value.trim(); const payload = { nom: form.nom.value.trim(), prenom: form.prenom.value.trim(), cin: form.cin.value.trim(), telephone: form.telephone.value.trim(), adresse: form.adresse.value.trim(), ville: form.ville.value.trim(), date_naissance: form.date_naissance.value, sexe: form.sexe.value, mutuelle: hasInsurance ? mutuelleValue : null }; DOM.createPatientBtn.disabled = true; DOM.createPatientBtn.innerHTML = '<span class="loading-spinner" role="status" aria-hidden="true"></span> Création...'; try { const data = await apiService.createPatient(payload); if (!data || !data.ipp) { throw new Error("IPP manquant - création échouée?"); } console.log("Create response:", data); form.reset(); DOM.mutuelleInput.disabled = true; DOM.hasInsuranceCheckbox.checked = false; const qrData = generateQrData(data.ipp); if (!qrData) { throw new Error("Erreur QR post-création."); } const { qrImageUrl } = qrData; DOM.createResultMessage.innerHTML = `<i class="fas fa-check-circle"></i> Patient (${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}) créé. IPP: ${sanitizeInput(data.ipp)}`; DOM.createQrCodeImage.src = qrImageUrl; DOM.createQrCodeImage.alt = `QR Code pour ${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}`; DOM.createPrintButton.onclick = () => printQRCode(qrImageUrl); showMessage('createResult', DOM.createResultDiv.innerHTML, 'result'); showToast('Patient créé avec succès!', 'success'); } catch(err) { console.error("Error creating:", err); if (!err.message.startsWith('Auth')) { showMessage('message', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur création."}`, 'error'); } showMessage('createResult', '', ''); } finally { DOM.createPatientBtn.disabled = false; DOM.createPatientBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Créer Patient'; } }
+
+    // *** MODIFIED handleCreatePatient with Direct Element Manipulation ***
+    async function handleCreatePatient(event) {
+        event.preventDefault();
+        showMessage('message', '', '');
+        showMessage('createResult', '', ''); // Clear previous result
+        if (!validateCreateForm()) return;
+
+        const form = event.target;
+        const hasInsurance = DOM.hasInsuranceCheckbox.checked;
+        const mutuelleValue = DOM.mutuelleInput.value.trim();
+        const payload = { nom: form.nom.value.trim(), prenom: form.prenom.value.trim(), cin: form.cin.value.trim(), telephone: form.telephone.value.trim(), adresse: form.adresse.value.trim(), ville: form.ville.value.trim(), date_naissance: form.date_naissance.value, sexe: form.sexe.value, mutuelle: hasInsurance ? mutuelleValue : null };
+
+        DOM.createPatientBtn.disabled = true;
+        DOM.createPatientBtn.innerHTML = '<span class="loading-spinner" role="status" aria-hidden="true"></span> Création...';
+
+        try {
+            const data = await apiService.createPatient(payload);
+            if (!data || !data.ipp) { throw new Error("IPP manquant - création échouée?"); }
+            console.log("Create response:", data);
+            form.reset(); DOM.mutuelleInput.disabled = true; DOM.hasInsuranceCheckbox.checked = false;
+
+            const qrData = generateQrData(data.ipp);
+            if (!qrData) { throw new Error("Erreur QR post-création."); }
+            const { qrImageUrl } = qrData;
+
+            // --- Directly update elements inside #createResult ---
+            const resultMsgEl = DOM.createResultMessage; // Use DOM ref
+            const resultImgEl = DOM.createQrCodeImage;   // Use DOM ref
+            const resultBtnEl = DOM.createPrintButton;   // Use DOM ref
+
+            if (resultMsgEl) resultMsgEl.innerHTML = `<i class="fas fa-check-circle"></i> Patient (${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}) créé. IPP: ${sanitizeInput(data.ipp)}`;
+            if (resultImgEl) { resultImgEl.src = qrImageUrl; resultImgEl.alt = `QR Code pour ${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}`; resultImgEl.style.display = 'block'; }
+            if (resultBtnEl) { resultBtnEl.onclick = () => printQRCode(qrImageUrl); resultBtnEl.style.display = 'inline-block'; } // Ensure button is displayed
+
+            // --- Make the container visible with correct styling ---
+            DOM.createResultDiv.style.backgroundColor = 'var(--success-light)';
+            DOM.createResultDiv.style.borderLeft = '4px solid var(--success)';
+            DOM.createResultDiv.style.display = 'block'; // Show the whole div
+            if (resultMsgEl) resultMsgEl.style.color = 'var(--success-dark)';
+            // --- End Direct Update ---
+
+            showToast('Patient créé avec succès!', 'success');
+        } catch(err) {
+            console.error("Error creating:", err);
+            if (!err.message.startsWith('Auth')) { showMessage('message', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur création."}`, 'error'); }
+            showMessage('createResult', '', ''); // Hide create result div on error
+        } finally {
+            DOM.createPatientBtn.disabled = false; DOM.createPatientBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Créer Patient';
+        }
+    }
+    // *** END MODIFIED handleCreatePatient ***
+
     function handleMutuelleChange() { DOM.mutuelleInput.disabled = !DOM.hasInsuranceCheckbox.checked; DOM.mutuelleInput.required = DOM.hasInsuranceCheckbox.checked; if (!DOM.hasInsuranceCheckbox.checked) { DOM.mutuelleInput.value = ''; DOM.mutuelleInput.classList.remove('input-error'); DOM.mutuelleInputContainer?.closest('.input-group')?.classList.remove('has-error'); const errorDiv = DOM.mutuelleInputContainer?.closest('.input-group')?.querySelector('.error-text'); if(errorDiv) errorDiv.textContent = ''; } }
 
     // --- Event Listeners ---
@@ -197,6 +250,7 @@
 
     // --- Initial Setup ---
     window.onload = () => { if (!localStorage.getItem(CONFIG.TOKEN_KEY)) { console.log("Reception: No token."); redirectToLogin(); return; } DOM.body.classList.add('loaded'); console.log("Reception: Authenticated."); resetSessionTimeout(); handleMutuelleChange(); ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => document.addEventListener(event, resetSessionTimeout, { passive: true })); };
+
   </script>
 </body>
 </html>
