@@ -11,7 +11,6 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 
   <style>
-    /* --- CSS (Unmodified from original snippet, except #createResult is hidden by default) --- */
     :root {
       --primary: #5d74f2;
       --primary-light: #ebeffe;
@@ -481,7 +480,6 @@
     // --- Utility Functions ---
     function showToast(message, type = 'success') {
       if (!message || !DOM.toast) return;
-
       const icon = type === 'success'
         ? '<i class="fas fa-check-circle" aria-hidden="true"></i>'
         : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>';
@@ -524,7 +522,7 @@
         else if (type === "info") el.classList.add("message-info");
       }
 
-      // If we’re dealing with #createResult specifically
+      // If dealing with #createResult specifically
       if (elementId === 'createResult') {
         const isResult = (type === 'result');
         const baseBg = isResult
@@ -654,53 +652,17 @@
       DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
       DOM.createForm.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
 
-      isValid &= validateField(
-        DOM.createForm.nom,
-        val => val.length > 0,
-        "Nom requis"
-      );
-      isValid &= validateField(
-        DOM.createForm.prenom,
-        val => val.length > 0,
-        "Prénom requis"
-      );
-      isValid &= validateField(
-        DOM.createForm.cin,
-        val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val),
-        "Format CIN invalide (ex: AB123456)"
-      );
-      isValid &= validateField(
-        DOM.createForm.telephone,
-        val => /^0[5-7]\d{8}$/.test(val),
-        "Format téléphone 0Xxxxxxxxx"
-      );
-      isValid &= validateField(
-        DOM.createForm.adresse,
-        val => val.length > 0,
-        "Adresse requise"
-      );
-      isValid &= validateField(
-        DOM.createForm.ville,
-        val => val.length > 0,
-        "Ville requise"
-      );
-      isValid &= validateField(
-        DOM.createForm.date_naissance,
-        val => val !== '',
-        "Date naissance requise"
-      );
-      isValid &= validateField(
-        DOM.createForm.sexe,
-        val => val !== '',
-        "Sélection sexe requise"
-      );
+      isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis");
+      isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis");
+      isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)");
+      isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx");
+      isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise");
+      isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise");
+      isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise");
+      isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise");
 
       if (DOM.hasInsuranceCheckbox.checked) {
-        isValid &= validateField(
-          DOM.mutuelleInput,
-          val => val.length > 0,
-          "Nom mutuelle requis si coché"
-        );
+        isValid &= validateField(DOM.mutuelleInput, val => val.length > 0, "Nom mutuelle requis si coché");
       } else {
         // Clear any error states on mutuelle if not checked
         const mutuelleGroup = DOM.mutuelleInput.closest('.input-group');
@@ -729,7 +691,6 @@
           throw e;
         }
       },
-
       async createPatient(payload) {
         try {
           const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, {
@@ -764,7 +725,6 @@
         alert('Veuillez autoriser les pop-ups pour imprimer.');
         return;
       }
-
       printWindow.document.write(`<!DOCTYPE html>
         <html>
           <head>
@@ -825,11 +785,11 @@
                     loadedCount++;
                     checkDone();
                   } else {
-                    img.onload = () => { loadedCount++; checkDone(); };
-                    img.onerror = () => { errorCount++; checkDone(); };
+                    img.onload=()=>{loadedCount++;checkDone();};
+                    img.onerror=()=>{errorCount++;checkDone();};
                   }
                 });
-                setTimeout(() => { if(!printed) doPrint(); },3000);
+                setTimeout(()=>{if(!printed) doPrint();},3000);
               }
             <\/script>
           </body>
@@ -849,7 +809,6 @@
         );
         return;
       }
-
       DOM.resultDiv.innerHTML =
         '<div class="patient-result-container" style="text-align:center; padding:20px;"><p><i class="fas fa-spinner fa-spin"></i> Recherche...</p></div>';
       DOM.resultDiv.style.display = 'block';
@@ -983,7 +942,7 @@
         }
         const { qrImageUrl } = qrData;
 
-        // Update #createResult elements directly
+        // Update #createResult elements
         const resultMsgEl = DOM.createResultMessage;
         const resultImgEl = DOM.createQrCodeImage;
         const resultBtnEl = DOM.createPrintButton;
@@ -1003,7 +962,9 @@
           console.error("!!! createPrintButton not found inside handleCreatePatient !!!");
         }
 
-        DOM.createResultDiv.style.display = 'block'; // Make the #createResult container visible
+        // Here is our debug log:
+        console.log("Setting #createResultDiv to block now...");
+        DOM.createResultDiv.style.display = 'block'; // Make the block visible
 
         showToast('Patient créé avec succès!', 'success');
       } catch(err) {
@@ -1040,16 +1001,16 @@
 
     // --- Initial Setup ---
     window.onload = () => {
-      // Confirm we have a token, else redirect
+      // If testing locally and you don’t have a token in localStorage, comment out below:
       if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
         console.log("Reception: No token.");
         redirectToLogin();
         return;
       }
+
       DOM.body.classList.add('loaded');
       console.log("Reception: Authenticated.");
 
-      // Ensure session is tracked
       resetSessionTimeout();
       ['mousemove','keypress','click','scroll'].forEach(
         event => document.addEventListener(event, resetSessionTimeout, { passive:true })
