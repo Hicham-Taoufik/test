@@ -100,7 +100,7 @@
     <div class="header">
       <div class="header-main-content">
         <div class="logo">
-          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> <!-- UPDATE SRC -->
+          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img">
         </div>
         <h1 class="header-title">Réception</h1>
       </div>
@@ -169,22 +169,7 @@
     function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } el.innerHTML = message || ""; el.style.display = message ? "block" : "none"; el.className = ""; if (type === 'result') { /* No special class for result containers */ } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); el.style.backgroundColor = baseBg; el.style.borderLeft = `4px solid ${baseBorder}`; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { if (el.innerHTML.includes(message)) { el.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
 
     // --- Authentication & Session ---
-    // *** fetchWithAuth with corrected closing parenthesis ***
-    function fetchWithAuth(url, options={}) {
-        const token=localStorage.getItem(CONFIG.TOKEN_KEY);
-        if(!token){ console.error('No token.'); alert('Session expirée.'); redirectToLogin(); return Promise.reject(new Error('Token non trouvé.')); }
-        resetSessionTimeout();
-        const headers={...options.headers,'Authorization':`Bearer ${token}`};
-        if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';}
-        else if(options.body instanceof FormData){delete headers['Content-Type'];}
-        return fetch(url,{...options,headers:headers})
-            .then(r => { // Start of .then() callback
-                if(r.status===401||r.status===403){ console.error('Auth error:',r.status); localStorage.removeItem(CONFIG.TOKEN_KEY); alert('Session invalide.'); redirectToLogin(); throw new Error(`Auth failed:${r.status}`); }
-                 if(!r.ok){ return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);}); }
-                 return r;
-            }); // <<< Closing parenthesis was added here
-    } // <<< Closing brace for fetchWithAuth
-
+    function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No token.');alert('Session expirée.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Auth error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide.');redirectToLogin();throw new Error(`Auth failed:${r.status}`);} if(!r.ok){return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);});} return r;}); }
     function redirectToLogin() { window.location.href = CONFIG.LOGIN_PAGE_URL; }
     function logout() { localStorage.removeItem(CONFIG.TOKEN_KEY); clearTimeout(sessionTimeoutId); showToast('Déconnecté.', 'success'); setTimeout(redirectToLogin, 1000); }
     function resetSessionTimeout() { if (sessionTimeoutId) clearTimeout(sessionTimeoutId); sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT); }
@@ -203,7 +188,7 @@
     // --- Event Handlers ---
     async function handlePatientSearch() { const cin = DOM.cinInput.value.trim(); if (!cin) { showMessage('getResult', '<div class="message message-warning" style="display:block;"><i class="fas fa-exclamation-triangle"></i> CIN requis.</div>', 'result'); return; } DOM.resultDiv.innerHTML = '<div class="patient-result-container" style="text-align:center; padding: 20px;"><p><i class="fas fa-spinner fa-spin"></i> Recherche...</p></div>'; DOM.resultDiv.style.display = 'block'; DOM.resultDiv.className = ""; try { const data = await apiService.fetchPatient(cin); if (!data || !data.nom || !data.ipp) { throw new Error("Patient non trouvé ou données invalides."); } currentIPP = data.ipp; currentPatientInfo = data; const qrData = generateQrData(data.ipp); if (!qrData) throw new Error("Erreur QR code."); const { qrImageUrl } = qrData; const formatDate = (d) => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('fr-FR') : '-'; const formatDateTime = (d) => d ? new Date(d).toLocaleString('fr-FR',{dateStyle:'medium',timeStyle:'short'}) : '-'; const resultHTML = `<div class="patient-result-container"><div style="margin-bottom:1rem;"><h3 style="color:var(--primary);"><i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}</h3></div><div class="patient-result-info"><div class="info-group"><div class="info-label">IPP</div><div class="info-value">${data.ipp||'-'}</div></div><div class="info-group"><div class="info-label">CIN</div><div class="info-value">${data.cin||'-'}</div></div><div class="info-group"><div class="info-label">Téléphone</div><div class="info-value">${data.telephone||'-'}</div></div><div class="info-group"><div class="info-label">Naissance</div><div class="info-value">${formatDate(data.date_naissance)}</div></div><div class="info-group"><div class="info-label">Sexe</div><div class="info-value">${data.sexe==='M'?'Homme':'Femme'}</div></div><div class="info-group"><div class="info-label">Mutuelle</div><div class="info-value">${data.mutuelle||"Non"}</div></div><div class="info-group" style="grid-column:span 2;"><div class="info-label">Adresse</div><div class="info-value">${data.adresse||'-'}, ${data.ville||''}</div></div><div class="info-group"><div class="info-label">Créé le</div><div class="info-value">${formatDateTime(data.created_at)}</div></div></div><div class="patient-result-qr"><img src="${qrImageUrl}" alt="QR Code Patient" /><button onclick="printQRCode('${qrImageUrl}')" class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer QR Code</button></div></div>`; showMessage('getResult', resultHTML, 'result'); } catch(err) { console.error("Error fetching:", err); if (!err.message.startsWith('Auth')) { showMessage('getResult', `<div class="message message-error" style="display:block;"><i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur récupération."}</div>`, 'result'); } } }
 
-    // *** handleCreatePatient with CORRECTED Direct Element Manipulation ***
+    // *** handleCreatePatient with Direct Element Manipulation and Logs ***
     async function handleCreatePatient(event) {
         event.preventDefault();
         showMessage('message', '', '');
@@ -221,7 +206,7 @@
         try {
             const data = await apiService.createPatient(payload);
             if (!data || !data.ipp) { throw new Error("IPP manquant - création échouée?"); }
-            console.log("Create response:", data);
+            console.log("Create response:", data); // Log success response
             form.reset(); DOM.mutuelleInput.disabled = true; DOM.hasInsuranceCheckbox.checked = false;
 
             const qrData = generateQrData(data.ipp);
@@ -231,13 +216,20 @@
             // --- Directly update elements inside #createResult ---
             const resultMsgEl = DOM.createResultMessage;
             const resultImgEl = DOM.createQrCodeImage;
-            const resultBtnEl = DOM.createPrintButton;
+            // *** Re-fetch the button reference INSIDE the function ***
+            const resultBtnEl = document.getElementById("createPrintButton"); // Use getElementById for safety
+            console.log("Button Element Check (Inside Handler):", resultBtnEl); // Log if button is found here
 
             if (resultMsgEl) resultMsgEl.innerHTML = `<i class="fas fa-check-circle"></i> Patient (${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}) créé. IPP: ${sanitizeInput(data.ipp)}`;
             if (resultImgEl) { resultImgEl.src = qrImageUrl; resultImgEl.alt = `QR Code pour ${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}`; resultImgEl.style.display = 'block'; }
+
+            // *** Use the locally fetched reference ***
             if (resultBtnEl) {
-                 resultBtnEl.onclick = () => printQRCode(qrImageUrl); // Assign print function
-                 resultBtnEl.style.display = 'inline-block'; // Ensure button is displayed
+                console.log("Assigning onclick and showing button..."); // Log before action
+                resultBtnEl.onclick = () => printQRCode(qrImageUrl);
+                resultBtnEl.style.display = 'inline-block'; // Ensure button is displayed
+            } else {
+                 console.error("!!! createPrintButton not found inside handleCreatePatient !!!"); // Error if not found
             }
 
             // --- Make the container visible with correct styling ---
@@ -268,6 +260,9 @@
 
     // --- Initial Setup ---
     window.onload = () => { if (!localStorage.getItem(CONFIG.TOKEN_KEY)) { console.log("Reception: No token."); redirectToLogin(); return; } DOM.body.classList.add('loaded'); console.log("Reception: Authenticated."); resetSessionTimeout(); handleMutuelleChange(); ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => document.addEventListener(event, resetSessionTimeout, { passive: true })); };
+
+    // --- Add Initial Log Check for Button Element ---
+    console.log("Initial Check - createPrintButton Element:", document.getElementById("createPrintButton"));
 
   </script>
 </body>
