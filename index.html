@@ -2,1391 +2,272 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="Dashboard de réception pour la gestion des patients - MediClinic" />
   <title>Réception - MediClinic</title>
-
-  <!-- Google Fonts / Font Awesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        rel="stylesheet"/>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <style>
-    :root {
-      --primary: #5d74f2;
-      --primary-light: #ebeffe;
-      --primary-dark: #4a62d8;
-      --success: #31c971;
-      --success-light: #e0fbea;
-      --success-dark: #28a960;
-      --warning: #ffb648;
-      --warning-light: #fff8ec;
-      --danger: #ff5a5a;
-      --danger-light: #ffeded;
-      --gray-100: #f9fafb;
-      --gray-200: #f1f3f9;
-      --gray-300: #e5e7eb;
-      --gray-400: #d1d5db;
-      --gray-500: #9ca3af;
-      --gray-600: #6b7280;
-      --gray-700: #4b5563;
-      --gray-800: #374151;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.04);
-      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05);
-      --shadow-focus: 0 0 0 3px rgba(93,116,242,0.2);
-      --border-radius: 0.5rem;
-      --transition-speed: 0.2s;
-      font-size: 15px;
-    }
-    * {
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--gray-100);
-      color: var(--gray-800);
-      line-height: 1.5;
-      min-height: 100vh;
-      padding: 0;
-      visibility: hidden; /* We'll fade in once loaded */
-    }
-    body.loaded {
-      visibility: visible;
-      animation: fadeIn 0.3s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      padding: 15px 0;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-      border-bottom: 1px solid var(--gray-200);
-    }
-    .header-main-content {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-grow: 1;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-    }
-    .logo-img {
-      height: 38px;
-      width: auto;
-      margin-right: 10px;
-    }
-    .header-title {
-      color: var(--gray-800);
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin: 0;
-      white-space: nowrap;
-    }
-    .header-logout {
-      flex-shrink: 0;
-      margin-left: auto;
-    }
-    .logout-btn {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.8rem;
-      border-radius: var(--border-radius);
-    }
-
-    .flex-row {
-      display: flex;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-    .flex-col {
-      flex: 1;
-      min-width: 320px;
-    }
-
-    .card {
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-md);
-      overflow: hidden;
-      margin-bottom: 1.5rem;
-      transition: box-shadow var(--transition-speed) ease;
-    }
-    .card:hover {
-      box-shadow: var(--shadow-lg);
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--gray-200);
-    }
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--gray-800);
-      display: flex;
-      align-items: center;
-    }
-    .card-title i {
-      margin-right: 0.6rem;
-      color: var(--primary);
-      font-size: 1.1rem;
-    }
-    .card-actions {
-      color: white;
-      background: var(--primary);
-      border-radius: 0.5rem;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card-body {
-      padding: 1.25rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-size: 0.8rem;
-      color: var(--gray-600);
-      font-weight: 500;
-    }
-    .input-group {
-      margin-bottom: 1rem;
-      position: relative;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
-      gap:1rem;
-      margin-bottom:1rem;
-    }
-    input[type="text"],
-    input[type="date"],
-    input[type="tel"],
-    input[type="email"],
-    select {
-      width: 100%;
-      padding: 0.7rem 0.9rem;
-      font-size: 0.9rem;
-      border-radius: var(--border-radius);
-      border: 1px solid var(--gray-300);
-      background: white;
-      transition: all var(--transition-speed) ease;
-      font-family: 'Inter', sans-serif;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: var(--shadow-focus);
-    }
-    .input-error {
-      border-color: var(--danger) !important;
-    }
-    .input-error:focus {
-      box-shadow: 0 0 0 3px rgba(255,90,90,0.2);
-    }
-    .error-text {
-      color: var(--danger);
-      font-size: 0.75rem;
-      margin-top: 4px;
-      display: none;
-    }
-    .input-group.has-error .error-text {
-      display: block;
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      opacity: 0.6;
-      cursor: pointer;
-    }
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      color: var(--gray-700);
-      margin-bottom: 0;
-      cursor: pointer;
-    }
-    .checkbox-label input[type="checkbox"] {
-      width: 1.1em;
-      height: 1.1em;
-      margin-right: 0.4rem;
-      cursor: pointer;
-      accent-color: var(--primary);
-    }
-    .mutuelle-group {
-      grid-column: span 2;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .mutuelle-group > div:first-child {
-      display: flex;
-      align-items: center;
-    }
-    input[name="mutuelle"]:disabled {
-      background-color: var(--gray-100);
-      cursor: not-allowed;
-      opacity: 0.7;
-      border: 1px solid var(--gray-300);
-    }
-    .btn-group {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-    }
-    .btn {
-      padding: 0.6rem 1.2rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      border-radius: var(--border-radius);
-      border: none;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform 0.1s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: auto;
-      line-height:1.5;
-    }
-    .btn:active {
-      transform: translateY(1px);
-    }
-    .btn i {
-      margin-right: 0.5rem;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    .btn-primary:hover {
-      background: var(--primary-dark);
-    }
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-    .btn-success:hover {
-      background: var(--success-dark);
-    }
-    .btn-secondary {
-      background: var(--gray-600);
-      color: white;
-    }
-    .btn-secondary:hover {
-      background: var(--gray-700);
-    }
-    .btn-outline {
-      background: white;
-      color: var(--primary);
-      border: 1px solid var(--gray-300);
-    }
-    .btn-outline:hover {
-      border-color: var(--primary);
-      background: var(--primary-light);
-    }
-    .btn:disabled {
-      background-color: var(--gray-300);
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .form-submit-button {
-      grid-column: span 2;
-    }
-    .search-bar {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
-    }
-    .search-bar input {
-      flex-grow: 1;
-    }
-
-    .message {
-      padding: 0.8rem 1rem;
-      border-radius: 6px;
-      margin-top: 1rem;
-      font-size:0.85rem;
-      font-weight:500;
-      display: none;
-      grid-column: span 2;
-      animation: fadeIn 0.3s ease;
-      word-break: break-word;
-    }
-    .message-success {
-      background: var(--success-light);
-      color: var(--success-dark);
-      border-left: 4px solid var(--success);
-    }
-    .message-warning {
-      background: var(--warning-light);
-      color: var(--warning);
-      border-left: 4px solid var(--warning);
-    }
-    .message-error {
-      background: var(--danger-light);
-      color: var(--danger);
-      border-left: 4px solid var(--danger);
-    }
-    .message-info {
-      background: var(--primary-light);
-      color: var(--primary-dark);
-      border-left: 4px solid var(--primary);
-    }
-    #getResult {
-      margin-top: 1.25rem;
-      padding: 0;
-      background-color: transparent;
-      border-radius: 0;
-      border-left: none;
-      display: none;
-    }
-    .patient-result-container {
-      background-color: var(--gray-100);
-      padding:1.25rem;
-      border-radius: var(--border-radius);
-      border-left: 4px solid var(--primary);
-      animation: slideIn 0.3s ease-out;
-    }
-    @keyframes slideIn {
-      from { opacity:0; transform: translateY(10px); }
-      to   { opacity:1; transform: translateY(0); }
-    }
-    .patient-result-info {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
-      gap:0.75rem 1rem;
-      margin-bottom:1rem;
-    }
-    .patient-result-info .info-group {
-      margin-bottom:0;
-    }
-    .info-group {
-      margin-bottom:5px;
-    }
-    .info-label {
-      font-size: 0.75rem;
-      color: var(--gray-500);
-      margin-bottom:4px;
-    }
-    .info-value {
-      font-size: 0.9rem;
-      color: var(--gray-800);
-      font-weight:500;
-    }
-    .patient-result-qr {
-      text-align: center;
-      margin-top: 1.25rem;
-    }
-    .patient-result-qr img {
-      max-width: 180px;
-      display: block;
-      margin: 0 auto 1rem auto;
-      border:1px solid var(--gray-300);
-      padding:5px;
-      background:white;
-      transition: transform 0.3s ease;
-    }
-    .patient-result-qr img:hover {
-      transform: scale(1.03);
-    }
-
-    /* #createResult is ALWAYS visible now, so remove or comment out the "display:none". */
-    #createResult {
-      margin-top: 1.25rem;
-      text-align: center;
-      background-color: var(--success-light);
-      padding: 1rem;
-      border-radius: var(--border-radius);
-      border-left: 4px solid var(--success);
-      animation: fadeIn 0.3s ease;
-    }
-    #createResult p {
-      color: var(--success-dark);
-      font-weight: 500;
-      margin-bottom: 1rem;
-    }
-    #createResult img {
-      max-width: 160px;
-      display: block;
-      margin: 0 auto 1rem auto;
-      border: 1px solid var(--gray-300);
-      padding:5px;
-      background:white;
-    }
-
-    .loading-spinner {
-      display:inline-block;
-      width:1em;
-      height:1em;
-      border:2px solid rgba(255,255,255,0.3);
-      border-radius:50%;
-      border-top-color:white;
-      animation: spin 1s linear infinite;
-      margin-left:-2px;
-      margin-right:8px;
-    }
-    .btn .loading-spinner {
-      border-top-color:white;
-    }
-    .btn-outline .loading-spinner {
-      border-top-color: var(--primary);
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .toast {
-      position: fixed;
-      bottom:20px;
-      right:20px;
-      background: var(--gray-800);
-      color:white;
-      padding:0.8rem 1.25rem;
-      border-radius: var(--border-radius);
-      box-shadow:0 4px 12px rgba(0,0,0,0.15);
-      display:flex;
-      align-items:center;
-      z-index:1000;
-      transform:translateY(120px);
-      opacity:0;
-      transition: all 0.4s cubic-bezier(0.215,0.610,0.355,1);
-    }
-    .toast.show {
-      transform:translateY(0);
-      opacity:1;
-    }
-    .toast.success {
-      background-color: var(--success-dark);
-    }
-    .toast.error {
-      background-color: var(--danger);
-    }
-    .toast i {
-      margin-right:0.75rem;
-    }
-
-    .sr-only {
-      position:absolute;
-      width:1px; 
-      height:1px; 
-      padding:0; 
-      margin:-1px; 
-      overflow:hidden;
-      clip: rect(0,0,0,0); 
-      white-space:nowrap; 
-      border-width:0;
-    }
-    a:focus-visible,
-    button:focus-visible,
-    input:focus-visible,
-    select:focus-visible,
-    textarea:focus-visible {
-      outline:2px solid var(--primary);
-      outline-offset:2px;
-      box-shadow:none;
-    }
-    .skip-link {
-      position:absolute;
-      left:-9999px;
-      z-index:999;
-      padding:1em;
-      background-color:white;
-      color:var(--primary);
-      opacity:0;
-    }
-    .skip-link:focus {
-      left:50%;
-      transform:translateX(-50%);
-      opacity:1;
-    }
-
-    @media (max-width:768px) {
-      .flex-row {
-        flex-direction: column;
-      }
-      .form-grid {
-        grid-template-columns:1fr;
-      }
-      .mutuelle-group,
-      .form-submit-button,
-      .message {
-        grid-column:span 1;
-      }
-      .patient-result-info {
-        grid-template-columns:1fr;
-      }
-      .header {
-        flex-direction: column;
-        align-items:flex-start;
-        gap:15px;
-      }
-      .header-main-content {
-        width:100%;
-      }
-      .header-logout {
-        width:100%;
-        margin-left:0;
-      }
-      .logout-btn {
-        width:100%;
-        justify-content:center;
-      }
-      .search-bar {
-        flex-direction:column;
-      }
-      .search-bar .btn {
-        width:100%;
-      }
-    }
-    @media (max-width:480px) {
-      .app-container {
-        padding:1rem;
-      }
-      .header-title {
-        font-size:1.2rem;
-      }
-      .card-body {
-        padding:1rem;
-      }
-      .btn {
-        padding:0.6rem 1rem;
-        font-size:0.8rem;
-      }
-      .patient-info {
-        grid-template-columns:1fr;
-      }
-      .btn-group {
-        gap:0.5rem;
-      }
-    }
+    /* --- CSS --- */
+    :root { --primary: #5d74f2; --primary-light: #ebeffe; --primary-dark: #4a62d8; --success: #31c971; --success-light: #e0fbea; --success-dark: #28a960; --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded; --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05); --shadow-focus: 0 0 0 3px rgba(93,116,242,0.2); --border-radius: 0.5rem; --transition-speed: 0.2s; font-size: 15px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-800); line-height: 1.5; min-height: 100vh; padding: 0; visibility: hidden; }
+    body.loaded { visibility: visible; animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem; }
+    .header { display: flex; align-items: center; padding: 15px 0; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--gray-200); }
+    .header-main-content { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; }
+    .logo { display: flex; align-items: center; }
+    .logo-img { height: 38px; width: auto; margin-right: 10px; }
+    .header-title { color: var(--gray-800); font-size: 1.4rem; font-weight: 600; margin: 0; white-space: nowrap; }
+    .header-logout { flex-shrink: 0; margin-left: auto; }
+    .logout-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: var(--border-radius); }
+    .flex-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .flex-col { flex: 1; min-width: 380px; }
+    .card { background: #ffffff; padding: 1.5rem; border-radius: 1rem; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; transition: var(--transition); overflow: hidden; }
+    .card:hover { box-shadow: var(--shadow-lg); }
+    .card-header { padding: 0 0 1.25rem 0; margin-bottom: 1.25rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+    .card-title { font-size: 1.15rem; font-weight: 600; color: var(--dark-color); margin: 0; display: flex; align-items: center; }
+    .card-title i { margin-right: 0.5rem; font-size: 1.2rem; color: var(--primary-color); }
+    .card-actions { color: white; background: var(--primary); border-radius: 0.5rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+    .card-body { /* Removed card-body specific padding, card now has padding */ }
+    label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--gray-600); font-weight: 500; }
+    .input-group { margin-bottom: 1.25rem; position: relative; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; }
+    input[type="text"], input[type="date"], input[type="tel"], input[type="email"], select { width: 100%; padding: 0.7rem 0.9rem; font-size: 0.9rem; border-radius: var(--border-radius); border: 1px solid #dfe3e8; background: white; transition: all var(--transition-speed) ease; font-family: 'Inter', sans-serif; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: var(--shadow-focus); }
+    .input-error { border-color: var(--danger) !important; }
+    .input-error:focus { box-shadow: 0 0 0 3px rgba(255, 90, 90, 0.2); }
+    .error-text { color: var(--danger); font-size: 0.75rem; margin-top: 4px; display: none; }
+    .input-group.has-error .error-text { display: block; }
+    input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
+    .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-700); margin-bottom: 0; cursor: pointer; }
+    .checkbox-label input[type="checkbox"] { width: 1.1em; height: 1.1em; margin-right: 0.4rem; cursor: pointer; accent-color: var(--primary); }
+    .mutuelle-group { grid-column: span 2; display: flex; flex-direction: column; gap: 0.75rem; }
+    .mutuelle-group > div:first-child { display: flex; align-items: center; }
+    input[name="mutuelle"]:disabled { background-color: var(--gray-100); cursor: not-allowed; opacity: 0.7; border: 1px solid var(--gray-300); }
+    .btn-group { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+    .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 500; border-radius: var(--border-radius); cursor: pointer; transition: background-color var(--transition-speed) ease, transform 0.1s ease; display: inline-flex; align-items: center; justify-content: center; width: auto; line-height: 1.5; border: 1px solid transparent; }
+    .btn:active { transform: translateY(1px); }
+    .btn i { margin-right: 0.5rem; }
+    .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: var(--primary-dark); } .btn-primary:disabled { background-color: var(--primary-light); border-color: var(--primary-light); cursor: not-allowed; }
+    .btn-success { background: var(--success); color: white; } .btn-success:hover { background: var(--success-dark); }
+    .btn-secondary { background: var(--gray-600); color: white; } .btn-secondary:hover { background: var(--gray-700); }
+    .btn-outline { background: white; color: var(--primary); border: 1px solid var(--gray-300); } .btn-outline:hover { border-color: var(--primary); background: var(--primary-light); }
+    .btn:disabled { background-color: var(--gray-300); cursor: not-allowed; opacity: 0.7; }
+    .form-submit-button { grid-column: span 2; }
+    .search-bar { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .search-bar input { flex-grow: 1; }
+    .message { padding: 0.8rem 1rem; border-radius: 6px; margin-top: 1rem; font-size: 0.85rem; font-weight: 500; display: none; grid-column: span 2; animation: fadeIn 0.3s ease; word-break: break-word; }
+    .message-success { background: var(--success-light); color: var(--success-dark); border-left: 4px solid var(--success); }
+    .message-warning { background: var(--warning-light); color: var(--warning); border-left: 4px solid var(--warning); }
+    .message-error { background: var(--danger-light); color: var(--danger); border-left: 4px solid var(--danger); }
+    .message-info { background: var(--primary-light); color: var(--primary-dark); border-left: 4px solid var(--primary);}
+    #getResult { margin-top: 1.25rem; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; }
+    .patient-result-container { background-color: var(--gray-100); padding: 1.25rem; border-radius: var(--border-radius); border-left: 4px solid var(--primary); animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .patient-result-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem 1rem; margin-bottom: 1rem; }
+    .patient-result-info .info-group { margin-bottom: 0; }
+    .info-group { margin-bottom: 5px; }
+    .info-label { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 4px; }
+    .info-value { font-size: 0.9rem; color: var(--gray-800); font-weight: 500; }
+    .patient-result-qr { text-align: center; margin-top: 1.25rem; }
+    .patient-result-qr img { max-width: 180px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; transition: transform 0.3s ease; }
+    .patient-result-qr img:hover { transform: scale(1.03); }
+    #createResult { display: none; margin-top: 1.25rem; text-align: center; background-color: var(--success-light); padding: 1rem; border-radius: var(--border-radius); border-left: 4px solid var(--success); animation: fadeIn 0.3s ease; }
+    #createResult p { color: var(--success-dark); font-weight: 500; margin-bottom: 1rem;}
+    #createResult img { max-width: 160px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; }
+    .loading-spinner { display: inline-block; width: 1em; height: 1em; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; margin-left: -2px; margin-right: 8px; }
+    .btn .loading-spinner { border-top-color: white; }
+    .btn-outline .loading-spinner { border-top-color: var(--primary); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--gray-800); color: white; padding: 0.8rem 1.25rem; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; z-index: 1000; transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1); }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background-color: var(--success-dark); }
+    .toast.error { background-color: var(--danger); }
+    .toast i { margin-right: 0.75rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; box-shadow: none; }
+    .skip-link { position: absolute; left: -9999px; z-index: 999; padding: 1em; background-color: white; color: var(--primary); opacity: 0; }
+    .skip-link:focus { left: 50%; transform: translateX(-50%); opacity: 1; }
+    @media (max-width: 768px) { .flex-row { flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .mutuelle-group, .form-submit-button, .message { grid-column: span 1; } .patient-result-info { grid-template-columns: 1fr; } .header { flex-direction: column; align-items: flex-start; gap: 15px; } .header-main-content { width: 100%; } .header-logout { width: 100%; margin-left: 0; } .logout-btn { width: 100%; justify-content: center; } .search-bar { flex-direction: column; } .search-bar .btn { width: 100%; } }
+    @media (max-width: 480px) { .app-container { padding: 1rem; } .header-title { font-size: 1.2rem; } .card-body { padding: 1rem; } .btn { padding: 0.6rem 1rem; font-size: 0.8rem; } .patient-info { grid-template-columns: 1fr; } .btn-group { gap: 0.5rem; } }
   </style>
 </head>
-
-<body>
+<body >
   <a href="#main-content" class="skip-link">Passer au contenu principal</a>
-
   <div class="container">
     <div class="header">
       <div class="header-main-content">
         <div class="logo">
-          <img src="./clinique-nakhil-logo-horizontal.webp" 
-               alt="MediClinic Logo" 
-               class="logo-img"/>
+          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> <!-- UPDATE SRC -->
         </div>
         <h1 class="header-title">Réception</h1>
       </div>
       <div class="header-logout">
-        <button onclick="logout()" 
-                class="btn btn-outline logout-btn no-print" 
-                aria-label="Déconnexion">
-          <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion
-        </button>
+        <button onclick="logout()" class="btn btn-outline logout-btn no-print" aria-label="Déconnexion"> <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion </button>
       </div>
     </div>
 
     <main id="main-content" class="flex-row">
-      <!-- Create Patient Section -->
       <div class="flex-col">
         <section class="card" aria-labelledby="create-patient-heading">
-          <div class="card-header">
-            <h2 id="create-patient-heading" class="card-title">
-              <i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient
-            </h2>
-            <div class="card-actions" aria-hidden="true">
-              <i class="fas fa-pen"></i>
-            </div>
-          </div>
+          <div class="card-header"> <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div> </div>
           <div class="card-body">
             <form id="createForm" novalidate>
               <div class="form-grid">
-                <div class="input-group">
-                  <label for="nom">Nom <span aria-hidden="true">*</span></label>
-                  <input id="nom" 
-                         name="nom" 
-                         type="text" 
-                         placeholder="Nom de famille" 
-                         required 
-                         aria-required="true" 
-                         autocomplete="family-name"/>
-                  <div class="error-text">Veuillez entrer un nom</div>
-                </div>
-                <div class="input-group">
-                  <label for="prenom">Prénom <span aria-hidden="true">*</span></label>
-                  <input id="prenom" 
-                         name="prenom" 
-                         type="text" 
-                         placeholder="Prénom" 
-                         required 
-                         aria-required="true" 
-                         autocomplete="given-name"/>
-                  <div class="error-text">Veuillez entrer un prénom</div>
-                </div>
-                <div class="input-group">
-                  <label for="cin">CIN <span aria-hidden="true">*</span></label>
-                  <input id="cin" 
-                         name="cin" 
-                         type="text" 
-                         placeholder="Ex: AB123456" 
-                         required 
-                         aria-required="true" 
-                         pattern="^[A-Za-z]{1,2}\d{5,6}$"/>
-                  <div class="error-text">Format CIN invalide (ex: AB123456)</div>
-                </div>
-                <div class="input-group">
-                  <label for="telephone">Téléphone <span aria-hidden="true">*</span></label>
-                  <input id="telephone" 
-                         name="telephone" 
-                         type="tel" 
-                         placeholder="Ex: 0612345678" 
-                         required 
-                         aria-required="true" 
-                         autocomplete="tel" 
-                         pattern="^0[5-7]\d{8}$"/>
-                  <div class="error-text">Format téléphone invalide (0xxxxxxxx)</div>
-                </div>
-                <div class="input-group">
-                  <label for="adresse">Adresse <span aria-hidden="true">*</span></label>
-                  <input id="adresse" 
-                         name="adresse" 
-                         type="text" 
-                         placeholder="Adresse complète" 
-                         required 
-                         aria-required="true" 
-                         autocomplete="address-line1"/>
-                  <div class="error-text">Veuillez entrer une adresse</div>
-                </div>
-                <div class="input-group">
-                  <label for="ville">Ville <span aria-hidden="true">*</span></label>
-                  <input id="ville" 
-                         name="ville" 
-                         type="text" 
-                         placeholder="Ville" 
-                         required 
-                         aria-required="true" 
-                         autocomplete="address-level2"/>
-                  <div class="error-text">Veuillez entrer une ville</div>
-                </div>
-                <div class="input-group">
-                  <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label>
-                  <input id="date_naissance" 
-                         name="date_naissance" 
-                         type="date" 
-                         required 
-                         aria-required="true" 
-                         autocomplete="bday"/>
-                  <div class="error-text">Veuillez entrer une date valide</div>
-                </div>
-                <div class="input-group">
-                  <label for="sexe">Sexe <span aria-hidden="true">*</span></label>
-                  <select id="sexe" 
-                          name="sexe" 
-                          required 
-                          aria-required="true" 
-                          autocomplete="sex">
-                    <option value="M">Homme</option>
-                    <option value="F">Femme</option>
-                  </select>
-                  <div class="error-text">Veuillez sélectionner un sexe</div>
-                </div>
-                <div class="input-group mutuelle-group">
-                  <div>
-                    <input type="checkbox" id="has_insurance" name="has_insurance" />
-                    <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label>
-                  </div>
-                  <div id="mutuelle-input-container">
-                    <input name="mutuelle" 
-                           id="mutuelle" 
-                           type="text" 
-                           placeholder="Nom Mutuelle (si cochée)"
-                           aria-labelledby="has_insurance" 
-                           disabled />
-                    <div class="error-text">Veuillez entrer le nom de la mutuelle</div>
-                  </div>
-                </div>
-                <div class="form-submit-button">
-                  <button type="submit" 
-                          class="btn btn-success" 
-                          id="createPatientBtn">
-                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
-                    Créer Patient
-                  </button>
-                </div>
+                <div class="input-group"> <label for="nom">Nom <span aria-hidden="true">*</span></label> <input id="nom" name="nom" type="text" placeholder="Nom de famille" required aria-required="true" autocomplete="family-name"/> <div class="error-text">Veuillez entrer un nom</div> </div>
+                <div class="input-group"> <label for="prenom">Prénom <span aria-hidden="true">*</span></label> <input id="prenom" name="prenom" type="text" placeholder="Prénom" required aria-required="true" autocomplete="given-name"/> <div class="error-text">Veuillez entrer un prénom</div> </div>
+                <div class="input-group"> <label for="cin">CIN <span aria-hidden="true">*</span></label> <input id="cin" name="cin" type="text" placeholder="Ex: AB123456" required aria-required="true" pattern="^[A-Za-z]{1,2}\d{5,6}$"/> <div class="error-text">Format CIN invalide (ex: AB123456)</div> </div>
+                <div class="input-group"> <label for="telephone">Téléphone <span aria-hidden="true">*</span></label> <input id="telephone" name="telephone" type="tel" placeholder="Ex: 0612345678" required aria-required="true" autocomplete="tel" pattern="^0[5-7]\d{8}$"/> <div class="error-text">Format téléphone invalide (0xxxxxxxx)</div> </div>
+                <div class="input-group"> <label for="adresse">Adresse <span aria-hidden="true">*</span></label> <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required aria-required="true" autocomplete="address-line1"/> <div class="error-text">Veuillez entrer une adresse</div> </div>
+                <div class="input-group"> <label for="ville">Ville <span aria-hidden="true">*</span></label> <input id="ville" name="ville" type="text" placeholder="Ville" required aria-required="true" autocomplete="address-level2"/> <div class="error-text">Veuillez entrer une ville</div> </div>
+                <div class="input-group"> <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label> <input id="date_naissance" name="date_naissance" type="date" required aria-required="true" autocomplete="bday"/> <div class="error-text">Veuillez entrer une date valide</div> </div>
+                <div class="input-group"> <label for="sexe">Sexe <span aria-hidden="true">*</span></label> <select id="sexe" name="sexe" required aria-required="true" autocomplete="sex"> <option value="M">Homme</option> <option value="F">Femme</option> </select> <div class="error-text">Veuillez sélectionner un sexe</div> </div>
+                <div class="input-group mutuelle-group"> <div> <input type="checkbox" id="has_insurance" name="has_insurance" /> <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label> </div> <div id="mutuelle-input-container"> <input name="mutuelle" id="mutuelle" type="text" placeholder="Nom Mutuelle (si cochée)" aria-labelledby="has_insurance" disabled /> <div class="error-text">Veuillez entrer le nom de la mutuelle</div> </div> </div>
+                <div class="form-submit-button"> <button type="submit" class="btn btn-success" id="createPatientBtn"> <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient </button> </div>
                 <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
             </form>
-
-            <!-- #createResult is ALWAYS shown, but the print button is initially disabled. -->
-            <div id="createResult" role="status" aria-live="polite">
-              <p id="createResultMessage">
-                (Le résultat / message apparaîtra après la création du patient.)
-              </p>
-              <img id="createQrCodeImage"
-                   src=""
-                   alt=""
-                   loading="lazy" />
-              <!-- Print Button is disabled until patient is successfully created -->
-              <button id="createPrintButton"
-                      class="btn btn-secondary"
-                      disabled>
-                <i class="fas fa-print" aria-hidden="true"></i>
-                Imprimer QR Code
-              </button>
+             <!-- Result Div for Create Patient -->
+            <div id="createResult"> <!-- Removed inline style="display: none;" -->
+                <p id="createResultMessage"></p>
+                <img id="createQrCodeImage" src="" alt="" loading="lazy" />
+                 <!-- Button is initially disabled via JS, but present in HTML -->
+                <button id="createPrintButton" class="btn btn-secondary">
+                    <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code
+                </button>
             </div>
           </div>
         </section>
       </div>
 
-      <!-- Search Patient Section -->
       <div class="flex-col">
         <section class="card" aria-labelledby="search-patient-heading">
-          <div class="card-header">
-            <h2 id="search-patient-heading" class="card-title">
-              <i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient
-            </h2>
-            <div class="card-actions" aria-hidden="true">
-              <i class="fas fa-users"></i>
-            </div>
-          </div>
+          <div class="card-header"> <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div> </div>
           <div class="card-body">
             <div class="search-bar">
-              <input id="getCin"
-                     type="text"
-                     placeholder="Entrer le CIN du patient"
-                     aria-label="Numéro CIN du patient"/>
-              <button id="searchBtn" class="btn btn-primary">
-                <i class="fas fa-search" aria-hidden="true"></i>
-                Rechercher
-              </button>
+              <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient"/>
+              <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button>
             </div>
             <div id="getResult" role="region" aria-live="polite"></div>
           </div>
         </section>
       </div>
-    </main>
+    </main> <!-- End flex-row -->
 
-    <!-- Toast Notification -->
     <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
-  </div>
+  </div> <!-- End container -->
 
+  <!-- ** SCRIPT ** -->
   <script>
     // --- Configuration & Constants ---
-    const CONFIG = {
-      API_BASE_URL: 'https://workflows.aphelionxinnovations.com',
-      QR_TARGET_BASE_URL: 'app://medilink/patient',
-      LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/',
-      TOKEN_KEY: 'authToken',
-      SESSION_TIMEOUT: 30 * 60 * 1000,  // 30 minutes
-      MESSAGE_DISPLAY_TIME: 7000,       // 7 seconds
-      TOAST_DISPLAY_TIME: 4000
-    };
-
-    const DOM = {
-      body: document.body,
-      resultDiv: document.getElementById("getResult"),
-      messageDiv: document.getElementById("message"),
-      createForm: document.getElementById("createForm"),
-      createResultDiv: document.getElementById("createResult"),
-      createResultMessage: document.getElementById("createResultMessage"),
-      createQrCodeImage: document.getElementById("createQrCodeImage"),
-      createPrintButton: document.getElementById("createPrintButton"),
-      createPatientBtn: document.getElementById("createPatientBtn"),
-      searchButton: document.getElementById("searchBtn"),
-      cinInput: document.getElementById("getCin"),
-      hasInsuranceCheckbox: document.getElementById("has_insurance"),
-      mutuelleInput: document.getElementById("mutuelle"),
-      mutuelleInputContainer: document.getElementById("mutuelle-input-container"),
-      toast: document.getElementById("toast")
-    };
-
-    let currentIPP = null;
-    let currentPatientInfo = null;
-    let sessionTimeoutId = null;
+    const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, MESSAGE_DISPLAY_TIME: 7000, TOAST_DISPLAY_TIME: 4000 };
+    const DOM = { body: document.body, resultDiv: document.getElementById("getResult"), messageDiv: document.getElementById("message"), createForm: document.getElementById("createForm"), createResultDiv: document.getElementById("createResult"), searchButton: document.getElementById("searchBtn"), cinInput: document.getElementById("getCin"), hasInsuranceCheckbox: document.getElementById("has_insurance"), mutuelleInput: document.getElementById("mutuelle"), mutuelleInputContainer: document.getElementById("mutuelle-input-container"), createPatientBtn: document.getElementById("createPatientBtn"), createResultMessage: document.getElementById("createResultMessage"), createQrCodeImage: document.getElementById("createQrCodeImage"), createPrintButton: document.getElementById("createPrintButton"), toast: document.getElementById("toast") };
+    let currentIPP = null; let currentPatientInfo = null; let sessionTimeoutId = null;
 
     // --- Utility Functions ---
-    function showToast(message, type = 'success') {
-      if (!message || !DOM.toast) return;
-      const icon = type === 'success'
-        ? '<i class="fas fa-check-circle" aria-hidden="true"></i>'
-        : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>';
-
-      DOM.toast.innerHTML = `${icon} ${message}`;
-      DOM.toast.className = `toast ${type}`;
-      DOM.toast.classList.add('show');
-
-      setTimeout(() => {
-        DOM.toast.classList.remove('show');
-      }, CONFIG.TOAST_DISPLAY_TIME);
-    }
-
-    function sanitizeInput(input) {
-      if (!input) return '';
-      const temp = document.createElement('div');
-      temp.textContent = input;
-      return temp.innerHTML;
-    }
-
-    function showMessage(elementId, message, type) {
-      const el = document.getElementById(elementId);
-      if (!el) {
-        console.error(`Msg Elem "${elementId}" not found.`);
-        return;
-      }
-      el.innerHTML = message || "";
-      el.style.display = message ? "block" : "none";
-      el.className = "";
-
-      // If it's a "message" or "getResult" region, we might add special classes
-      if (type === 'result') {
-        // Just show the raw content
-      } else {
-        // It's a message container
-        el.className = "message";
-        if (type === "success") el.classList.add("message-success");
-        else if (type === "warning") el.classList.add("message-warning");
-        else if (type === "error") el.classList.add("message-error");
-        else if (type === "info") el.classList.add("message-info");
-      }
-
-      // Auto-hide success/info messages from #message after a while
-      if (type !== 'error' &&
-          type !== 'warning' &&
-          type !== 'loading' &&
-          message &&
-          elementId === 'message') {
-        setTimeout(() => {
-          if (el.innerHTML.includes(message)) {
-            el.style.display = 'none';
-          }
-        }, CONFIG.MESSAGE_DISPLAY_TIME);
-      }
-    }
+    function showToast(message, type = 'success') { if (!message || !DOM.toast) return; const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; DOM.toast.innerHTML = `${icon} ${message}`; DOM.toast.className = `toast ${type}`; DOM.toast.classList.add('show'); setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); }
+    function sanitizeInput(input) { if (!input) return ''; const temp = document.createElement('div'); temp.textContent = input; return temp.innerHTML; }
+    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } el.innerHTML = message || ""; el.style.display = message ? "block" : "none"; el.className = ""; if (type === 'result') { /* No special class for result containers */ } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); el.style.backgroundColor = baseBg; el.style.borderLeft = `4px solid ${baseBorder}`; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { if (el.innerHTML.includes(message)) { el.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
 
     // --- Authentication & Session ---
-    function fetchWithAuth(url, options={}) {
-      const token = localStorage.getItem(CONFIG.TOKEN_KEY);
-      if (!token) {
-        console.error('No token.');
-        alert('Session expirée.');
-        redirectToLogin();
-        return Promise.reject(new Error('Token non trouvé.'));
-      }
-      resetSessionTimeout();
-
-      const headers = {
-        ...options.headers,
-        'Authorization': `Bearer ${token}`
-      };
-      if (options.body && !(options.body instanceof FormData)) {
-        headers['Content-Type'] = 'application/json';
-      } else if (options.body instanceof FormData) {
-        delete headers['Content-Type'];
-      }
-
-      return fetch(url, {...options, headers})
-        .then(r => {
-          if (r.status === 401 || r.status === 403) {
-            console.error('Auth error:', r.status);
-            localStorage.removeItem(CONFIG.TOKEN_KEY);
-            alert('Session invalide.');
-            redirectToLogin();
-            throw new Error(`Auth failed: ${r.status}`);
-          }
-          if (!r.ok) {
-            return r.text().then(t => {
-              throw new Error(`Erreur ${r.status}: ${t || r.statusText}`);
-            });
-          }
-          return r;
-        });
-    }
-
-    function redirectToLogin() {
-      window.location.href = CONFIG.LOGIN_PAGE_URL;
-    }
-
-    function logout() {
-      localStorage.removeItem(CONFIG.TOKEN_KEY);
-      clearTimeout(sessionTimeoutId);
-      showToast('Déconnecté.', 'success');
-      setTimeout(redirectToLogin, 1000);
-    }
-
-    function resetSessionTimeout() {
-      if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
-      sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT);
-    }
+    function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No token.');alert('Session expirée.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Auth error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide.');redirectToLogin();throw new Error(`Auth failed:${r.status}`);} if(!r.ok){return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);});} return r;}); }
+    function redirectToLogin() { window.location.href = CONFIG.LOGIN_PAGE_URL; }
+    function logout() { localStorage.removeItem(CONFIG.TOKEN_KEY); clearTimeout(sessionTimeoutId); showToast('Déconnecté.', 'success'); setTimeout(redirectToLogin, 1000); }
+    function resetSessionTimeout() { if (sessionTimeoutId) clearTimeout(sessionTimeoutId); sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT); }
 
     // --- Form Validation ---
-    function validateField(input, validationFn, errorMessage) {
-      const value = input.value.trim();
-      const group = input.closest('.input-group');
-      if (!group) return true;
-
-      const isValid = validationFn(value);
-      group.classList.toggle('has-error', !isValid);
-      input.classList.toggle('input-error', !isValid);
-
-      const errorDiv = group.querySelector('.error-text');
-      if (errorDiv) {
-        errorDiv.textContent = isValid ? '' : errorMessage;
-      }
-      return isValid;
-    }
-
-    function validateCreateForm() {
-      let isValid = true;
-      showMessage('message', '', '');
-
-      DOM.createForm.querySelectorAll('.input-group.has-error')
-                    .forEach(el => el.classList.remove('has-error'));
-      DOM.createForm.querySelectorAll('input, select')
-                    .forEach(el => el.classList.remove('input-error'));
-
-      isValid &= validateField(DOM.createForm.nom,
-        val => val.length > 0, 
-        "Nom requis"
-      );
-      isValid &= validateField(DOM.createForm.prenom,
-        val => val.length > 0, 
-        "Prénom requis"
-      );
-      isValid &= validateField(DOM.createForm.cin,
-        val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val),
-        "Format CIN invalide (ex: AB123456)"
-      );
-      isValid &= validateField(DOM.createForm.telephone,
-        val => /^0[5-7]\d{8}$/.test(val),
-        "Format téléphone 0Xxxxxxxxx"
-      );
-      isValid &= validateField(DOM.createForm.adresse,
-        val => val.length > 0,
-        "Adresse requise"
-      );
-      isValid &= validateField(DOM.createForm.ville,
-        val => val.length > 0,
-        "Ville requise"
-      );
-      isValid &= validateField(DOM.createForm.date_naissance,
-        val => val !== '',
-        "Date naissance requise"
-      );
-      isValid &= validateField(DOM.createForm.sexe,
-        val => val !== '',
-        "Sélection sexe requise"
-      );
-
-      // If mutuelle is checked, require that field
-      if (DOM.hasInsuranceCheckbox.checked) {
-        isValid &= validateField(DOM.mutuelleInput,
-          val => val.length > 0,
-          "Nom mutuelle requis si coché"
-        );
-      } else {
-        const mutuelleGroup = DOM.mutuelleInput.closest('.input-group');
-        if (mutuelleGroup) mutuelleGroup.classList.remove('has-error');
-        DOM.mutuelleInput.classList.remove('input-error');
-        const errorDiv = mutuelleGroup?.querySelector('.error-text');
-        if (errorDiv) errorDiv.textContent = '';
-      }
-
-      if (!isValid) {
-        showMessage('message', 'Veuillez corriger les erreurs.', 'error');
-        const firstError = DOM.createForm.querySelector('.input-error');
-        if (firstError) firstError.focus();
-      }
-      return !!isValid;
-    }
+    function validateField(input, validationFn, errorMessage) { const value = input.value.trim(); const group = input.closest('.input-group'); if (!group) return true; const isValid = validationFn(value); group.classList.toggle('has-error', !isValid); input.classList.toggle('input-error', !isValid); const errorDiv = group.querySelector('.error-text'); if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage; return isValid; }
+    function validateCreateForm() { let isValid = true; showMessage('message', '', ''); DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); DOM.createForm.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error')); isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis"); isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis"); isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)"); isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx"); isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise"); isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise"); isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise"); isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise"); const mutuelleGroup = DOM.mutuelleInput.closest('.input-group'); if (DOM.hasInsuranceCheckbox.checked) { isValid &= validateField(DOM.mutuelleInput, val => val.length > 0, "Nom mutuelle requis si coché"); } else { if(mutuelleGroup) mutuelleGroup.classList.remove('has-error'); DOM.mutuelleInput.classList.remove('input-error'); const errorDiv = mutuelleGroup?.querySelector('.error-text'); if(errorDiv) errorDiv.textContent = ''; } if (!isValid) { showMessage('message', 'Veuillez corriger les erreurs.', 'error'); const firstError = DOM.createForm.querySelector('.input-error'); if(firstError) firstError.focus(); } return !!isValid; }
 
     // --- API Service ---
-    const apiService = {
-      async fetchPatient(cin) {
-        try {
-          const res = await fetchWithAuth(
-            `${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`
-          );
-          return await res.json();
-        } catch(e) {
-          console.error("Pat fetch err:", e);
-          throw e;
-        }
-      },
-      async createPatient(payload) {
-        try {
-          const res = await fetchWithAuth(
-            `${CONFIG.API_BASE_URL}/webhook/create-patient`,
-            {
-              method: 'POST',
-              body: JSON.stringify(payload)
-            }
-          );
-          return await res.json();
-        } catch(e) {
-          console.error("Pat create err:", e);
-          throw e;
-        }
-      }
-    };
+    const apiService = { async fetchPatient(cin) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`); return await res.json(); } catch (e) { console.error("Pat fetch err:", e); throw e; } }, async createPatient(payload) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) }); return await res.json(); } catch (e) { console.error("Pat create err:", e); throw e; } }};
 
     // --- QR Code Functions ---
-    function generateQrData(ipp) {
-      if (!ipp) {
-        console.error("IPP missing for QR.");
-        return null;
-      }
-      const qrTargetUrl = 
-        `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
-      const qrImageUrl = 
-        `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`;
-
-      console.log("QR Target:", qrTargetUrl);
-      console.log("QR Image:", qrImageUrl);
-      return { qrTargetUrl, qrImageUrl };
-    }
-
-    function printQRCode(qrImageUrl) {
-      const printWindow = window.open('', '_blank', 'width=400,height=450');
-      if (!printWindow) {
-        alert('Veuillez autoriser les pop-ups pour imprimer.');
-        return;
-      }
-      printWindow.document.write(`<!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="UTF-8">
-            <title>Imprimer QR</title>
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/>
-            <style>
-              body {
-                font-family:'Inter',sans-serif;
-                text-align:center; margin:0; padding-top:20px;
-              }
-              img.logo {
-                display:block; width:60px; margin:0 auto 10px auto;
-              }
-              img.qrcode {
-                display:block; width:200px; height:200px;
-                margin:0 auto 15px auto; border:1px solid #eee;
-                padding:5px; background:white;
-              }
-              button { display:none; }
-              @media print {
-                body {
-                  margin:5mm;
-                  -webkit-print-color-adjust:exact;
-                  print-color-adjust:exact;
-                }
-                img.logo, img.qrcode {
-                  margin-bottom:8px;
-                }
-              }
-            </style>
-          </head>
-          <body>
-            <img src="./clinique-nakhil-logo-horizontal.webp" 
-                 alt="Logo" 
-                 class="logo" 
-                 onerror="this.style.display='none'"/>
-            <img src="${qrImageUrl}" alt="QR Code" class="qrcode"/>
-            <script>
-              let printed = false;
-              const doPrint = () => {
-                if (!printed) {
-                  window.print();
-                  printed = true;
-                  window.onafterprint = () => window.close();
-                  setTimeout(() => window.close(), 1500);
-                }
-              };
-              // Wait for images to load or 3s fallback
-              let loadedCount=0, errorCount=0;
-              const images = document.querySelectorAll('img');
-              const total = images.length;
-              if (total===0) {
-                doPrint();
-              } else {
-                images.forEach(img => {
-                  const checkDone = () => {
-                    if (loadedCount + errorCount === total) doPrint();
-                  };
-                  if (img.complete) {
-                    loadedCount++;
-                    checkDone();
-                  } else {
-                    img.onload=()=>{loadedCount++;checkDone();};
-                    img.onerror=()=>{errorCount++;checkDone();};
-                  }
-                });
-                setTimeout(()=>{if(!printed) doPrint();},3000);
-              }
-            <\/script>
-          </body>
-        </html>`
-      );
-      printWindow.document.close();
-    }
+    function generateQrData(ipp) { if (!ipp) { console.error("IPP missing QR."); return null; } const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`; const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`; console.log("QR Target:", qrTargetUrl); console.log("QR Image:", qrImageUrl); return { qrTargetUrl, qrImageUrl }; }
+    function printQRCode(qrImageUrl) { const printWindow = window.open('', '_blank', 'width=400,height=450'); if (!printWindow) { alert('Veuillez autoriser les pop-ups.'); return; } printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Imprimer QR</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/><style>body{font-family:'Inter',sans-serif;text-align:center;margin:0;padding-top:20px} img.logo{display:block;width:60px;margin:0 auto 10px auto} img.qrcode{display:block;width:200px;height:200px;margin:0 auto 15px auto;border:1px solid #eee;padding:5px;background:white} button{display:none;} @media print{body{margin:5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact} img.logo, img.qrcode{margin-bottom:8px}}</style></head><body><img src="./clinique-nakhil-logo-horizontal.webp" alt="Logo" class="logo" onerror="this.style.display='none'" /><img src="${qrImageUrl}" alt="QR Code" class="qrcode" /><script>let p=false;const a=()=>{if(!p){window.print();p=true;window.onafterprint=()=>window.close();setTimeout(()=>window.close(),1500)}};let i=document.querySelectorAll('img'),l=0,e=0,t=i.length;if(t===0)a();else{i.forEach(m=>{const c=()=>{if(l+e===t)a()};if(m.complete)l++,c();else{m.onload=()=>{l++;c()};m.onerror=()=>{e++;c()}}});setTimeout(()=>{if(!p)a()},3000)}<\/script></body></html>`); printWindow.document.close(); }
 
     // --- Event Handlers ---
-    async function handlePatientSearch() {
-      const cin = DOM.cinInput.value.trim();
-      if (!cin) {
-        showMessage(
-          'getResult',
-          '<div class="message message-warning" style="display:block;"><i class="fas fa-exclamation-triangle"></i> CIN requis.</div>',
-          'result'
-        );
-        return;
-      }
-      DOM.resultDiv.innerHTML =
-        '<div class="patient-result-container" style="text-align:center; padding:20px;"><p><i class="fas fa-spinner fa-spin"></i> Recherche...</p></div>';
-      DOM.resultDiv.style.display = 'block';
-      DOM.resultDiv.className = "";
+    async function handlePatientSearch() { const cin = DOM.cinInput.value.trim(); if (!cin) { showMessage('getResult', '<div class="message message-warning" style="display:block;"><i class="fas fa-exclamation-triangle"></i> CIN requis.</div>', 'result'); return; } DOM.resultDiv.innerHTML = '<div class="patient-result-container" style="text-align:center; padding: 20px;"><p><i class="fas fa-spinner fa-spin"></i> Recherche...</p></div>'; DOM.resultDiv.style.display = 'block'; DOM.resultDiv.className = ""; try { const data = await apiService.fetchPatient(cin); if (!data || !data.nom || !data.ipp) { throw new Error("Patient non trouvé ou données invalides."); } currentIPP = data.ipp; currentPatientInfo = data; const qrData = generateQrData(data.ipp); if (!qrData) throw new Error("Erreur QR code."); const { qrImageUrl } = qrData; const formatDate = (d) => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('fr-FR') : '-'; const formatDateTime = (d) => d ? new Date(d).toLocaleString('fr-FR',{dateStyle:'medium',timeStyle:'short'}) : '-'; const resultHTML = `<div class="patient-result-container"><div style="margin-bottom:1rem;"><h3 style="color:var(--primary);"><i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}</h3></div><div class="patient-result-info"><div class="info-group"><div class="info-label">IPP</div><div class="info-value">${data.ipp||'-'}</div></div><div class="info-group"><div class="info-label">CIN</div><div class="info-value">${data.cin||'-'}</div></div><div class="info-group"><div class="info-label">Téléphone</div><div class="info-value">${data.telephone||'-'}</div></div><div class="info-group"><div class="info-label">Naissance</div><div class="info-value">${formatDate(data.date_naissance)}</div></div><div class="info-group"><div class="info-label">Sexe</div><div class="info-value">${data.sexe==='M'?'Homme':'Femme'}</div></div><div class="info-group"><div class="info-label">Mutuelle</div><div class="info-value">${data.mutuelle||"Non"}</div></div><div class="info-group" style="grid-column:span 2;"><div class="info-label">Adresse</div><div class="info-value">${data.adresse||'-'}, ${data.ville||''}</div></div><div class="info-group"><div class="info-label">Créé le</div><div class="info-value">${formatDateTime(data.created_at)}</div></div></div><div class="patient-result-qr"><img src="${qrImageUrl}" alt="QR Code Patient" /><button onclick="printQRCode('${qrImageUrl}')" class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer QR Code</button></div></div>`; showMessage('getResult', resultHTML, 'result'); } catch(err) { console.error("Error fetching:", err); if (!err.message.startsWith('Auth')) { showMessage('getResult', `<div class="message message-error" style="display:block;"><i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur récupération."}</div>`, 'result'); } } }
 
-      try {
-        const data = await apiService.fetchPatient(cin);
-        if (!data || !data.nom || !data.ipp) {
-          throw new Error("Patient non trouvé ou données invalides.");
-        }
-        currentIPP = data.ipp;
-        currentPatientInfo = data;
-
-        // Generate QR
-        const qrData = generateQrData(data.ipp);
-        if (!qrData) throw new Error("Erreur QR code.");
-        const { qrImageUrl } = qrData;
-
-        const formatDate = (d) =>
-          d ? new Date(d + 'T00:00:00Z').toLocaleDateString('fr-FR') : '-';
-        const formatDateTime = (d) =>
-          d
-            ? new Date(d).toLocaleString('fr-FR', {
-                dateStyle:'medium',
-                timeStyle:'short'
-              })
-            : '-';
-
-        const resultHTML = `
-          <div class="patient-result-container">
-            <div style="margin-bottom:1rem;">
-              <h3 style="color:var(--primary);">
-                <i class="fas fa-user-check"></i> ${data.prenom} ${data.nom}
-              </h3>
-            </div>
-            <div class="patient-result-info">
-              <div class="info-group">
-                <div class="info-label">IPP</div>
-                <div class="info-value">${data.ipp || '-'}</div>
-              </div>
-              <div class="info-group">
-                <div class="info-label">CIN</div>
-                <div class="info-value">${data.cin || '-'}</div>
-              </div>
-              <div class="info-group">
-                <div class="info-label">Téléphone</div>
-                <div class="info-value">${data.telephone || '-'}</div>
-              </div>
-              <div class="info-group">
-                <div class="info-label">Naissance</div>
-                <div class="info-value">${formatDate(data.date_naissance)}</div>
-              </div>
-              <div class="info-group">
-                <div class="info-label">Sexe</div>
-                <div class="info-value">${data.sexe === 'M' ? 'Homme' : 'Femme'}</div>
-              </div>
-              <div class="info-group">
-                <div class="info-label">Mutuelle</div>
-                <div class="info-value">${data.mutuelle || "Non"}</div>
-              </div>
-              <div class="info-group" style="grid-column:span 2;">
-                <div class="info-label">Adresse</div>
-                <div class="info-value">
-                  ${data.adresse || '-'}, ${data.ville || ''}
-                </div>
-              </div>
-              <div class="info-group">
-                <div class="info-label">Créé le</div>
-                <div class="info-value">${formatDateTime(data.created_at)}</div>
-              </div>
-            </div>
-            <div class="patient-result-qr">
-              <img src="${qrImageUrl}" alt="QR Code Patient" />
-              <button onclick="printQRCode('${qrImageUrl}')"
-                      class="btn btn-secondary">
-                <i class="fas fa-print"></i> Imprimer QR Code
-              </button>
-            </div>
-          </div>
-        `;
-        showMessage('getResult', resultHTML, 'result');
-      } catch(err) {
-        console.error("Error fetching:", err);
-        if (!err.message.startsWith('Auth')) {
-          showMessage(
-            'getResult',
-            `<div class="message message-error" style="display:block;">
-               <i class="fas fa-exclamation-triangle"></i> 
-               ${err.message || "Erreur récupération."}
-             </div>`,
-            'result'
-          );
-        }
-      }
-    }
-
+    // *** handleCreatePatient with setTimeout fix for button ***
     async function handleCreatePatient(event) {
-      event.preventDefault();
-      showMessage('message', '', '');
-      // Clear previous result text (optional):
-      DOM.createResultMessage.textContent = "(En cours...)";
-      DOM.createQrCodeImage.src = "";
-      // Keep #createPrintButton disabled until success
-      DOM.createPrintButton.disabled = true;
+        event.preventDefault();
+        showMessage('message', '', '');
+        showMessage('createResult', '', ''); // Clear previous result
+        if (!validateCreateForm()) return;
 
-      if (!validateCreateForm()) return;
+        const form = event.target;
+        const hasInsurance = DOM.hasInsuranceCheckbox.checked;
+        const mutuelleValue = DOM.mutuelleInput.value.trim();
+        const payload = { nom: form.nom.value.trim(), prenom: form.prenom.value.trim(), cin: form.cin.value.trim(), telephone: form.telephone.value.trim(), adresse: form.adresse.value.trim(), ville: form.ville.value.trim(), date_naissance: form.date_naissance.value, sexe: form.sexe.value, mutuelle: hasInsurance ? mutuelleValue : null };
 
-      const form = event.target;
-      const hasInsurance = DOM.hasInsuranceCheckbox.checked;
-      const mutuelleValue = DOM.mutuelleInput.value.trim();
+        DOM.createPatientBtn.disabled = true;
+        DOM.createPatientBtn.innerHTML = '<span class="loading-spinner" role="status" aria-hidden="true"></span> Création...';
 
-      const payload = {
-        nom: form.nom.value.trim(),
-        prenom: form.prenom.value.trim(),
-        cin: form.cin.value.trim(),
-        telephone: form.telephone.value.trim(),
-        adresse: form.adresse.value.trim(),
-        ville: form.ville.value.trim(),
-        date_naissance: form.date_naissance.value,
-        sexe: form.sexe.value,
-        mutuelle: hasInsurance ? mutuelleValue : null
-      };
+        try {
+            const data = await apiService.createPatient(payload);
+            if (!data || !data.ipp) { throw new Error("IPP manquant - création échouée?"); }
+            console.log("Create response:", data);
+            form.reset(); DOM.mutuelleInput.disabled = true; DOM.hasInsuranceCheckbox.checked = false;
 
-      DOM.createPatientBtn.disabled = true;
-      DOM.createPatientBtn.innerHTML =
-        '<span class="loading-spinner" role="status" aria-hidden="true"></span> Création...';
+            const qrData = generateQrData(data.ipp);
+            if (!qrData) { throw new Error("Erreur QR post-création."); }
+            const { qrImageUrl } = qrData;
 
-      try {
-        // Call the "create-patient" API
-        const data = await apiService.createPatient(payload);
-        if (!data || !data.ipp) {
-          throw new Error("IPP manquant - création échouée?");
+            // --- Update elements inside #createResult ---
+            const resultMsgEl = DOM.createResultMessage;
+            const resultImgEl = DOM.createQrCodeImage;
+
+            if (resultMsgEl) resultMsgEl.innerHTML = `<i class="fas fa-check-circle"></i> Patient (${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}) créé. IPP: ${sanitizeInput(data.ipp)}`;
+            if (resultImgEl) { resultImgEl.src = qrImageUrl; resultImgEl.alt = `QR Code pour ${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}`; resultImgEl.style.display = 'block'; }
+
+            // --- Make the container visible first ---
+            DOM.createResultDiv.style.backgroundColor = 'var(--success-light)';
+            DOM.createResultDiv.style.borderLeft = '4px solid var(--success)';
+            DOM.createResultDiv.style.display = 'block'; // Show the whole div
+            if (resultMsgEl) resultMsgEl.style.color = 'var(--success-dark)';
+
+            // --- DELAY Button Access and Configuration ---
+            setTimeout(() => {
+                const resultBtnEl = document.getElementById("createPrintButton");
+                console.log("Button Element Check (Inside setTimeout):", resultBtnEl);
+                if (resultBtnEl) {
+                    console.log("Assigning onclick and showing button (setTimeout)...");
+                    resultBtnEl.onclick = () => printQRCode(qrImageUrl);
+                    resultBtnEl.style.display = 'inline-block'; // Ensure button is displayed
+                    resultBtnEl.disabled = false; // Ensure button is enabled
+                } else {
+                     console.error("!!! createPrintButton STILL not found inside setTimeout !!!");
+                }
+            }, 50); // Short delay
+
+            showToast('Patient créé avec succès!', 'success');
+        } catch(err) {
+            console.error("Error creating:", err);
+            if (!err.message.startsWith('Auth')) { showMessage('message', `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur création."}`, 'error'); }
+            showMessage('createResult', '', ''); // Hide create result div on error
+        } finally {
+            DOM.createPatientBtn.disabled = false; DOM.createPatientBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Créer Patient';
         }
-        console.log("Create response:", data);
-
-        // Reset form after success
-        form.reset();
-        DOM.mutuelleInput.disabled = true;
-        DOM.hasInsuranceCheckbox.checked = false;
-
-        const qrData = generateQrData(data.ipp);
-        if (!qrData) {
-          throw new Error("Erreur QR post-création.");
-        }
-        const { qrImageUrl } = qrData;
-
-        // Update #createResult elements
-        DOM.createResultMessage.innerHTML =
-          `<i class="fas fa-check-circle"></i> 
-           Patient (${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}) 
-           créé. IPP: ${sanitizeInput(data.ipp)}`;
-
-        DOM.createQrCodeImage.src = qrImageUrl;
-        DOM.createQrCodeImage.alt =
-          `QR Code pour ${sanitizeInput(payload.prenom)} ${sanitizeInput(payload.nom)}`;
-
-        // Enable the print button now
-        DOM.createPrintButton.onclick = () => printQRCode(qrImageUrl);
-        DOM.createPrintButton.disabled = false;
-
-        showToast('Patient créé avec succès!', 'success');
-      } catch(err) {
-        console.error("Error creating:", err);
-        if (!err.message.startsWith('Auth')) {
-          showMessage(
-            'message',
-            `<i class="fas fa-exclamation-triangle"></i> ${err.message || "Erreur création."}`,
-            'error'
-          );
-        }
-        // Optionally show an error in #createResult too:
-        // DOM.createResultMessage.textContent = "Erreur création...";
-      } finally {
-        DOM.createPatientBtn.disabled = false;
-        DOM.createPatientBtn.innerHTML =
-          '<i class="fas fa-plus-circle"></i> Créer Patient';
-      }
     }
+    // *** END MODIFIED handleCreatePatient ***
 
-    function handleMutuelleChange() {
-      DOM.mutuelleInput.disabled = !DOM.hasInsuranceCheckbox.checked;
-      DOM.mutuelleInput.required = DOM.hasInsuranceCheckbox.checked;
-      if (!DOM.hasInsuranceCheckbox.checked) {
-        DOM.mutuelleInput.value = '';
-        DOM.mutuelleInput.classList.remove('input-error');
-        DOM.mutuelleInputContainer?.closest('.input-group')?.classList.remove('has-error');
-        const errorDiv = DOM.mutuelleInputContainer?.closest('.input-group')
-                           ?.querySelector('.error-text');
-        if (errorDiv) errorDiv.textContent = '';
-      }
-    }
+    function handleMutuelleChange() { DOM.mutuelleInput.disabled = !DOM.hasInsuranceCheckbox.checked; DOM.mutuelleInput.required = DOM.hasInsuranceCheckbox.checked; if (!DOM.hasInsuranceCheckbox.checked) { DOM.mutuelleInput.value = ''; DOM.mutuelleInput.classList.remove('input-error'); DOM.mutuelleInputContainer?.closest('.input-group')?.classList.remove('has-error'); const errorDiv = DOM.mutuelleInputContainer?.closest('.input-group')?.querySelector('.error-text'); if(errorDiv) errorDiv.textContent = ''; } }
 
     // --- Event Listeners ---
     DOM.searchButton?.addEventListener('click', handlePatientSearch);
-    DOM.cinInput?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handlePatientSearch();
-    });
+    DOM.cinInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handlePatientSearch(); });
     DOM.createForm?.addEventListener('submit', handleCreatePatient);
     DOM.hasInsuranceCheckbox?.addEventListener('change', handleMutuelleChange);
 
     // --- Initial Setup ---
-    window.onload = () => {
-      // If testing locally without a token, comment this block:
-      if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
-        console.log("Reception: No token.");
-        redirectToLogin();
-        return;
-      }
+    window.onload = () => { if (!localStorage.getItem(CONFIG.TOKEN_KEY)) { console.log("Reception: No token."); redirectToLogin(); return; } DOM.body.classList.add('loaded'); console.log("Reception: Authenticated."); resetSessionTimeout(); handleMutuelleChange(); ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => document.addEventListener(event, resetSessionTimeout, { passive: true })); };
 
-      DOM.body.classList.add('loaded');
-      console.log("Reception: Authenticated.");
+    // --- Add Initial Log Check for Button Element ---
+    console.log("Initial Check - createPrintButton Element:", document.getElementById("createPrintButton"));
 
-      resetSessionTimeout();
-      ['mousemove','keypress','click','scroll'].forEach(
-        event => document.addEventListener(event, resetSessionTimeout, { passive:true })
-      );
-
-      handleMutuelleChange();
-
-      // Check createPrintButton presence after DOM load
-      console.log(
-        "Initial Check - createPrintButton Element:",
-        document.getElementById("createPrintButton")
-      );
-    };
   </script>
 </body>
 </html>
