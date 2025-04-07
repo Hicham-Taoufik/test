@@ -1,128 +1,118 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="Dashboard de réception pour la gestion des patients - MediClinic" />
-  <title>Réception - MediClinic (Simplified Test)</title>
-  <!-- Minimal CSS for testing -->
+  <meta charset="UTF-8">
+  <title>Always Display Print Button</title>
   <style>
-    :root { --primary: blue; --success: green; --warning: orange; --danger: red; --light-gray: #ddd; --border-radius: 0.5rem; }
-    body { font-family: 'Inter', sans-serif; padding: 20px; }
-    .btn-secondary { background-color: yellow; color: black; border: 1px solid red; padding: 10px 15px; display: inline-block; } /* Very basic button style */
-    #createResult { display: none; margin-top: 20px; text-align: center; background-color: #eee; padding: 15px; border: 1px solid #ccc; border-left: 4px solid green; } /* Basic result div style */
-    #createQrCodeImage { max-width: 150px; border: 1px solid black; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; }
+    /* Keep #createResult visible from start (no display:none) */
+    #createResult {
+      margin-top: 1rem;
+      background: #f0f0ff;
+      border-left: 4px solid #5d74f2;
+      padding: 1rem;
+      border-radius: 6px;
+    }
+    #createQrCodeImage {
+      max-width: 160px;
+      display: block;
+      margin: 0 auto 1rem auto;
+      border: 1px solid #ccc;
+      background: #fff;
+    }
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      background: #6b7280;  /* Gray */
+      color: white;
+    }
+    .btn-secondary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
-<body > <!-- Body starts visible -->
-  <a href="#main-content" class="skip-link">Passer au contenu principal</a>
-  <div class="container">
-    <div class="header"> <h1 class="header-title">Réception - Dashboard Simplifié</h1> </div>
-    <main id="main-content" class="flex-row">
-      <div class="flex-col">
-        <section class="card" aria-labelledby="create-patient-heading">
-          <div class="card-header"> <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient (TEST)</h2> </div>
-          <div class="card-body">
-            <form id="createForm" novalidate>
-              <div class="form-grid">
-                <div class="input-group"> <label for="nom">Nom</label> <input type="text" id="nom" name="nom" class="form-control" placeholder="Nom" required aria-required="true" autocomplete="family-name"/> </div>
-                <div class="input-group"> <label for="prenom">Prénom</label> <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Prénom" required aria-required="true" autocomplete="given-name"/> </div>
-                <button type="submit" class="btn btn-success" id="createPatientBtn">Créer Patient</button>
-                <div id="message" class="message" role="alert" aria-live="polite"></div>
-              </div>
-            </form>
-            <!-- Result Div for Create Patient -->
-            <div id="createResult" role="status" aria-live="polite" style="display: none;"> <!-- Start hidden -->
-                <p id="createResultMessage"></p>
-                <img id="createQrCodeImage" src="" alt="" loading="lazy" style="display: block;" /> <!-- Image visible initially -->
-                <button id="createPrintButton" class="btn btn-secondary">Imprimer QR Code</button> <!-- Basic button -->
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+<body>
+  <h2>Créer Patient</h2>
+  <form id="createForm">
+    <input type="text" id="prenom" placeholder="Prénom" required>
+    <input type="text" id="nom" placeholder="Nom" required>
+    <button type="submit">Créer Patient</button>
+  </form>
+
+  <!-- Always visible, but print button is disabled initially -->
+  <div id="createResult">
+    <p id="createResultMessage">QR et message apparaîtront ici.</p>
+    <img id="createQrCodeImage" src="" alt="QR Code" />
+    <button
+      id="createPrintButton"
+      class="btn btn-secondary"
+      disabled
+    >
+      <i class="fas fa-print"></i> Imprimer QR Code
+    </button>
   </div>
 
-  <!-- ** SCRIPT - SIMPLIFIED for button test ** -->
   <script>
-    const DOM = { body: document.body, createForm: document.getElementById("createForm"), createPatientBtn: document.getElementById("createPatientBtn"), createResultDiv: document.getElementById("createResult"), createResultMessage: document.getElementById("createResultMessage"), createQrCodeImage: document.getElementById("createQrCodeImage"), createPrintButton: document.getElementById("createPrintButton") };
-    const BASE_URL = 'https://workflows.aphelionxinnovations.com'; // Still need base URL
-    const QR_API_URL = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='; // Simplified QR API URL
-
-    // --- Utility Functions ---
-    function sanitizeInput(input) { if (!input) return ''; const temp = document.createElement('div'); temp.textContent = input; return temp.innerHTML; }
-    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if(el) { el.innerText = message; el.style.display = message ? "block" : "none"; } }
-
-    // --- QR Code Function (Simplified) ---
-    function generateQrData(ipp) { if (!ipp) return null; const qrTargetUrl = `app://medilink/patient?ipp=${encodeURIComponent(ipp)}`; const qrImageUrl = `${QR_API_URL}${encodeURIComponent(qrTargetUrl)}`; return { qrTargetUrl, qrImageUrl }; }
-    function printQRCode(qrImageUrl) { const printWindow = window.open(qrImageUrl, '_blank');  } // Open QR image in new tab for basic print test
-
-
-    async function handleCreatePatient(event) {
-        event.preventDefault();
-        showMessage('message', 'Création en cours...', 'info');
-        DOM.createPatientBtn.disabled = true;
-
-        const form = event.target;
-        const payload = { nom: form.nom.value.trim(), prenom: form.prenom.value.trim(), cin: form.cin.value.trim() }; // Minimal data
-
-        try {
-            // *** Simplified API Call - remove fetchWithAuth and token for this test ***
-            const res = await fetch(`${BASE_URL}/webhook/create-patient`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-            const data = await res.json();
-            if (!data || !data.ipp) throw new Error("IPP manquant.");
-
-            const qrData = generateQrData(data.ipp);
-            if (!qrData) throw new Error("QR error.");
-            const { qrImageUrl } = qrData;
-
-            // --- Direct Element Updates - Simplified and Explicit ---
-            const resultMsgEl = DOM.createResultMessage;
-            const resultImgEl = DOM.createQrCodeImage;
-            const resultBtnEl = DOM.createPrintButton;
-
-            console.log("Button Element Check (Inside Handler):", resultBtnEl); // Check if button is found
-
-            if (resultMsgEl) resultMsgEl.innerText = `Patient créé! IPP: ${data.ipp}`;
-            if (resultImgEl) resultImgEl.src = qrImageUrl;
-            if (resultBtnEl) {
-                console.log("Assigning onclick and showing button..."); // Log right before setting
-                resultBtnEl.onclick = () => printQRCode(qrImageUrl); // Assign onclick
-                resultBtnEl.style.display = 'inline-block'; // Ensure button is visible
-            } else {
-                 console.error("!!! createPrintButton NOT FOUND in handleCreatePatient !!!"); // Error if button is null
-            }
-
-            DOM.createResultDiv.style.display = 'block'; // Make result div visible
-
-            showMessage('message', 'Patient créé avec succès!', 'success');
-
-        } catch (error) {
-            console.error("Create Error:", error);
-            showMessage('message', `Erreur création: ${error.message}`, 'error');
-            DOM.createResultDiv.style.display = 'none';
-        } finally {
-            DOM.createPatientBtn.disabled = false;
-            DOM.createPatientBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Créer Patient';
-        }
+    // Quick function to simulate generating a QR code URL
+    function generateQrData(prenom, nom) {
+      const randomIPP = 'IPP' + Math.floor(Math.random() * 100000);
+      return {
+        qrImageUrl:
+          'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='
+          + encodeURIComponent('app://medilink/patient?ipp=' + randomIPP),
+        ipp: randomIPP,
+      };
     }
 
+    // Simple print function
+    function printQRCode(qrUrl) {
+      const newWin = window.open('', '_blank', 'width=400,height=450');
+      if (!newWin) {
+        alert("Popup blocked!");
+        return;
+      }
+      newWin.document.write(`
+        <html><head><title>Print QR</title></head>
+        <body style="text-align:center;">
+          <img src="${qrUrl}" style="margin:20px auto;max-width:200px;border:1px solid #ccc" />
+          <script>
+            window.onload = function() {
+              window.print();
+              window.onafterprint = () => window.close();
+            };
+          <\/script>
+        </body></html>
+      `);
+      newWin.document.close();
+    }
 
-    // --- Event Listeners ---
-    DOM.createForm.addEventListener('submit', handleCreatePatient);
+    const createForm = document.getElementById('createForm');
+    const createResultMessage = document.getElementById('createResultMessage');
+    const createQrCodeImage = document.getElementById('createQrCodeImage');
+    const createPrintButton = document.getElementById('createPrintButton');
 
-    // --- Initial Setup ---
-    window.onload = () => {
-      DOM.body.classList.add('loaded'); // Make body visible
-      console.log("Reception Lite: Page Loaded.");
-      console.log("Initial Check - createPrintButton Element:", document.getElementById("createPrintButton")); // Check on load
-    };
+    createForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const prenom = document.getElementById('prenom').value.trim();
+      const nom = document.getElementById('nom').value.trim();
 
+      // Simulate success
+      const { qrImageUrl, ipp } = generateQrData(prenom, nom);
+
+      // Fill #createResult with data
+      createResultMessage.textContent =
+        `Patient créé: ${prenom} ${nom} (IPP: ${ipp})`;
+      createQrCodeImage.src = qrImageUrl;
+      createQrCodeImage.alt = `QR pour ${prenom} ${nom}`;
+
+      // ENABLE the print button, attach function
+      createPrintButton.disabled = false;
+      createPrintButton.onclick = () => printQRCode(qrImageUrl);
+    });
   </script>
 </body>
 </html>
