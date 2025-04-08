@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <style>
-    /* --- CSS (Includes styles for camera capture elements) --- */
+    /* --- CSS (Includes styles for ID Capture) --- */
     :root { --primary: #5d74f2; --primary-light: #ebeffe; --primary-dark: #4a62d8; --success: #31c971; --success-light: #e0fbea; --success-dark: #28a960; --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded; --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05); --shadow-focus: 0 0 0 3px rgba(93, 116, 242, 0.2); --border-radius: 0.5rem; --transition-speed: 0.2s; font-size: 15px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-800); line-height: 1.5; min-height: 100vh; padding: 0; visibility: hidden; }
@@ -90,11 +90,11 @@
     a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; box-shadow: none; }
     .skip-link { position: absolute; left: -9999px; z-index: 999; padding: 1em; background-color: white; color: var(--primary); opacity: 0; }
     .skip-link:focus { left: 50%; transform: translateX(-50%); opacity: 1; }
-    /* Styles for ID Capture */
-    #idCaptureContainer { display: none; /* Hidden initially */ margin-top: 1rem; border: 1px dashed var(--gray-400); padding: 1rem; border-radius: var(--border-radius); background-color: var(--gray-100); text-align: center; }
+    #idCaptureContainer { display: none; margin-top: 1rem; border: 1px dashed var(--gray-400); padding: 1rem; border-radius: var(--border-radius); background-color: var(--gray-100); text-align: center; }
     #idVideo { display: block; width: 100%; max-width: 400px; height: auto; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); background-color: #000; }
     #idCaptureContainer .btn-group { justify-content: center; }
-    /* Responsive Styles */
+    .capture-preview { max-width: 150px; height: auto; margin: 0 5px; border: 1px solid var(--gray-400); border-radius: 4px; }
+    .capture-status { margin-top: 1rem; }
     @media (max-width: 768px) { .flex-row { flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .mutuelle-group, .form-submit-button, .message { grid-column: span 1; } .patient-result-info { grid-template-columns: 1fr; } .header { flex-direction: column; align-items: flex-start; gap: 15px; } .header-main-content { width: 100%; } .header-logout { width: 100%; margin-left: 0; } .logout-btn { width: 100%; justify-content: center; } .search-bar { flex-direction: column; } .search-bar .btn { width: 100%; } }
     @media (max-width: 480px) { .app-container { padding: 1rem; } .header-title { font-size: 1.2rem; } .card { padding: 1rem; } .btn { padding: 0.6rem 1rem; font-size: 0.8rem; } .patient-info { grid-template-columns: 1fr; } .btn-group { gap: 0.5rem; } }
   </style>
@@ -116,21 +116,25 @@
           <div class="card-header"> <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div> </div>
           <div class="card-body">
 
-            <!-- ADDED: ID Capture Section -->
-            <div class="id-capture-section mb-4">
-              <button id="captureIdButton" type="button" class="btn btn-primary"> <i class="fas fa-camera"></i> Scanner CIN pour pré-remplir </button>
+             <!-- ID Capture Section -->
+            <div class="id-capture-section mb-4 no-print">
+              <button id="captureIdButton" type="button" class="btn btn-primary"> <i class="fas fa-camera"></i> Scanner CIN </button>
               <div id="idCaptureContainer">
-                  <p>Positionnez la CIN dans le cadre</p>
+                  <p id="captureInstruction">Positionnez le RECTO de la CIN et prenez la photo.</p>
                   <video id="idVideo" playsinline></video>
-                  <canvas id="idCanvas" style="display:none;"></canvas> <!-- Hidden canvas for capture -->
+                  <canvas id="idCanvas" style="display:none;"></canvas>
+                   <div class="d-flex justify-content-center gap-2 my-2">
+                        <img id="frontPreview" class="capture-preview" alt="Aperçu Recto" style="display: none;">
+                        <img id="backPreview" class="capture-preview" alt="Aperçu Verso" style="display: none;">
+                   </div>
                   <div class="btn-group mt-2">
-                     <button id="takePhotoButton" type="button" class="btn btn-success"> <i class="fas fa-camera-retro"></i> Prendre Photo </button>
-                     <button id="cancelCaptureButton" type="button" class="btn btn-secondary"> Annuler </button>
+                     <button id="takePhotoButton" type="button" class="btn btn-success" disabled> <i class="fas fa-camera-retro"></i> Prendre Photo </button>
+                     <button id="cancelCaptureButton" type="button" class="btn btn-secondary" disabled> Annuler </button>
                   </div>
                   <div id="captureMessage" class="message message-info mt-2"></div>
               </div>
             </div>
-            <!-- END: ID Capture Section -->
+             <!-- END ID Capture Section -->
 
             <form id="createForm" novalidate>
               <div class="form-grid">
@@ -147,7 +151,7 @@
                 <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
             </form>
-            <div id="createResult" role="status" aria-live="polite"> <p id="createResultMessage"></p> <img id="createQrCodeImage" src="" alt="" loading="lazy" /> <button id="createPrintButton" class="btn btn-secondary" disabled> <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code </button> </div>
+            <div id="createResult"> <p id="createResultMessage"></p> <img id="createQrCodeImage" src="" alt="" loading="lazy" /> <button id="createPrintButton" class="btn btn-secondary" disabled> <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code </button> </div>
           </div>
         </section>
       </div>
@@ -156,10 +160,7 @@
         <section class="card" aria-labelledby="search-patient-heading">
           <div class="card-header"> <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div> </div>
           <div class="card-body">
-            <div class="search-bar">
-              <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient"/>
-              <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button>
-            </div>
+            <div class="search-bar"> <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient"/> <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button> </div>
             <div id="getResult" role="region" aria-live="polite"></div>
           </div>
         </section>
@@ -172,22 +173,21 @@
   <script>
     // --- Configuration & Constants ---
     const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, MESSAGE_DISPLAY_TIME: 7000, TOAST_DISPLAY_TIME: 4000 };
-    const DOM = { body: document.body, resultDiv: document.getElementById("getResult"), messageDiv: document.getElementById("message"), createForm: document.getElementById("createForm"), createResultDiv: document.getElementById("createResult"), searchButton: document.getElementById("searchBtn"), cinInput: document.getElementById("getCin"), hasInsuranceCheckbox: document.getElementById("has_insurance"), mutuelleInput: document.getElementById("mutuelle"), mutuelleInputContainer: document.getElementById("mutuelle-input-container"), createPatientBtn: document.getElementById("createPatientBtn"), createResultMessage: document.getElementById("createResultMessage"), createQrCodeImage: document.getElementById("createQrCodeImage"), createPrintButton: document.getElementById("createPrintButton"), toast: document.getElementById("toast"),
-                   // ID Capture Elements
-                   captureIdButton: document.getElementById('captureIdButton'), idCaptureContainer: document.getElementById('idCaptureContainer'), idVideo: document.getElementById('idVideo'), takePhotoButton: document.getElementById('takePhotoButton'), cancelCaptureButton: document.getElementById('cancelCaptureButton'), captureMessage: document.getElementById('captureMessage'), idCanvas: document.getElementById('idCanvas')
-                 };
-    let currentIPP = null; let currentPatientInfo = null; let sessionTimeoutId = null; let idCaptureStream = null;
+    const DOM = { body: document.body, resultDiv: document.getElementById("getResult"), messageDiv: document.getElementById("message"), createForm: document.getElementById("createForm"), createResultDiv: document.getElementById("createResult"), searchButton: document.getElementById("searchBtn"), cinInput: document.getElementById("getCin"), hasInsuranceCheckbox: document.getElementById("has_insurance"), mutuelleInput: document.getElementById("mutuelle"), mutuelleInputContainer: document.getElementById("mutuelle-input-container"), createPatientBtn: document.getElementById("createPatientBtn"), createResultMessage: document.getElementById("createResultMessage"), createQrCodeImage: document.getElementById("createQrCodeImage"), createPrintButton: document.getElementById("createPrintButton"), toast: document.getElementById("toast"), captureIdButton: document.getElementById('captureIdButton'), idCaptureContainer: document.getElementById('idCaptureContainer'), idVideo: document.getElementById('idVideo'), takePhotoButton: document.getElementById('takePhotoButton'), cancelCaptureButton: document.getElementById('cancelCaptureButton'), captureMessage: document.getElementById('captureMessage'), idCanvas: document.getElementById('idCanvas'), frontPreview: document.getElementById('frontPreview'), backPreview: document.getElementById('backPreview'), captureInstruction: document.getElementById('captureInstruction') };
+    let currentIPP = null; let currentPatientInfo = null; let sessionTimeoutId = null;
+    // Variables for ID Capture
+    let idCaptureStream = null; let frontImageBlob = null; let backImageBlob = null; let isCapturingFront = true;
 
     // --- Utility Functions ---
     function showToast(message, type = 'success') { /* ... */ }
     function sanitizeInput(input) { /* ... */ }
-    function showMessage(elementId, message, type) { /* ... */ }
+    function showMessage(elementId, message, type) { /* ... (ensure it handles 'info' type for captureMessage) ... */ const el = document.getElementById(elementId); if (!el) return; const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const iconClass = statusIcons[type] || statusIcons['info']; const iconHtml = message ? `<i class="${iconClass} me-2"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; el.className = ""; if (type === 'result') {} else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId==='createResult'){/*...styling as before...*/} if(type!=='error'&&type!=='warning'&&type!=='loading'&&message&&elementId==='message'){setTimeout(()=>{const cE=document.getElementById(elementId);if(cE&&cE.innerHTML.includes(message)){cE.style.display='none';}},CONFIG.MESSAGE_DISPLAY_TIME);} }
 
     // --- Authentication & Session ---
-    function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No token.');alert('Session expirée.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Auth error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide.');redirectToLogin();throw new Error(`Auth failed:${r.status}`);} if(!r.ok){return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);});} return r;}); }
+    function fetchWithAuth(url, options={}) { /* ... */ }
     function redirectToLogin() { window.location.href = CONFIG.LOGIN_PAGE_URL; }
-    function logout() { localStorage.removeItem(CONFIG.TOKEN_KEY); clearTimeout(sessionTimeoutId); showToast('Déconnecté.', 'success'); setTimeout(redirectToLogin, 1000); }
-    function resetSessionTimeout() { if (sessionTimeoutId) clearTimeout(sessionTimeoutId); sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT); }
+    function logout() { /* ... */ }
+    function resetSessionTimeout() { /* ... */ }
 
     // --- Form Validation ---
     function validateField(input, validationFn, errorMessage) { /* ... */ }
@@ -195,89 +195,71 @@
 
     // --- API Service ---
     const apiService = {
-      async fetchPatient(cin) { /* ... */ },
-      async createPatient(payload) { /* ... */ },
-      // *** ADDED: Function to call ID extraction API ***
-      async extractIdInfo(imageDataBlob) {
-          const formData = new FormData();
-          // 'id_image' MUST match the File Parameter Name in your n8n Webhook node
-          formData.append('id_image', imageDataBlob, 'id_card_capture.jpg');
-          try {
-              // Use fetchWithAuth as this endpoint should also be protected
-              const res = await fetchWithAuth(
-                  `${CONFIG.API_BASE_URL}/webhook/extract-id-info`, // Your new n8n webhook path
-                  {
-                      method: 'POST',
-                      body: formData // Send image data
-                      // No Content-Type needed for FormData
-                  }
-              );
-              return await res.json(); // Expecting JSON like {nom:.., prenom:.. etc.}
-          } catch (e) {
-              console.error("ID Extract err:", e);
-              throw e; // Re-throw to be caught by caller
-          }
-      }
+        async fetchPatient(cin) { /* ... */ },
+        async createPatient(payload) { /* ... */ },
+        async extractIdInfo(formData) { // formData should contain 'id_image_front' and 'id_image_back'
+            try {
+                const res = await fetchWithAuth(
+                    `${CONFIG.API_BASE_URL}/webhook/extract-id-info`,
+                    { method: 'POST', body: formData } // Send FormData
+                );
+                return await res.json(); // Expecting JSON like {nom:.., prenom:.. etc.}
+            } catch (e) { console.error("ID Extract err:", e); throw e; }
+        }
     };
 
     // --- QR Code Functions ---
     function generateQrData(ipp) { /* ... */ }
     function printQRCode(qrImageUrl) { /* ... */ }
 
-    // --- Event Handlers ---
-    async function handlePatientSearch() { /* ... */ }
-    async function handleCreatePatient(event) { /* ... (Function remains, but might be less used if ID scan works) ... */ }
-    function handleMutuelleChange() { /* ... */ }
-
-    // --- ADDED: ID Card Capture Logic ---
+    // --- ID Capture Functions ---
     function updateCaptureMessage(message, type = 'info') { showMessage('captureMessage', message, type); }
 
     async function startIdCapture() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            updateCaptureMessage('Demande d\'accès caméra...', 'loading');
+            updateCaptureMessage('Demande caméra...', 'loading');
             DOM.captureIdButton.disabled = true;
             DOM.idCaptureContainer.style.display = 'block';
+            DOM.frontPreview.style.display = 'none'; // Hide previews initially
+            DOM.backPreview.style.display = 'none';
+            isCapturingFront = true; // Start with front
+            DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo.";
+
             try {
                 idCaptureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } });
                 DOM.idVideo.srcObject = idCaptureStream;
                 await DOM.idVideo.play();
-                updateCaptureMessage('Positionnez la carte et prenez la photo.', 'info');
+                updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info');
                 DOM.takePhotoButton.disabled = false;
                 DOM.cancelCaptureButton.disabled = false;
-            } catch (err) {
-                console.error("Error accessing camera for ID capture:", err);
-                updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error');
-                stopIdCapture(); // Clean up
-                 DOM.captureIdButton.disabled = false;
-            }
-        } else {
-            alert("Votre navigateur ne supporte pas l'accès caméra.");
-             updateCaptureMessage("Accès caméra non supporté.", 'error');
-             DOM.captureIdButton.disabled = false;
-        }
+            } catch (err) { updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error'); stopIdCapture(false); }
+        } else { alert("Accès caméra non supporté."); updateCaptureMessage("Caméra non supportée.", 'error'); }
     }
 
-    function stopIdCapture() {
-        if (idCaptureStream) {
-            idCaptureStream.getTracks().forEach(track => track.stop());
-        }
+    function stopIdCapture(clearBlobs = true) {
+        if (idCaptureStream) { idCaptureStream.getTracks().forEach(track => track.stop()); }
         DOM.idVideo.srcObject = null;
         DOM.idCaptureContainer.style.display = 'none';
         DOM.takePhotoButton.disabled = true;
         DOM.cancelCaptureButton.disabled = true;
         DOM.captureIdButton.disabled = false;
         idCaptureStream = null;
-         updateCaptureMessage('', ''); // Clear message
+        updateCaptureMessage('', '');
+        if (clearBlobs) { // Optionally clear stored images on cancel
+            frontImageBlob = null;
+            backImageBlob = null;
+            DOM.frontPreview.src = '';
+            DOM.backPreview.src = '';
+             DOM.frontPreview.style.display = 'none';
+             DOM.backPreview.style.display = 'none';
+            console.log("ID Capture cancelled and blobs cleared.");
+        }
     }
 
-    async function takePhotoAndExtract() {
-        if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) {
-             updateCaptureMessage('La caméra n\'est pas prête.', 'warning');
-             return;
-        }
-        updateCaptureMessage('Capture et analyse...', 'loading');
-        DOM.takePhotoButton.disabled = true; // Prevent multiple clicks
-        DOM.cancelCaptureButton.disabled = true;
+    async function takePhotoAndProcess() {
+        if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) { updateCaptureMessage('Caméra non prête.', 'warning'); return; }
+        updateCaptureMessage('Capture...', 'loading');
+        DOM.takePhotoButton.disabled = true; // Prevent multiple clicks while processing
 
         const canvas = DOM.idCanvas;
         canvas.width = DOM.idVideo.videoWidth;
@@ -285,70 +267,92 @@
         const context = canvas.getContext('2d');
         context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height);
 
-        // Convert canvas to Blob
         canvas.toBlob(async (blob) => {
-            if (!blob) {
-                 updateCaptureMessage('Erreur lors de la capture de l\'image.', 'error');
-                 stopIdCapture(); return;
+            if (!blob) { updateCaptureMessage('Erreur capture image.', 'error'); stopIdCapture(); return; }
+
+            if (isCapturingFront) {
+                frontImageBlob = blob;
+                console.log("Recto captured", frontImageBlob);
+                DOM.frontPreview.src = URL.createObjectURL(frontImageBlob); // Show preview
+                DOM.frontPreview.style.display = 'inline-block';
+                isCapturingFront = false; // Move to capturing back
+                DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo.";
+                updateCaptureMessage('Recto OK. Préparez le verso.', 'info');
+                DOM.takePhotoButton.disabled = false; // Re-enable for next shot
+
+            } else { // Capturing Back
+                backImageBlob = blob;
+                console.log("Verso captured", backImageBlob);
+                DOM.backPreview.src = URL.createObjectURL(backImageBlob); // Show preview
+                DOM.backPreview.style.display = 'inline-block';
+                stopIdCapture(false); // Stop camera, keep blobs
+                updateCaptureMessage('Verso OK. Analyse en cours...', 'loading');
+
+                // Now send both blobs to backend
+                if (frontImageBlob && backImageBlob) {
+                    const formData = new FormData();
+                    formData.append('id_image_front', frontImageBlob, 'id_card_front.jpg');
+                    formData.append('id_image_back', backImageBlob, 'id_card_back.jpg');
+                    try {
+                        const extractedData = await apiService.extractIdInfo(formData);
+                        console.log("Extracted ID Data:", extractedData);
+                        if (extractedData) {
+                            autofillCreateForm(extractedData);
+                            showToast('Formulaire pré-rempli!', 'success');
+                            updateCaptureMessage('Données extraites!', 'success');
+                        } else { throw new Error("Aucune donnée extraite."); }
+                    } catch (error) {
+                         console.error("Error during ID extraction API call:", error);
+                         updateCaptureMessage(`Erreur extraction: ${error.message}`, 'error');
+                         // Consider if blobs should be cleared on error:
+                         // frontImageBlob = null; backImageBlob = null;
+                         // DOM.frontPreview.style.display='none'; DOM.backPreview.style.display='none';
+                    } finally {
+                         // Reset blobs for next potential capture attempt
+                         frontImageBlob = null; backImageBlob = null;
+                    }
+                } else {
+                    console.error("Missing one or both image blobs.");
+                    updateCaptureMessage('Erreur: Images manquantes.', 'error');
+                }
             }
-            stopIdCapture(); // Stop camera after capture
-
-            try {
-                 // Send blob to backend API
-                 const extractedData = await apiService.extractIdInfo(blob);
-                 console.log("Extracted ID Data:", extractedData);
-
-                 if (extractedData) {
-                     // Autofill the form
-                     autofillCreateForm(extractedData);
-                     showToast('Formulaire pré-rempli!', 'success');
-                     showMessage('message','Vérifiez les informations et complétez si nécessaire avant de créer.','info');
-                 } else {
-                     throw new Error("Aucune donnée extraite.");
-                 }
-            } catch (error) {
-                console.error("Error during ID extraction API call:", error);
-                 showMessage('message', `Erreur extraction: ${error.message}`, 'error');
-            } finally {
-                 // Re-enable capture button even on error? Or keep disabled until form submitted/cleared?
-                 DOM.captureIdButton.disabled = false;
-            }
-
-        }, 'image/jpeg', 0.9); // Specify JPEG format and quality
+        }, 'image/jpeg', 0.9);
     }
 
     function autofillCreateForm(data) {
-         // Use querySelector for safer access within the form
-        const form = DOM.createForm;
-        if (!form) return;
-
-        // Use || '' as fallback to prevent setting 'null' or 'undefined' as value
-        if(data.nom) form.nom.value = data.nom || '';
-        if(data.prenom) form.prenom.value = data.prenom || '';
-        if(data.cin) form.cin.value = data.cin || '';
-        if(data.date_naissance) form.date_naissance.value = data.date_naissance || ''; // Assumes YYYY-MM-DD from API
-        if(data.sexe) form.sexe.value = data.sexe || 'M'; // Default to 'M' if missing
-        if(data.adresse) form.adresse.value = data.adresse || '';
-        if(data.ville) form.ville.value = data.ville || '';
-        // Note: Telephone, Mutuelle might not be reliably extracted from all IDs
-
-        // Clear validation errors after autofill
-         form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
-         form.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
-         form.querySelectorAll('.error-text').forEach(el => el.textContent = '');
-         showMessage('message','',''); // Clear general form message
+        const form = DOM.createForm; if (!form) return;
+        console.log("Autofilling form with:", data);
+        // Autofill logic (check if data property exists before setting)
+        if(data.nom !== undefined) form.nom.value = data.nom || '';
+        if(data.prenom !== undefined) form.prenom.value = data.prenom || '';
+        if(data.cin !== undefined) form.cin.value = data.cin || '';
+        if(data.date_naissance !== undefined) form.date_naissance.value = data.date_naissance || ''; // Expects YYYY-MM-DD
+        if(data.sexe !== undefined) form.sexe.value = data.sexe || 'M';
+        if(data.adresse !== undefined) form.adresse.value = data.adresse || '';
+        if(data.ville !== undefined) form.ville.value = data.ville || '';
+        // Clear validation states after autofill
+        form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
+        form.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
+        form.querySelectorAll('.error-text').forEach(el => el.textContent = '');
+        showMessage('message','Vérifiez les informations auto-remplies et complétez.', 'info');
     }
+    // --- END ID Card Capture Logic ---
+
+
+    // --- Event Handlers ---
+    async function handlePatientSearch() { /* ... Same as before ... */ }
+    async function handleCreatePatient(event) { /* ... Same as before ... */ }
+    function handleMutuelleChange() { /* ... Same as before ... */ }
 
     // --- Event Listeners ---
     DOM.searchButton?.addEventListener('click', handlePatientSearch);
     DOM.cinInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handlePatientSearch(); });
     DOM.createForm?.addEventListener('submit', handleCreatePatient);
     DOM.hasInsuranceCheckbox?.addEventListener('change', handleMutuelleChange);
-    // ** ADDED Listeners for ID Capture **
+    // Add listeners for ID capture buttons
     DOM.captureIdButton?.addEventListener('click', startIdCapture);
     DOM.takePhotoButton?.addEventListener('click', takePhotoAndExtract);
-    DOM.cancelCaptureButton?.addEventListener('click', stopIdCapture);
-
+    DOM.cancelCaptureButton?.addEventListener('click', () => stopIdCapture(true)); // Clear blobs on cancel
 
     // --- Initial Setup ---
     window.onload = () => { if (!localStorage.getItem(CONFIG.TOKEN_KEY)) { console.log("Reception: No token."); redirectToLogin(); return; } DOM.body.classList.add('loaded'); console.log("Reception: Authenticated."); resetSessionTimeout(); handleMutuelleChange(); ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => document.addEventListener(event, resetSessionTimeout, { passive: true })); };
