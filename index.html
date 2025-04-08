@@ -49,7 +49,6 @@
     .btn-group { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
     .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 500; border-radius: var(--border-radius); cursor: pointer; transition: background-color var(--transition-speed) ease, transform 0.1s ease; display: inline-flex; align-items: center; justify-content: center; width: auto; line-height: 1.5; border: 1px solid transparent; }
     .btn:active { transform: translateY(1px); }
-    .btn i { margin-right: 0.5rem; }
     .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: var(--primary-dark); } .btn-primary:disabled { background-color: var(--primary-light); border-color: var(--primary-light); cursor: not-allowed; }
     .btn-success { background: var(--success); color: white; } .btn-success:hover { background: var(--success-dark); }
     .btn-secondary { background: var(--gray-600); color: white; } .btn-secondary:hover { background: var(--gray-700); }
@@ -203,7 +202,31 @@
     async function startIdCapture() { if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { updateCaptureMessage('Demande caméra...', 'loading'); DOM.captureIdButton.disabled = true; DOM.idCaptureContainer.style.display = 'block'; DOM.frontPreview.style.display = 'none'; DOM.backPreview.style.display = 'none'; isCapturingFront = true; DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo."; try { idCaptureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } }); DOM.idVideo.srcObject = idCaptureStream; await DOM.idVideo.play(); updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info'); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; } catch (err) { updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error'); stopIdCapture(false); } } else { alert("Accès caméra non supporté."); updateCaptureMessage("Caméra non supportée.", 'error'); DOM.captureIdButton.disabled = false;} }
     function stopIdCapture(clearBlobs = true) { if (idCaptureStream) { idCaptureStream.getTracks().forEach(track => track.stop()); } DOM.idVideo.srcObject = null; DOM.idCaptureContainer.style.display = 'none'; DOM.takePhotoButton.disabled = true; DOM.cancelCaptureButton.disabled = true; DOM.captureIdButton.disabled = false; idCaptureStream = null; updateCaptureMessage('', ''); if (clearBlobs) { frontImageBlob = null; backImageBlob = null; DOM.frontPreview.src = ''; DOM.backPreview.src = ''; DOM.frontPreview.style.display = 'none'; DOM.backPreview.style.display = 'none'; console.log("ID Capture cancelled and blobs cleared."); } }
     async function takePhotoAndExtract() { if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) { updateCaptureMessage('Caméra non prête.', 'warning'); return; } updateCaptureMessage('Capture et analyse...', 'loading'); DOM.takePhotoButton.disabled = true; DOM.cancelCaptureButton.disabled = true; const canvas = DOM.idCanvas; canvas.width = DOM.idVideo.videoWidth; canvas.height = DOM.idVideo.videoHeight; const context = canvas.getContext('2d'); context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height); canvas.toBlob(async (blob) => { if (!blob) { updateCaptureMessage('Erreur capture image.', 'error'); stopIdCapture(); return; } if (isCapturingFront) { frontImageBlob = blob; console.log("Recto captured"); DOM.frontPreview.src = URL.createObjectURL(frontImageBlob); DOM.frontPreview.style.display = 'inline-block'; isCapturingFront = false; DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo."; updateCaptureMessage('Recto OK. Préparez le verso.', 'info'); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; } else { backImageBlob = blob; console.log("Verso captured"); DOM.backPreview.src = URL.createObjectURL(backImageBlob); DOM.backPreview.style.display = 'inline-block'; stopIdCapture(false); updateCaptureMessage('Verso OK. Analyse en cours...', 'loading'); if (frontImageBlob && backImageBlob) { const formData = new FormData(); formData.append('id_image_front', frontImageBlob, 'id_card_front.jpg'); formData.append('id_image_back', backImageBlob, 'id_card_back.jpg'); try { const extractedData = await apiService.extractIdInfo(formData); console.log("Extracted ID Data:", extractedData); if (extractedData) { autofillCreateForm(extractedData); showToast('Formulaire pré-rempli!', 'success'); updateCaptureMessage('Données extraites!', 'success'); } else { throw new Error("Aucune donnée extraite."); } } catch (error) { console.error("Error extraction API call:", error); updateCaptureMessage(`Erreur extraction: ${error.message}`, 'error'); } finally { frontImageBlob = null; backImageBlob = null; } } else { console.error("Missing blobs."); updateCaptureMessage('Erreur: Images manquantes.', 'error'); } } }, 'image/jpeg', 0.9); }
-    function autofillCreateForm(data) { const form = DOM.createForm; if (!form) return; console.log("Autofilling form with:", data); if(data.nom !== undefined) form.nom.value = data.nom || ''; if(data.prenom !== undefined) form.prenom.value = data.prenom || ''; if(data.cin !== undefined) form.cin.value = data.cin || ''; if(data.date_naissance !== undefined) form.date_naissance.value = data.date_naissance || ''; if(data.sexe !== undefined) form.sexe.value = data.sexe || 'M'; if(data.adresse !== undefined) form.adresse.value = data.adresse || ''; if(data.ville !== undefined) form.ville.value = data.ville || ''; form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); form.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error')); form.querySelectorAll('.error-text').forEach(el => el.textContent = ''); showMessage('message','Vérifiez les infos et complétez.', 'info'); }
+    function autofillCreateForm(data) {
+      const form = DOM.createForm;
+      if (!form || !data || !data.data) return;
+
+      const extracted = data.data;
+
+      console.log("Extracted from API:", extracted); // for debugging
+
+      // Fill form fields
+      form.nom.value = extracted.last_name || '';
+      form.prenom.value = extracted.first_name || '';
+      form.cin.value = extracted.id_number || '';
+      form.date_naissance.value = extracted.date_of_birth || '';
+      form.adresse.value = extracted.address || '';
+      form.ville.value = extracted.city || '';
+      form.sexe.value = extracted.gender === 'F' ? 'F' : 'M';
+
+      // Clear previous errors
+      form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
+      form.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
+      form.querySelectorAll('.error-text').forEach(el => el.textContent = '');
+
+      // Show a feedback message
+      showMessage('message', 'Formulaire pré-rempli automatiquement. Veuillez vérifier les informations.', 'info');
+    }
 
     // --- Event Handlers ---
     async function handlePatientSearch() { /* ... Same as previous correct version ... */ }
