@@ -53,6 +53,11 @@
         display: flex;
         align-items: center;
     }
+    /* Style for placeholder text in Choices.js */
+     .choices__list--single .choices__item[data-value=""] {
+        color: #6c757d; /* Example placeholder color */
+        opacity: 0.8;
+     }
   </style>
 </head>
 <body >
@@ -304,26 +309,58 @@
     function autofillCreateForm(data) { const form = DOM.createForm; if (!form || !data || !data.data) { console.warn("Autofill failed: Form or data object missing."); return; } const extracted = data.data; console.log("Extracted from API for Autofill:", extracted); let formattedDateOfBirth = ""; if (extracted.date_of_birth) { const originalDateString = extracted.date_of_birth; const dateParts = originalDateString.split('/'); if (dateParts.length === 3) { const day = dateParts[0]; const month = dateParts[1]; const year = dateParts[2]; formattedDateOfBirth = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`; console.log("Formatted date_of_birth:", formattedDateOfBirth); } else { console.warn("Date of birth format not as expected (DD/MM/YYYY):", originalDateString); } } else { console.warn("Date of birth missing from extracted data."); } form.nom.value = extracted.last_name ?? ''; form.prenom.value = extracted.first_name ?? ''; form.cin.value = extracted.id_number ?? ''; form.date_naissance.value = formattedDateOfBirth; form.adresse.value = extracted.address ?? ''; form.ville.value = extracted.city ?? ''; form.sexe.value = extracted.gender === 'F' ? 'F' : 'M'; form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); form.querySelectorAll('input, select, .choices').forEach(el => el.classList.remove('input-error')); form.querySelectorAll('.error-text').forEach(el => el.textContent = ''); showMessage('message', 'Formulaire pré-rempli. Vérifiez les informations.', 'info'); }
 
     // --- Dropdown Population Functions ---
-    function populateDropdown(selectElement, items, placeholderValue = '', valueKey = 'name', textKey = 'name') {
+    // Enhanced populateDropdown function (FIXED)
+    function populateDropdown(selectElement, items, placeholderValue = '', valueKey = null, textKeyOrFn = null) {
         if (!selectElement || !Array.isArray(items)) {
-            console.warn("Cannot populate dropdown:", selectElement, items);
+            console.warn("Cannot populate dropdown:", selectElement?.id, items);
+            if(selectElement) selectElement.innerHTML = `<option value="${placeholderValue}">Erreur/Vide</option>`;
             return;
         }
-        // Keep only the placeholder option
-        selectElement.innerHTML = `<option value="${placeholderValue}"></option>`; // Ensure the placeholder option exists
+        // Start with only the placeholder option
+        selectElement.innerHTML = `<option value="${placeholderValue}"></option>`;
 
         items.forEach(item => {
             const option = document.createElement('option');
-            const value = typeof item === 'object' ? item[valueKey] : item;
-            const text = typeof item === 'object' ? item[textKey] : item;
-            // Avoid adding duplicate placeholder if it exists in items
-            if (value !== placeholderValue) {
+            let value, text;
+
+            if (typeof item === 'object' && item !== null) {
+                // Item is an object
+                value = valueKey ? item[valueKey] : JSON.stringify(item); // Use specified key or stringify
+
+                if (typeof textKeyOrFn === 'function') {
+                    text = textKeyOrFn(item); // Use function for display text
+                } else if (typeof textKeyOrFn === 'string') {
+                    text = item[textKeyOrFn]; // Use specified key for display text
+                } else {
+                    text = value; // Fallback: use the value
+                }
+            } else {
+                // Item is a simple string or number
+                value = item;
+                text = item;
+            }
+
+            // Add option only if value/text are valid and not the placeholder value itself
+            if (String(value) !== String(placeholderValue) && value !== undefined && value !== null && text !== undefined && text !== null) {
                  option.value = value;
                  option.textContent = text;
                  selectElement.appendChild(option);
+            } else if (String(value) === String(placeholderValue)) {
+                 // console.log(`Skipping item with same value as placeholder: ${value}`); // Optional log
+            } else {
+                 console.warn(`Skipping invalid item for ${selectElement.id}: value=${value}, text=${text}`);
             }
         });
+
+        // Log if dropdown is empty after populating
+        if(selectElement.options.length <= 1 && items.length > 0) {
+             console.warn(`Dropdown ${selectElement.id} appears empty despite receiving ${items.length} items. Check valueKey/textKeyOrFn logic.`);
+        } else if (selectElement.options.length <= 1 && items.length === 0) {
+             console.log(`Dropdown ${selectElement.id} is empty as no items were provided.`);
+             // Placeholder text is handled by Choices.js or the initial <option>
+        }
     }
+
 
     async function initializeDropdowns() {
         // Clear previous instances if re-initializing
@@ -341,76 +378,78 @@
             const [mutuellesResponse, doctorsResponse] = await Promise.all([
                 apiService.getMutuelles(),
                 apiService.getDoctors()
-            ]).catch(error => { // Catch errors from Promise.all
+            ]).catch(error => {
                 console.error("Failed during API fetch for dropdowns:", error);
                 showToast("Erreur chargement des listes.", "error");
-                // Set lists to empty to prevent errors later
-                return [ { data: [] }, { data: [] } ];
+                return [ { mutuelles: [] }, { doctors: [] } ]; // Return structure with empty arrays on error
             });
 
             console.log("Mutuelles Response:", mutuellesResponse);
             console.log("Doctors Response:", doctorsResponse);
 
-            // Use optional chaining and default to empty array for safety
-            const mutuellesList = mutuellesResponse?.data || [];
-            const doctorsList = doctorsResponse?.data || [];
+            // Correct data extraction (FIXED)
+            const mutuellesList = mutuellesResponse?.mutuelles ?? [];
+            const doctorsList = doctorsResponse?.doctors ?? [];
 
 
             // --- Populate the original selects FIRST ---
             if (DOM.mutuelleField) {
-                 populateDropdown(DOM.mutuelleField, mutuellesList, '', 'name', 'name');
+                // Mutuelles: Simple string array (FIXED call)
+                 populateDropdown(DOM.mutuelleField, mutuellesList, ''); // Item is value and text
             }
             if (DOM.doctorSelect) {
-                 // Adjust 'id', 'name' if doctor object has different keys
-                 populateDropdown(DOM.doctorSelect, doctorsList, '', 'id', 'name');
+                 // Doctors: Object array (FIXED call)
+                 populateDropdown(
+                     DOM.doctorSelect,
+                     doctorsList,
+                     '', // Placeholder value
+                     'matricule', // Key for option value
+                     (item) => `${item.prenom} ${item.nom} (${item.specialite})` // Function for option text
+                 );
             }
             console.log("Original selects populated.");
 
             // --- Initialize Choices.js AFTER population ---
             const choicesOptions = {
                 searchEnabled: true,
-                shouldSort: false, // Keep API order
+                shouldSort: false,
                 itemSelectText: '',
                 loadingText: 'Chargement...',
                 noResultsText: 'Aucun résultat',
-                noChoicesText: 'Aucune option disponible',
-                searchPlaceholderValue: "Rechercher...", // Placeholder for search input
-                allowHTML: false // Prevent HTML injection
+                noChoicesText: 'Aucune option disponible', // Displayed when list is empty after filtering/loading
+                placeholder: true, // Use the <option value=""> as placeholder
+                placeholderValue: '', // Matches the value attribute of the placeholder <option>
+                searchPlaceholderValue: "Rechercher...",
+                removeItemButton: true, // Adds a small 'x' button
+                allowHTML: false
             };
 
-            if (DOM.mutuelleField && mutuellesList.length > 0) {
-                choicesMutuelleInstance = new Choices(DOM.mutuelleField, {
-                    ...choicesOptions,
-                    placeholder: true,
-                    placeholderValue: '', // Value of the placeholder <option>
-                    removeItemButton: true,
-                });
-                 // Initial enabled/disabled state set by handleMutuelleChange below
-            } else if (DOM.mutuelleField) {
-                 // Handle case where list is empty or failed to load after population attempt
-                 if (DOM.mutuelleField.options.length <= 1) { // Only placeholder exists
-                      DOM.mutuelleField.innerHTML = '<option value="">Liste vide ou erreur</option>';
-                 }
-                 DOM.mutuelleField.disabled = true;
+            // Initialize Choices for Mutuelle if list is not empty (FIXED logic)
+            if (DOM.mutuelleField) {
+                if (mutuellesList.length > 0) {
+                    choicesMutuelleInstance = new Choices(DOM.mutuelleField, choicesOptions);
+                    // Initial state set by handleMutuelleChange
+                } else {
+                    // List is empty, keep select disabled. Placeholder text is set by populateDropdown.
+                    DOM.mutuelleField.disabled = true;
+                    console.log("Mutuelle list is empty, select disabled.");
+                }
             }
 
-            if (DOM.doctorSelect && doctorsList.length > 0) {
-                choicesDoctorInstance = new Choices(DOM.doctorSelect, {
-                   ...choicesOptions,
-                   placeholder: true,
-                   placeholderValue: '',
-                   removeItemButton: true,
-                });
-                 DOM.doctorSelect.disabled = false; // Enable original select
-                 choicesDoctorInstance.enable();   // Enable Choices instance
-            } else if (DOM.doctorSelect) {
-                 if (DOM.doctorSelect.options.length <= 1) {
-                     DOM.doctorSelect.innerHTML = '<option value="">Liste vide ou erreur</option>';
-                 }
-                 DOM.doctorSelect.disabled = true;
+            // Initialize Choices for Doctor if list is not empty (FIXED logic)
+            if (DOM.doctorSelect) {
+                 if (doctorsList.length > 0) {
+                    choicesDoctorInstance = new Choices(DOM.doctorSelect, choicesOptions);
+                    DOM.doctorSelect.disabled = false; // Enable original select (important for Choices)
+                    choicesDoctorInstance.enable();   // Enable Choices instance
+                } else {
+                    // List is empty, keep select disabled.
+                    DOM.doctorSelect.disabled = true;
+                    console.log("Doctor list is empty, select disabled.");
+                }
             }
 
-             // Set initial state for Mutuelle based on checkbox AFTER Choices is potentially initialized
+             // Set initial state for Mutuelle based on checkbox AFTER potential initialization
              handleMutuelleChange();
 
             console.log("Choices.js initialized.");
@@ -420,12 +459,13 @@
             // Catch errors during population or Choices initialization
             console.error("Failed to populate dropdowns or initialize Choices:", error);
             showToast("Erreur initialisation des listes.", "error");
-             if (DOM.mutuelleField) {
-                 DOM.mutuelleField.innerHTML = '<option value="">Erreur</option>';
+             // Fallback: ensure selects show an error state if init failed badly
+             if (DOM.mutuelleField && !choicesMutuelleInstance) {
+                 DOM.mutuelleField.innerHTML = '<option value="">Erreur Init</option>';
                  DOM.mutuelleField.disabled = true;
              }
-             if (DOM.doctorSelect) {
-                 DOM.doctorSelect.innerHTML = '<option value="">Erreur</option>';
+             if (DOM.doctorSelect && !choicesDoctorInstance) {
+                 DOM.doctorSelect.innerHTML = '<option value="">Erreur Init</option>';
                  DOM.doctorSelect.disabled = true;
              }
         }
@@ -450,13 +490,19 @@
           const qrCodeData = generateQrData(currentIPP);
           let displayDate = "N/A";
           if (currentPatientInfo.date_naissance) { const dateParts = currentPatientInfo.date_naissance.split('-'); if (dateParts.length === 3) { displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; } else { displayDate = sanitizeInput(currentPatientInfo.date_naissance); } }
-          const qrCodeHTML = `<div class="patient-result-container">
-                                  <div class="patient-result-info">
-                                      ${Object.entries({ Nom: currentPatientInfo.nom, Prénom: currentPatientInfo.prenom, CIN: currentPatientInfo.cin, Téléphone: currentPatientInfo.telephone, Adresse: currentPatientInfo.adresse, Ville: currentPatientInfo.ville, 'Date Naissance': displayDate, Sexe: currentPatientInfo.sexe === 'M' ? 'Homme' : 'Femme', Mutuelle: currentPatientInfo.mutuelle || 'N/A', IPP: currentIPP || 'N/A' }).map(([label, value]) => `<div class="info-group"><div class="info-label">${label}:</div><div class="info-value">${sanitizeInput(value)}</div></div>`).join('')}
-                                  </div>
-                                  ${qrCodeData ? `<div class="patient-result-qr"> <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient" loading="lazy" /> <p>Scannez ce QR Code avec l'appli patient.</p> <button onclick="printQRCode('${qrCodeData.qrImageUrl}')" class="btn btn-secondary btn-sm"><i class="fas fa-print"></i> Imprimer QR</button> </div>` : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>'}
-                               </div>`;
-          DOM.getResult.innerHTML = qrCodeHTML;
+          // Simplified result display generation
+          const infoHtml = Object.entries({
+              Nom: currentPatientInfo.nom, Prénom: currentPatientInfo.prenom, CIN: currentPatientInfo.cin,
+              Téléphone: currentPatientInfo.telephone, Adresse: currentPatientInfo.adresse, Ville: currentPatientInfo.ville,
+              'Date Naissance': displayDate, Sexe: currentPatientInfo.sexe === 'M' ? 'Homme' : 'Femme',
+              Mutuelle: currentPatientInfo.mutuelle || 'N/A', IPP: currentIPP || 'N/A'
+            }).map(([label, value]) => `<div class="info-group"><div class="info-label">${label}:</div><div class="info-value">${sanitizeInput(value)}</div></div>`).join('');
+
+          const qrHtml = qrCodeData ?
+            `<div class="patient-result-qr"> <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient" loading="lazy" /> <p>Scannez ce QR Code avec l'appli patient.</p> <button onclick="printQRCode('${qrCodeData.qrImageUrl}')" class="btn btn-secondary btn-sm"><i class="fas fa-print"></i> Imprimer QR</button> </div>`
+            : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>';
+
+          DOM.getResult.innerHTML = `<div class="patient-result-container"><div class="patient-result-info">${infoHtml}</div>${qrHtml}</div>`;
         } else {
           showMessage('getResult', 'Patient non trouvé.', 'warning');
           DOM.getResult.innerHTML = '<div class="patient-result-container"><p>Patient non trouvé.</p></div>';
@@ -487,10 +533,8 @@
         ville: DOM.createForm.ville.value.trim(),
         date_naissance: birthDateToSend,
         sexe: DOM.createForm.sexe.value,
-        // Get value from the select field if checkbox is checked
         mutuelle: DOM.hasInsuranceCheckbox.checked ? DOM.mutuelleField.value : null,
-        // Add doctor ID - use null if no doctor is selected (value is '')
-        // Ensure 'doctorId' (or whatever key used here) is correct for your backend
+        // Use doctor 'matricule' (value of the selected option) or null
         doctorId: DOM.doctorSelect.value || null,
       };
 
@@ -539,7 +583,6 @@
     }
 
     function handleMutuelleChange() {
-        // Check if the Choices instance exists before trying to use it
         if (!DOM.hasInsuranceCheckbox || !DOM.mutuelleField ) return;
 
         const isChecked = DOM.hasInsuranceCheckbox.checked;
