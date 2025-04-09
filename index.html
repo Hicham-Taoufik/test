@@ -7,7 +7,6 @@
   <title>Réception - MediClinic</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <!-- Assume style.css provides comprehensive styling. Basic styles included below for demonstration. -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +15,6 @@
     <header class="header no-print">
       <div class="header-main-content">
         <div class="logo">
-          <!-- Use a real or placeholder image -->
           <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> 
         </div>
         <h1 class="header-title">Réception</h1>
@@ -35,7 +33,6 @@
           <h2 id="create-patient-heading" class="card-title">
             <i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient
           </h2>
-          <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div>
         </header>
         <div class="card-body">
           <!-- ID Capture Section -->
@@ -51,7 +48,7 @@
                 <img id="frontPreview" class="capture-preview" alt="Aperçu Recto" style="display: none;">
                 <img id="backPreview" class="capture-preview" alt="Aperçu Verso" style="display: none;">
               </div>
-              <div class="d-flex justify-content-center gap-2 mt-2"> <!-- Use flex for buttons too -->
+              <div class="d-flex justify-content-center gap-2 mt-2">
                 <button id="takePhotoButton" type="button" class="btn btn-success" disabled>
                   <i class="fas fa-camera-retro"></i> Prendre Photo
                 </button>
@@ -62,8 +59,7 @@
               <div id="captureMessage" class="message mt-2" style="display: none;" role="alert"></div>
             </div>
           </div>
-          <!-- End ID Capture Section -->
-
+          <!-- Patient Creation Form -->
           <form id="createForm" class="no-print" novalidate>
             <div class="form-grid">
               <div class="input-group">
@@ -88,14 +84,7 @@
               </div>
               <div class="input-group">
                 <label for="adresse">Adresse <span class="req-star" aria-hidden="true">*</span></label>
-                <textarea
-                  id="adresse"
-                  name="adresse"
-                  class="professional"
-                  placeholder="Rue, Code postal, Ville, Pays"
-                  required
-                  autocomplete="address-line1"
-                ></textarea>
+                <textarea id="adresse" name="adresse" class="professional" placeholder="Rue, Code postal, Ville, Pays" required autocomplete="address-line1"></textarea>
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
@@ -105,7 +94,7 @@
               </div>
               <div class="input-group">
                 <label for="date_naissance">Date de Naissance <span class="req-star" aria-hidden="true">*</span></label>
-                <input id="date_naissance" name="date_naissance" type="date" required autocomplete="bday" max="9999-12-31"> <!-- Added max date -->
+                <input id="date_naissance" name="date_naissance" type="date" required autocomplete="bday" max="9999-12-31">
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
@@ -117,43 +106,23 @@
                 </select>
                 <div class="error-text"></div>
               </div>
-
-              <!-- Médecin référent searchable field -->
               <div class="input-group">
                 <label for="medecin_referent">Médecin référent</label>
-                <input
-                  type="text"
-                  list="doctors"
-                  id="medecin_referent"
-                  name="medecin_referent"
-                  placeholder="Rechercher un médecin"
-                  autocomplete="off"
-                >
+                <input type="text" list="doctors" id="medecin_referent" name="medecin_referent" placeholder="Rechercher un médecin" autocomplete="off">
                 <datalist id="doctors"></datalist>
-                <div class="error-text"></div> <!-- Added error text div -->
+                <div class="error-text"></div>
               </div>
-
-              <!-- Mutuelle checkbox + searchable field -->
               <div class="input-group mutuelle-group">
                 <div>
                   <input type="checkbox" id="has_insurance" name="has_insurance">
                   <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label>
                 </div>
                 <div id="mutuelle-input-container">
-                  <input
-                    type="text"
-                    id="mutuelle"
-                    name="mutuelle"
-                    list="mutuelles"
-                    placeholder="Rechercher ou sélectionner une mutuelle"
-                    disabled
-                    autocomplete="off"
-                  >
+                  <input type="text" id="mutuelle" name="mutuelle" list="mutuelles" placeholder="Rechercher ou sélectionner une mutuelle" disabled autocomplete="off">
                   <datalist id="mutuelles"></datalist>
                   <div class="error-text"></div>
                 </div>
               </div>
-
               <div class="form-submit-button">
                 <button type="submit" class="btn btn-success" id="createPatientBtn">
                   <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient
@@ -162,8 +131,6 @@
               <div id="message" class="message" role="alert" aria-live="polite" style="display: none;"></div>
             </div>
           </form>
-
-          <!-- Result Area for Creation -->
           <div id="createResult" style="display: none;">
             <p id="createResultMessage"></p>
             <img id="createQrCodeImage" src="" alt="QR Code Patient" loading="lazy">
@@ -180,7 +147,6 @@
           <h2 id="search-patient-heading" class="card-title">
             <i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient
           </h2>
-          <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div>
         </header>
         <div class="card-body">
           <div class="search-bar no-print">
@@ -189,9 +155,7 @@
               <i class="fas fa-search" aria-hidden="true"></i> Rechercher
             </button>
           </div>
-          <div id="getResult" role="region" aria-live="polite">
-             <!-- Search results will appear here -->
-          </div>
+          <div id="getResult" role="region" aria-live="polite"></div>
         </div>
       </section>
     </main>
@@ -201,39 +165,26 @@
 
   <script>
   (function() {
-    'use strict'; // Enable strict mode
-
-    // --- Configuration ---
+    'use strict';
     const CONFIG = {
-      // IMPORTANT: Replace with your actual backend URLs
-      API_BASE_URL: 'https://workflows.aphelionxinnovations.com', // Example backend
-      LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', // Example login page
-      // ---
-      QR_TARGET_BASE_URL: 'app://medilink/patient', // Example deep link for QR code
+      API_BASE_URL: 'https://workflows.aphelionxinnovations.com',
+      LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/',
+      QR_TARGET_BASE_URL: 'app://medilink/patient',
       TOKEN_KEY: 'authToken',
-      SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutes
-      MESSAGE_DISPLAY_TIME: 7000, // 7 seconds for form messages
-      TOAST_DISPLAY_TIME: 4000 // 4 seconds for toasts
+      SESSION_TIMEOUT: 30 * 60 * 1000,
+      TOAST_DISPLAY_TIME: 4000
     };
     const DOCTORS_ENDPOINT   = CONFIG.API_BASE_URL + '/webhook/get-doctors';
     const MUTUELLES_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/get-mutuelles';
     const EXTRACT_ID_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/extract-id-info';
     const CREATE_PATIENT_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/create-patient';
-    const GET_PATIENT_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/get-patient'; // Base URL for GET
+    const GET_PATIENT_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/get-patient';
 
-    // --- State ---
-    let doctorsList   = [];
-    let mutuellesList = [];
-    let sessionTimeoutId = null;
-    let idCaptureStream  = null;
-    let frontImageBlob   = null;
-    let backImageBlob    = null;
-    let isCapturingFront = true;
+    let doctorsList = [], mutuellesList = [];
+    let sessionTimeoutId = null, idCaptureStream = null;
+    let frontImageBlob = null, backImageBlob = null, isCapturingFront = true;
 
-    // --- DOM References ---
-    // Using const for references that won't change
     const DOM = {
-      body: document.body,
       createForm: document.getElementById('createForm'),
       nom: document.getElementById('nom'),
       prenom: document.getElementById('prenom'),
@@ -246,8 +197,8 @@
       hasInsurance: document.getElementById('has_insurance'),
       mutuelle: document.getElementById('mutuelle'),
       medecinReferent: document.getElementById('medecin_referent'),
-      doctorsDatalist: document.getElementById('doctors'), // Added reference
-      mutuellesDatalist: document.getElementById('mutuelles'), // Added reference
+      doctorsDatalist: document.getElementById('doctors'),
+      mutuellesDatalist: document.getElementById('mutuelles'),
       captureIdButton: document.getElementById('captureIdButton'),
       idCaptureContainer: document.getElementById('idCaptureContainer'),
       idVideo: document.getElementById('idVideo'),
@@ -263,397 +214,214 @@
       createResultMessage: document.getElementById('createResultMessage'),
       createQrCodeImage: document.getElementById('createQrCodeImage'),
       createPrintButton: document.getElementById('createPrintButton'),
-      message: document.getElementById('message'), // Form-level message area
+      message: document.getElementById('message'),
       searchBtn: document.getElementById('searchBtn'),
-      getCin: document.getElementById('getCin'), // Search input
-      resultDiv: document.getElementById('getResult'), // Search result area
+      getCin: document.getElementById('getCin'),
+      resultDiv: document.getElementById('getResult'),
       toast: document.getElementById('toast')
     };
 
-    // --- Utility Functions ---
-
-    /**
-     * Sanitizes HTML string to prevent XSS.
-     * @param {string} input The string to sanitize.
-     * @returns {string} Sanitized string.
-     */
     function sanitize(input) {
       const temp = document.createElement('div');
       temp.textContent = input || '';
       return temp.innerHTML;
     }
 
-    /**
-     * Shows a toast notification.
-     * @param {string} msg The message to display.
-     * @param {'success' | 'error' | 'info'} type The type of toast.
-     */
     function showToast(msg, type = 'info') {
       if (!msg || !DOM.toast) return;
-      const icons = {
-        success: '<i class="fas fa-check-circle"></i>',
-        error:   '<i class="fas fa-exclamation-triangle"></i>', // Changed icon
-        info:    '<i class="fas fa-info-circle"></i>'
-      };
+      const icons = { success: '<i class="fas fa-check-circle"></i>', error: '<i class="fas fa-exclamation-triangle"></i>', info: '<i class="fas fa-info-circle"></i>' };
       DOM.toast.innerHTML = `${icons[type] || icons.info} ${sanitize(msg)}`;
-      DOM.toast.className = `toast ${type}`; // Remove show initially
-
-      // Clear previous timeout if any to prevent overlapping animations/removals
+      DOM.toast.className = `toast ${type}`;
       if (DOM.toast.timeoutId) clearTimeout(DOM.toast.timeoutId);
       if (DOM.toast.animationFrameId) cancelAnimationFrame(DOM.toast.animationFrameId);
-
-      // Use rAF for smoother transition start
       DOM.toast.animationFrameId = requestAnimationFrame(() => {
-          DOM.toast.classList.add('show');
-          DOM.toast.timeoutId = setTimeout(() => {
-              DOM.toast.classList.remove('show');
-              DOM.toast.timeoutId = null;
-              DOM.toast.animationFrameId = null; // Clean up animation frame id
-          }, CONFIG.TOAST_DISPLAY_TIME);
+        DOM.toast.classList.add('show');
+        DOM.toast.timeoutId = setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME);
       });
     }
 
-    /**
-     * Displays a message in a designated element.
-     * @param {string} elementId The ID of the message container element.
-     * @param {string} message The message text.
-     * @param {'info' | 'success' | 'warning' | 'error' | 'loading' | 'result'} type The message type.
-     */
     function showMessage(elementId, message, type = 'info') {
       const el = document.getElementById(elementId);
-      if (!el) {
-        console.warn(`Element with ID '${elementId}' not found for showMessage.`);
-        return;
-      }
-      const icons = {
-        info:    'fas fa-info-circle',
-        success: 'fas fa-check-circle',
-        warning: 'fas fa-exclamation-triangle',
-        error:   'fas fa-times-circle',
-        loading: 'fas fa-spinner fa-spin'
-      };
-      const iconHtml = message && type !== 'result' && icons[type]
-        ? `<i class="${icons[type]} me-2" aria-hidden="true"></i>`
-        : '';
-
+      if (!el) return;
+      const icons = { info: 'fas fa-info-circle', success: 'fas fa-check-circle', warning: 'fas fa-exclamation-triangle', error: 'fas fa-times-circle', loading: 'fas fa-spinner fa-spin' };
+      const iconHtml = message && type !== 'result' && icons[type] ? `<i class="${icons[type]} me-2" aria-hidden="true"></i>` : '';
       el.innerHTML = message ? `${iconHtml}${sanitize(message)}` : '';
-      el.style.display = message ? 'flex' : 'none'; // Use flex for alignment with icon
+      el.style.display = message ? 'flex' : 'none';
       el.className = type === 'result' ? '' : `message message-${type}`;
-
-      // Special handling for capture message container visibility
       if (elementId === 'captureMessage' && el.parentElement) {
           el.parentElement.style.display = message ? 'block' : 'none';
-          if (message) el.style.display = 'flex'; // Ensure message itself is visible
+          if (message) el.style.display = 'flex';
       }
     }
 
-    /**
-     * Performs fetch requests with authorization header and session management.
-     * @param {string} url The URL to fetch.
-     * @param {object} opts Fetch options (method, body, etc.).
-     * @returns {Promise<Response>} The fetch Response object.
-     */
     async function fetchWithAuth(url, opts = {}) {
       const token = localStorage.getItem(CONFIG.TOKEN_KEY);
       if (!token) {
-        alert('Session expirée ou jeton manquant. Redirection vers la page de connexion.');
+        alert('Session expirée. Redirection vers la page de connexion.');
         window.location.href = CONFIG.LOGIN_PAGE_URL;
-        // Prevent further execution by throwing an error that stops the promise chain
-        throw new Error('No authentication token found.');
+        throw new Error('No auth token found.');
       }
-
-      resetSessionTimeout(); // Reset timeout on authenticated activity
-
-      const headers = { ...opts.headers, 'Authorization': `Bearer ${token}` };
-      // Automatically set Content-Type for JSON bodies if not FormData
-      if (opts.body && !(opts.body instanceof FormData) && !headers['Content-Type']) {
-         if (typeof opts.body === 'string'){ // Assume JSON if stringified
-              headers['Content-Type'] = 'application/json';
-         }
+      resetSessionTimeout();
+      opts.headers = { ...opts.headers, 'Authorization': `Bearer ${token}` };
+      if (opts.body && !(opts.body instanceof FormData) && !opts.headers['Content-Type'] && typeof opts.body === 'string') {
+         opts.headers['Content-Type'] = 'application/json';
       }
-
       try {
-        const response = await fetch(url, { ...opts, headers });
-
+        const response = await fetch(url, opts);
         if ([401, 403].includes(response.status)) {
           localStorage.removeItem(CONFIG.TOKEN_KEY);
-          alert('Session invalide ou expirée. Veuillez vous reconnecter.');
+          alert('Session invalide ou expirée.');
           window.location.href = CONFIG.LOGIN_PAGE_URL;
-          throw new Error('Authentication failed.'); // Specific error for auth failure
+          throw new Error('Authentication failed.');
         }
-
         if (!response.ok) {
           let errorBody = '';
           try {
-            // Attempt to read error details from response, prioritizing JSON
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                const errorData = await response.json();
-                errorBody = errorData.message || errorData.error || JSON.stringify(errorData);
-            } else {
-                errorBody = await response.text();
-            }
-          } catch (e) { /* Ignore error reading body */ }
-          // Construct a more informative error message
-          throw new Error(errorBody || `HTTP error ${response.status} - ${response.statusText}`);
+            const ct = response.headers.get('content-type');
+            errorBody = ct && ct.includes('application/json') ? (await response.json()).message : await response.text();
+          } catch (e) {}
+          throw new Error(errorBody || `HTTP error ${response.status}`);
         }
-
-        return response; // Return the full response object on success
-
+        return response;
       } catch (error) {
-        console.error('Fetch error:', error);
-        // Show toast only for non-auth related errors, as auth errors trigger alerts/redirects
-        if (error.message !== 'Authentication failed.' && error.message !== 'No authentication token found.') {
+        if (!['Authentication failed.', 'No auth token found.'].includes(error.message))
           showToast(`Erreur réseau ou serveur: ${error.message}`, 'error');
-        }
-        throw error; // Re-throw to allow caller to handle
+        throw error;
       }
     }
 
-    /** Resets the session inactivity timer. */
     function resetSessionTimeout() {
       if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
       sessionTimeoutId = setTimeout(window.logout, CONFIG.SESSION_TIMEOUT);
     }
 
-    // --- Validation ---
-
-    /**
-     * Validates a single form field.
-     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} input The input element.
-     * @param {function(string): boolean} testFn Validation function returning true if valid.
-     * @param {string} [errorMessage] Custom error message.
-     * @returns {boolean} True if the field is valid.
-     */
     function validateField(input, testFn, errorMessage) {
-        if (!input) return true; // Should not happen but safeguard
-
-        const value = input.value.trim();
-        const group = input.closest('.input-group');
-        const errorDiv = group ? group.querySelector('.error-text') : null;
-        let isValid = false;
-        let message = errorMessage || 'Valeur invalide.'; // Default message
-
-        if (input.required && value === '') {
-            isValid = false;
-            message = 'Ce champ est requis.';
-        } else if (!input.required && value === '') {
-            isValid = true; // Not required and empty is always valid
-        } else {
-            // For non-empty or non-required fields, use test function if provided
-            isValid = testFn ? testFn(value) : true; // Assume valid if no specific test needed
-        }
-
-        // Date specific validation: Ensure date is not in the future
-        if (isValid && input.type === 'date' && value !== '') {
-           const inputDate = new Date(value + 'T00:00:00'); // Use T00:00:00 for consistent comparison
-           const today = new Date();
-           today.setHours(0, 0, 0, 0); // Compare against start of today
-
-           if (inputDate > today) {
-               isValid = false;
-               message = 'La date ne peut pas être dans le futur.';
-           }
-        }
-
-        if (group) group.classList.toggle('has-error', !isValid);
-        input.classList.toggle('input-error', !isValid);
-        if (errorDiv) {
-            errorDiv.textContent = isValid ? '' : message;
-        }
-
-        return isValid;
+      if (!input) return true;
+      const value = input.value.trim();
+      const group = input.closest('.input-group');
+      const errorDiv = group ? group.querySelector('.error-text') : null;
+      let isValid = input.required ? value !== '' : true;
+      let message = input.required && !value ? 'Ce champ est requis.' : errorMessage || 'Valeur invalide.';
+      if (isValid && value && testFn) { isValid = testFn(value); }
+      if (isValid && input.type === 'date' && value) {
+         const inputDate = new Date(value + 'T00:00:00'), today = new Date();
+         today.setHours(0, 0, 0, 0);
+         if (inputDate > today) { isValid = false; message = 'La date ne peut pas être dans le futur.'; }
+      }
+      if (group) group.classList.toggle('has-error', !isValid);
+      input.classList.toggle('input-error', !isValid);
+      if (errorDiv) errorDiv.textContent = isValid ? '' : message;
+      return isValid;
     }
 
-    /** Clears all validation errors from the create form. */
     function clearErrors() {
-        DOM.createForm.querySelectorAll('.input-group').forEach(group => {
-            group.classList.remove('has-error');
-            group.querySelectorAll('input, textarea, select').forEach(input => input.classList.remove('input-error'));
-            const errorDiv = group.querySelector('.error-text');
-            if (errorDiv) errorDiv.textContent = '';
-        });
-        showMessage('message', '', 'info'); // Clear form-level message too
+      DOM.createForm.querySelectorAll('.input-group').forEach(group => {
+        group.classList.remove('has-error');
+        group.querySelectorAll('input, textarea, select').forEach(input => input.classList.remove('input-error'));
+        const err = group.querySelector('.error-text'); if (err) err.textContent = '';
+      });
+      showMessage('message', '', 'info');
     }
 
-    /**
-     * Validates the entire patient creation form.
-     * @returns {boolean} True if the form is valid.
-     */
     function validateForm() {
-        clearErrors(); // Start fresh
-        let isValid = true; // Assume valid initially
-
-        // Validate required fields with specific patterns/checks
-        isValid &= validateField(DOM.nom,           v => v.length > 0,                     'Nom requis');
-        isValid &= validateField(DOM.prenom,        v => v.length > 0,                     'Prénom requis');
-        isValid &= validateField(DOM.cin,           v => /^[A-Za-z]{1,2}\d{5,6}$/.test(v), 'Format CIN invalide (ex: AB123456)');
-        isValid &= validateField(DOM.telephone,     v => /^0[5-7]\d{8}$/.test(v),          'Format téléphone invalide (ex: 0612345678)');
-        isValid &= validateField(DOM.adresse,       v => v.length > 0,                     'Adresse requise');
-        isValid &= validateField(DOM.ville,         v => v.length > 0,                     'Ville requise');
-        isValid &= validateField(DOM.dateNaissance, v => v !== '',                         'Date de naissance requise'); // Date format/future check done in validateField
-        isValid &= validateField(DOM.sexe,          v => v !== '',                         'Sélection du sexe requise');
-
-        // Conditional validation for Mutuelle
-        if (DOM.hasInsurance.checked) {
-            isValid &= validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
-            // Additionally check if the value exists in the datalist (case-insensitive)
-            isValid &= validateField(DOM.mutuelle,
-                                     v => v !== '' && mutuellesList.some(m => m.toLowerCase() === v.toLowerCase()),
-                                     'Veuillez sélectionner une mutuelle valide de la liste');
-        }
-
-        // Conditional validation for Medecin Referent (only if a value is entered)
-        if (DOM.medecinReferent.value.trim() !== '') {
-             const doctorFormat = v => doctorsList.some(d => `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === v.toLowerCase());
-             isValid &= validateField(DOM.medecinReferent, doctorFormat, 'Médecin référent invalide ou non trouvé dans la liste');
-        }
-
-        if (!isValid) {
-            showToast('Veuillez corriger les erreurs dans le formulaire.', 'error');
-            // Find first invalid field and focus it for accessibility
-            const firstError = DOM.createForm.querySelector('.has-error input, .has-error select, .has-error textarea');
-            if (firstError) {
-                firstError.focus();
-            }
-        }
-        return isValid;
+      clearErrors();
+      let valid = true;
+      valid &= validateField(DOM.nom, v => v.length > 0, 'Nom requis');
+      valid &= validateField(DOM.prenom, v => v.length > 0, 'Prénom requis');
+      valid &= validateField(DOM.cin, v => /^[A-Za-z]{1,2}\d{5,6}$/.test(v), 'Format CIN invalide (ex: AB123456)');
+      valid &= validateField(DOM.telephone, v => /^0[5-7]\d{8}$/.test(v), 'Format téléphone invalide (ex: 0612345678)');
+      valid &= validateField(DOM.adresse, v => v.length > 0, 'Adresse requise');
+      valid &= validateField(DOM.ville, v => v.length > 0, 'Ville requise');
+      valid &= validateField(DOM.dateNaissance, v => v !== '', 'Date de naissance requise');
+      valid &= validateField(DOM.sexe, v => v !== '', 'Sélection du sexe requise');
+      if (DOM.hasInsurance.checked) {
+        valid &= validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
+        valid &= validateField(DOM.mutuelle, v => v && mutuellesList.some(m => m.toLowerCase() === v.toLowerCase()), 'Sélectionnez une mutuelle valide');
+      }
+      if (DOM.medecinReferent.value.trim() !== '') {
+         const doctorChk = v => doctorsList.some(d => `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === v.toLowerCase());
+         valid &= validateField(DOM.medecinReferent, doctorChk, 'Médecin référent invalide');
+      }
+      if (!valid) {
+        showToast('Veuillez corriger les erreurs dans le formulaire.', 'error');
+        const firstErr = DOM.createForm.querySelector('.has-error input, .has-error select, .has-error textarea');
+        if (firstErr) firstErr.focus();
+      }
+      return valid;
     }
 
-
-    // --- Form Handling ---
-
-    /** Resets the create patient form to its initial state. */
     function resetForm() {
       DOM.createForm.reset();
       clearErrors();
-      handleMutuelleChange(); // Reset mutuelle input state
-      // Hide and clear the creation result area
+      handleMutuelleChange();
       DOM.createResult.style.display = 'none';
       DOM.createResultMessage.textContent = '';
       DOM.createQrCodeImage.src = '';
       DOM.createQrCodeImage.alt = '';
       DOM.createPrintButton.disabled = true;
-      DOM.createPrintButton.onclick = null; // Remove previous handler
-      showMessage('message','', 'info'); // Clear form-level message
+      DOM.createPrintButton.onclick = null;
+      showMessage('message','', 'info');
     }
 
-    /** Handles changes to the "Has Insurance" checkbox. */
     function handleMutuelleChange() {
-      const isEnabled = DOM.hasInsurance.checked;
-      DOM.mutuelle.disabled = !isEnabled;
-      DOM.mutuelle.required = isEnabled; // Set required based on checkbox
-      if (!isEnabled) {
-          DOM.mutuelle.value = ''; // Clear value if disabled
-          // Clear potential validation error if unchecked
-          validateField(DOM.mutuelle, () => true); // Mark as valid (or clear error) when disabled
+      const enabled = DOM.hasInsurance.checked;
+      DOM.mutuelle.disabled = !enabled;
+      DOM.mutuelle.required = enabled;
+      if (!enabled) {
+          DOM.mutuelle.value = '';
+          validateField(DOM.mutuelle, () => true);
       } else {
-           // Re-validate if enabled and potentially empty (will show required message if empty)
-           validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
+          validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
       }
     }
 
-    // --- Data Fetching & Population ---
-
-    /** Fetches and populates the doctors datalist. */
-    async function populateMedecinReferent() {
+    async function fetchAndPopulate(endpoint, key) {
       try {
-        const response = await fetchWithAuth(DOCTORS_ENDPOINT);
-        const text = await response.text();
-        if (!text) {
-          console.warn('Received empty response body when fetching doctors.');
-          doctorsList = [];
-          DOM.doctorsDatalist.innerHTML = ''; // Clear list
-          return;
-        }
-        const data = JSON.parse(text);
-
-        if (data.success && Array.isArray(data.doctors)) {
-          doctorsList = data.doctors; // Store full objects
-          DOM.doctorsDatalist.innerHTML = ''; // Clear existing options
-          doctorsList.forEach(d => {
-            const option = document.createElement('option');
-            // Value combines name and specialty for display and lookup
-            option.value = `${d.nom} ${d.prenom} - ${d.specialite}`;
-            // Store matricule in a data attribute for easy retrieval (though datalist makes this tricky)
-            // We'll retrieve by matching the value string later
-            DOM.doctorsDatalist.appendChild(option);
-          });
-          console.log("Doctors list populated:", doctorsList.length);
-        } else {
-          console.error('Failed to parse doctors or unexpected data structure:', data);
-          showToast('Erreur lors du chargement des médecins.', 'error');
-        }
-      } catch (error) {
-        // Error is logged and potentially toasted by fetchWithAuth
-        console.error('Error fetching/populating doctors:', error);
+        const res = await fetchWithAuth(endpoint);
+        const txt = await res.text();
+        if (!txt) { return []; }
+        const data = JSON.parse(txt);
+        return data.success && Array.isArray(data[key]) ? data[key] : [];
+      } catch (e) {
+        showToast(`Erreur lors du chargement de ${key}.`, 'error');
+        return [];
       }
     }
 
-    /** Fetches and populates the mutuelles datalist. */
-    async function populateMutuelles() {
-      try {
-        const response = await fetchWithAuth(MUTUELLES_ENDPOINT);
-        const text = await response.text();
-        if (!text) {
-          console.warn('Received empty response body when fetching mutuelles.');
-          mutuellesList = [];
-          DOM.mutuellesDatalist.innerHTML = ''; // Clear list
-          return;
-        }
-        const data = JSON.parse(text);
-
-        if (data.success && Array.isArray(data.mutuelles)) {
-          mutuellesList = data.mutuelles; // Store names
-          DOM.mutuellesDatalist.innerHTML = ''; // Clear existing options
-          mutuellesList.forEach(m => {
-            const option = document.createElement('option');
-            option.value = m; // Value is the name itself
-            DOM.mutuellesDatalist.appendChild(option);
-          });
-           console.log("Mutuelles list populated:", mutuellesList.length);
-        } else {
-          console.error('Failed to parse mutuelles or unexpected data structure:', data);
-          showToast('Erreur lors du chargement des mutuelles.', 'error');
-        }
-      } catch (error) {
-         // Error is logged and potentially toasted by fetchWithAuth
-         console.error('Error fetching/populating mutuelles:', error);
+    async function populateDataLists() {
+      doctorsList = await fetchAndPopulate(DOCTORS_ENDPOINT, 'doctors');
+      if (doctorsList.length) {
+        DOM.doctorsDatalist.innerHTML = '';
+        doctorsList.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = `${d.nom} ${d.prenom} - ${d.specialite}`;
+          DOM.doctorsDatalist.appendChild(opt);
+        });
+      }
+      mutuellesList = await fetchAndPopulate(MUTUELLES_ENDPOINT, 'mutuelles');
+      if (mutuellesList.length) {
+        DOM.mutuellesDatalist.innerHTML = '';
+        mutuellesList.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m;
+          DOM.mutuellesDatalist.appendChild(opt);
+        });
       }
     }
 
-    // --- QR Code Functionality ---
-
-    /**
-     * Generates QR code image URL and target URL for a given IPP.
-     * @param {string} ipp Patient Identifier.
-     * @returns {{qrImageUrl: string, targetUrl: string}} Object containing URLs.
-     */
     function generateQrData(ipp) {
-      const encodedIpp = encodeURIComponent(ipp);
-      const targetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodedIpp}`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}`;
-      return { qrImageUrl: qrApiUrl, targetUrl: targetUrl };
+      const encoded = encodeURIComponent(ipp);
+      const target = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encoded}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(target)}`;
+      return { qrImageUrl: qrUrl, targetUrl: target };
     }
 
-    /**
-     * Opens a new window to print the QR code.
-     * Made globally accessible for dynamic onclick handlers.
-     * @param {string} imgUrl The URL of the QR code image.
-     */
     window.printQRCode = function(imgUrl) {
-      if (!imgUrl) {
-          console.error("printQRCode called with no image URL.");
-          return;
-      }
-      const printWindow = window.open('', '_blank', 'width=400,height=450,resizable=yes,scrollbars=yes');
-      if (!printWindow) {
-        showToast('Veuillez autoriser les pop-ups pour imprimer.', 'warning');
-        return;
-      }
-      // Sanitize the imgUrl before injecting into HTML
-      const sanitizedImgUrl = sanitize(imgUrl);
-      printWindow.document.write(`
+      if (!imgUrl) return;
+      const pw = window.open('', '_blank', 'width=400,height=450,resizable=yes,scrollbars=yes');
+      if (!pw) { showToast('Veuillez autoriser les pop-ups pour imprimer.', 'warning'); return; }
+      const sImgUrl = sanitize(imgUrl);
+      pw.document.write(`
         <!DOCTYPE html>
         <html lang="fr">
         <head>
@@ -662,531 +430,324 @@
           <style>
             body { margin: 20px; text-align: center; font-family: sans-serif; }
             img { max-width: 90%; height: auto; border: 1px solid #ccc; }
-            p { margin-top: 20px; }
-            @media print {
-              body { margin: 10px; } /* Adjust print margin */
-              button { display: none; }
-            }
+            @media print { body { margin: 10px; } button { display: none; } }
           </style>
         </head>
         <body>
-          <img src="${sanitizedImgUrl}" alt="QR Code Patient">
+          <img src="${sImgUrl}" alt="QR Code Patient">
           <p><button onclick="window.print(); this.style.display='none';">Imprimer</button></p>
           <script>
-            // Automatically trigger print when window loads
-            window.onload = function() {
-              // Short delay seems to help ensure image is loaded in some browsers
-              setTimeout(function() {
-                  window.print();
-                  // Closing window after print can be problematic/blocked by browsers
-                  // Best practice is often to let the user close manually or via the button.
-                  // window.onafterprint = function() { if (window.opener && !window.closed) { /* window.close(); */ } };
-              }, 250);
-            };
+            window.onload = function() { setTimeout(window.print, 250); };
           <\/script>
         </body>
         </html>
       `);
-      printWindow.document.close(); // Important for rendering
-    }
+      pw.document.close();
+    };
 
-    // --- ID Capture Functionality ---
-
-    /** Starts the ID capture process using the camera. */
     async function startIdCapture() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showMessage('captureMessage', 'La fonctionnalité caméra n\'est pas supportée.', 'error');
+        showMessage('captureMessage', 'La fonctionnalité caméra n’est pas supportée.', 'error');
         return;
       }
-
-      showMessage('captureMessage', 'Demande d\'accès caméra...', 'loading');
+      showMessage('captureMessage', 'Demande d’accès caméra...', 'loading');
       DOM.captureIdButton.disabled = true;
       DOM.idCaptureContainer.style.display = 'block';
-      DOM.frontPreview.style.display = 'none'; // Reset previews
-      DOM.backPreview.style.display = 'none';
-      if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src); // Clean previous URLs
+      DOM.frontPreview.style.display = DOM.backPreview.style.display = 'none';
+      if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src);
       if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
-      DOM.frontPreview.src = DOM.backPreview.src = '';
-      frontImageBlob = backImageBlob = null; // Clear previous blobs
-      isCapturingFront = true; // Always start with front
+      frontImageBlob = backImageBlob = null;
+      isCapturingFront = true;
       DOM.captureInstruction.textContent = 'Positionnez le RECTO de la CIN dans le cadre et prenez la photo.';
-
       try {
         idCaptureStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
         });
         DOM.idVideo.srcObject = idCaptureStream;
-        // Use 'loadedmetadata' event to ensure video dimensions are available
         DOM.idVideo.onloadedmetadata = () => {
-            DOM.idVideo.play()
-              .then(() => {
-                 showMessage('captureMessage', 'Caméra prête. Prenez la photo du RECTO.', 'info');
-                 DOM.takePhotoButton.disabled = false;
-                 DOM.cancelCaptureButton.disabled = false;
-              })
-              .catch(playErr => {
-                  console.error("Video play error:", playErr);
-                  showMessage('captureMessage', `Erreur lecture vidéo: ${playErr.message}`, 'error');
-                  stopIdCapture(true);
-              });
+          DOM.idVideo.play().then(() => {
+            showMessage('captureMessage', 'Caméra prête. Prenez la photo du RECTO.', 'info');
+            DOM.takePhotoButton.disabled = false;
+            DOM.cancelCaptureButton.disabled = false;
+          }).catch(() => {
+            showMessage('captureMessage', 'Erreur lecture vidéo.', 'error');
+            stopIdCapture(true);
+          });
         };
       } catch (err) {
-        console.error("Camera Access Error:", err);
-        let errMsg = `Erreur caméra: ${err.message}`;
-        if (err.name === "NotAllowedError") errMsg = "Permission caméra refusée.";
-        else if (err.name === "NotFoundError") errMsg = "Aucune caméra compatible trouvée.";
-        else if (err.name === "NotReadableError") errMsg = "Caméra déjà utilisée ou inaccessible.";
-        showMessage('captureMessage', errMsg, 'error');
-        stopIdCapture(true); // Clean up fully
+        const msg = err.name === "NotAllowedError" ? "Permission caméra refusée." :
+                    err.name === "NotFoundError" ? "Aucune caméra trouvée." :
+                    "Erreur caméra.";
+        showMessage('captureMessage', msg, 'error');
+        stopIdCapture(true);
       }
     }
 
-    /** Stops the ID capture stream and resets the UI. */
-    function stopIdCapture(clearBlobsAndPreviews = true) {
-        if (idCaptureStream) {
-            idCaptureStream.getTracks().forEach(track => track.stop());
-            idCaptureStream = null;
-        }
-        DOM.idVideo.srcObject = null;
-        DOM.idVideo.onloadedmetadata = null; // Remove listener
-        DOM.idCaptureContainer.style.display = 'none';
-        DOM.takePhotoButton.disabled = true;
-        DOM.cancelCaptureButton.disabled = true;
-        DOM.captureIdButton.disabled = false; // Re-enable start button
-        showMessage('captureMessage', '', 'info'); // Clear message
-
-        if (clearBlobsAndPreviews) {
-            frontImageBlob = backImageBlob = null;
-            if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src);
-            if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
-            DOM.frontPreview.src = DOM.backPreview.src = '';
-            DOM.frontPreview.alt = DOM.backPreview.alt = '';
-            DOM.frontPreview.style.display = 'none';
-            DOM.backPreview.style.display = 'none';
-        }
+    function stopIdCapture(clear = true) {
+      if (idCaptureStream) {
+        idCaptureStream.getTracks().forEach(t => t.stop());
+        idCaptureStream = null;
+      }
+      DOM.idVideo.srcObject = null;
+      DOM.idCaptureContainer.style.display = 'none';
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      DOM.captureIdButton.disabled = false;
+      showMessage('captureMessage', '', 'info');
+      if (clear) {
+        frontImageBlob = backImageBlob = null;
+        if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src);
+        if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
+        DOM.frontPreview.src = DOM.backPreview.src = '';
+        DOM.frontPreview.style.display = DOM.backPreview.style.display = 'none';
+      }
     }
 
-   /** Takes a photo from the video stream and handles extraction process. */
-   async function takePhotoAndExtract() {
-        // Ensure video stream exists and is ready
-        if (!idCaptureStream || DOM.idVideo.readyState < DOM.idVideo.HAVE_METADATA) {
-            showMessage('captureMessage', 'Caméra non prête ou flux vidéo non disponible.', 'warning');
-            return;
+    async function takePhotoAndExtract() {
+      if (!idCaptureStream || DOM.idVideo.readyState < DOM.idVideo.HAVE_METADATA) {
+        showMessage('captureMessage', 'Caméra non prête.', 'warning');
+        return;
+      }
+      showMessage('captureMessage', 'Capture de l’image...', 'loading');
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      const canvas = DOM.idCanvas;
+      canvas.width = DOM.idVideo.videoWidth;
+      canvas.height = DOM.idVideo.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        showMessage('captureMessage', 'Impossible d’obtenir le contexte Canvas.', 'error');
+        stopIdCapture(true);
+        return;
+      }
+      ctx.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          showMessage('captureMessage', 'Erreur lors de la création de l’image.', 'error');
+          stopIdCapture(true);
+          return;
         }
-
-        showMessage('captureMessage', 'Capture de l\'image...', 'loading');
-        DOM.takePhotoButton.disabled = true; // Disable buttons during capture/processing
-        DOM.cancelCaptureButton.disabled = true;
-
-        const canvas = DOM.idCanvas;
-        // Ensure canvas dimensions match the video source for accurate capture
-        canvas.width = DOM.idVideo.videoWidth;
-        canvas.height = DOM.idVideo.videoHeight;
-
-        const context = canvas.getContext('2d');
-        if (!context) {
-             showMessage('captureMessage', 'Impossible d\'obtenir le contexte Canvas.', 'error');
-             stopIdCapture(true); // Stop everything if canvas fails
-             return;
-        }
-        context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height);
-
-        // Convert canvas to Blob
-        canvas.toBlob(async (blob) => {
-            if (!blob) {
-                showMessage('captureMessage', 'Erreur lors de la création de l\'image (blob).', 'error');
-                stopIdCapture(true);
-                return;
-            }
-
-            if (isCapturingFront) {
-                if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src); // Clean previous URL
-                frontImageBlob = blob;
-                DOM.frontPreview.src = URL.createObjectURL(blob);
-                DOM.frontPreview.alt = "Aperçu Recto CIN";
-                DOM.frontPreview.style.display = 'inline-block';
-                isCapturingFront = false; // Now capture the back
-                DOM.captureInstruction.textContent = 'Positionnez le VERSO de la CIN et prenez la photo.';
-                showMessage('captureMessage', 'Image RECTO capturée. Préparez le VERSO.', 'info');
-                DOM.takePhotoButton.disabled = false; // Re-enable buttons for next step
-                DOM.cancelCaptureButton.disabled = false;
-            } else {
-                if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src); // Clean previous URL
-                backImageBlob = blob;
-                DOM.backPreview.src = URL.createObjectURL(blob);
-                DOM.backPreview.alt = "Aperçu Verso CIN";
-                DOM.backPreview.style.display = 'inline-block';
-
-                // Both images captured - Stop video feed, keep blobs/previews for now
-                stopIdCapture(false);
-                showMessage('captureMessage', 'Images RECTO et VERSO capturées. Analyse OCR en cours...', 'loading');
-
-                // Proceed with extraction only if both blobs are present
-                if (frontImageBlob && backImageBlob) {
-                    const formData = new FormData();
-                    formData.append('id_image_front', frontImageBlob, 'cin_recto.jpg');
-                    formData.append('id_image_back', backImageBlob, 'cin_verso.jpg');
-
-                    try {
-                        console.log("Sending images for extraction...");
-                        const response = await fetchWithAuth(EXTRACT_ID_ENDPOINT, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        const data = await response.json();
-                        console.log("Extraction response:", data);
-
-                        if (data && data.data) {
-                            autofillCreateForm(data.data);
-                            showToast('Informations CIN extraites!', 'success');
-                            showMessage('captureMessage', 'Extraction réussie. Vérifiez le formulaire.', 'success');
-                            // Keep previews visible for verification
-                        } else {
-                            throw new Error(data.message || 'Aucune donnée extraite ou format de réponse invalide.');
-                        }
-                    } catch (error) {
-                        console.error("Extraction Error:", error);
-                        showMessage('captureMessage', `Erreur extraction: ${error.message}`, 'error');
-                        // Keep previews in case of error for manual entry aid
-                    } finally {
-                         // Clean up blobs after attempt (success or fail) to free memory
-                         frontImageBlob = backImageBlob = null;
-                         // Re-enable capture button if process failed/finished
-                         DOM.captureIdButton.disabled = false;
-                    }
-                } else {
-                     // This state should ideally not be reached if logic is correct
-                     showMessage('captureMessage', 'Erreur: Image recto ou verso manquante pour l\'extraction.', 'error');
-                     stopIdCapture(true); // Full cleanup
-                }
-            }
-        }, 'image/jpeg', 0.9); // Use JPEG format, quality 90%
-    }
-
-
-    /**
-     * Autofills the creation form with data extracted from the ID.
-     * @param {object} extractedData Data object from the OCR API.
-     */
-    function autofillCreateForm(extractedData) {
-        const d = extractedData;
-        console.log("Autofilling form with:", d);
-
-        // Reset form fields but keep datalists populated
-        resetForm(); // This also calls clearErrors and handleMutuelleChange
-
-        // Fill fields, providing fallbacks for potentially missing data
-        DOM.nom.value = d.last_name || '';
-        DOM.prenom.value = d.first_name || '';
-        DOM.cin.value = d.id_number || '';
-        DOM.adresse.value = d.address || '';
-        DOM.ville.value = d.city || ''; // Assuming OCR provides city
-        DOM.sexe.value = (d.gender === 'F' || String(d.gender).toUpperCase() === 'FEMALE') ? 'F'
-                       : (d.gender === 'M' || String(d.gender).toUpperCase() === 'MALE') ? 'M'
-                       : '';
-
-        // Handle date: OCR format might vary (DD/MM/YYYY, YYYY-MM-DD, etc.)
-        if (d.date_of_birth) {
-            let isoDate = '';
-            // Try parsing DD/MM/YYYY
-            let parts = String(d.date_of_birth).match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
-            if (parts) {
-                isoDate = `${parts[3]}-${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
-            } else {
-                // Try parsing YYYY-MM-DD directly
-                parts = String(d.date_of_birth).match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
-                if (parts) {
-                     isoDate = `${parts[1]}-${parts[2].padStart(2, '0')}-${parts[3].padStart(2, '0')}`;
-                } else {
-                     console.warn("Could not parse extracted date_of_birth format:", d.date_of_birth);
-                }
-            }
-            // Validate the resulting date string before setting
-             if (isoDate && !isNaN(new Date(isoDate + 'T00:00:00'))) {
-                  DOM.dateNaissance.value = isoDate;
-             } else {
-                  DOM.dateNaissance.value = '';
-                  console.warn("Invalid date constructed:", isoDate);
-             }
-
+        if (isCapturingFront) {
+          if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src);
+          frontImageBlob = blob;
+          DOM.frontPreview.src = URL.createObjectURL(blob);
+          DOM.frontPreview.alt = "Aperçu Recto CIN";
+          DOM.frontPreview.style.display = 'inline-block';
+          isCapturingFront = false;
+          DOM.captureInstruction.textContent = 'Positionnez le VERSO de la CIN et prenez la photo.';
+          showMessage('captureMessage', 'Image RECTO capturée. Préparez le VERSO.', 'info');
+          DOM.takePhotoButton.disabled = false;
+          DOM.cancelCaptureButton.disabled = false;
         } else {
-             DOM.dateNaissance.value = ''; // Clear if not provided
-        }
-
-        // Phone number is less likely to be on CIN
-        DOM.telephone.value = d.phone_number || '';
-
-        showMessage('message', 'Formulaire pré-rempli depuis la CIN. Veuillez vérifier toutes les informations.', 'success');
-
-        // Visually trigger validation status update for filled fields
-        Object.values(DOM).forEach(el => {
-           if (el && typeof el.matches === 'function' && el.matches('#createForm input, #createForm select, #createForm textarea')) {
-               // Re-run validation for the specific field to update its style/error message
-               // This uses the existing validation logic bound to the field type/patterns
-               validateField(el, () => true); // Simplified check to update visuals based on current value
-           }
-        });
-        // Explicitly re-validate conditionally required fields
-        if (DOM.hasInsurance.checked) validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
-    }
-
-
-    // --- Patient Search Functionality ---
-
-    /** Handles the patient search request. */
-    async function handlePatientSearch() {
-        const cinValue = DOM.getCin.value.trim();
-        if (!cinValue) {
-            showToast('Veuillez entrer un CIN pour la recherche.', 'warning');
-            DOM.resultDiv.innerHTML = '<p class="message message-warning">Veuillez entrer un CIN.</p>';
-            return;
-        }
-        // Basic format check (optional but good practice)
-        if (!/^[A-Za-z]{1,2}\d{5,6}$/.test(cinValue)) {
-             showToast('Format CIN invalide pour la recherche.', 'error');
-             DOM.resultDiv.innerHTML = '<p class="message message-error">Format CIN invalide (ex: AB123456).</p>';
-             return;
-        }
-
-        showToast('Recherche du patient...', 'info');
-        DOM.resultDiv.innerHTML = '<p class="message message-loading"><i class="fas fa-spinner fa-spin me-2"></i>Recherche en cours...</p>';
-        DOM.searchBtn.disabled = true;
-        DOM.getCin.disabled = true; // Disable input during search
-
-        try {
-            // Construct URL with query parameter
-            const searchUrl = `${GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(cinValue)}`;
-            const response = await fetchWithAuth(searchUrl); // GET is default method
-            const data = await response.json();
-
-            if (data && data.data && data.data.ipp) { // Check for successful response structure
-                const p = data.data;
-                let formattedDob = 'N/A';
-                if (p.date_naissance) {
-                    try {
-                        // Assuming API returns YYYY-MM-DD. Add time and treat as UTC to avoid timezone issues.
-                        const date = new Date(p.date_naissance + 'T00:00:00Z');
-                        if (!isNaN(date)) {
-                             // Format for French locale
-                             formattedDob = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                        }
-                    } catch (e) { console.error("Error formatting date:", e); }
-                }
-
-                const { qrImageUrl } = generateQrData(p.ipp);
-
-                // Build result HTML - SANITIZE ALL DATA from API
-                DOM.resultDiv.innerHTML = `
-                <div class="patient-result-container">
-                  <div class="patient-result-info">
-                    <div><strong>Nom:</strong> ${sanitize(p.nom)}</div>
-                    <div><strong>Prénom:</strong> ${sanitize(p.prenom)}</div>
-                    <div><strong>IPP:</strong> ${sanitize(p.ipp)}</div>
-                    <div><strong>CIN:</strong> ${sanitize(p.cin || 'N/A')}</div>
-                    <div><strong>Téléphone:</strong> ${sanitize(p.telephone || 'N/A')}</div>
-                    <div><strong>Adresse:</strong> ${sanitize(p.adresse || 'N/A')}</div>
-                    <div><strong>Ville:</strong> ${sanitize(p.ville || 'N/A')}</div>
-                    <div><strong>Naissance:</strong> ${formattedDob}</div>
-                    <div><strong>Sexe:</strong> ${p.sexe === 'M' ? 'Homme' : (p.sexe === 'F' ? 'Femme' : 'N/A')}</div>
-                    <div><strong>Mutuelle:</strong> ${sanitize(p.mutuelle || 'Aucune')}</div>
-                    <div><strong>Médecin Réf.:</strong> ${sanitize(p.medecin_referent_nom || 'N/A')}</div> <!-- Assuming API provides name -->
-                  </div>
-                  <div class="patient-result-qr">
-                    <img src="${sanitize(qrImageUrl)}" alt="QR Code pour ${sanitize(p.nom)} ${sanitize(p.prenom)}">
-                    <button onclick="window.printQRCode('${sanitize(qrImageUrl)}')" class="btn btn-secondary btn-sm no-print">
-                      <i class="fas fa-print"></i> Imprimer QR
-                    </button>
-                  </div>
-                </div>`;
-                showToast('Patient trouvé.', 'success');
-            } else {
-                // Handle cases where API returns success status but no patient data
-                DOM.resultDiv.innerHTML = '<p class="message message-info">Aucun patient trouvé avec ce CIN.</p>';
-                showToast('Patient non trouvé.', 'info');
+          if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
+          backImageBlob = blob;
+          DOM.backPreview.src = URL.createObjectURL(blob);
+          DOM.backPreview.alt = "Aperçu Verso CIN";
+          DOM.backPreview.style.display = 'inline-block';
+          stopIdCapture(false);
+          showMessage('captureMessage', 'Images capturées. Analyse OCR en cours...', 'loading');
+          if (frontImageBlob && backImageBlob) {
+            const formData = new FormData();
+            formData.append('id_image_front', frontImageBlob, 'cin_recto.jpg');
+            formData.append('id_image_back', backImageBlob, 'cin_verso.jpg');
+            try {
+              const res = await fetchWithAuth(EXTRACT_ID_ENDPOINT, { method: 'POST', body: formData });
+              const data = await res.json();
+              if (data && data.data) {
+                autofillCreateForm(data.data);
+                showToast('Informations CIN extraites!', 'success');
+                showMessage('captureMessage', 'Extraction réussie. Vérifiez le formulaire.', 'success');
+              } else {
+                throw new Error(data.message || 'Aucune donnée extraite.');
+              }
+            } catch (e) {
+              showMessage('captureMessage', `Erreur extraction: ${e.message}`, 'error');
+            } finally {
+              frontImageBlob = backImageBlob = null;
+              DOM.captureIdButton.disabled = false;
             }
-        } catch (error) {
-            // Error already logged/toasted by fetchWithAuth or console here
-            DOM.resultDiv.innerHTML = `<p class="message message-error">Erreur lors de la recherche: ${sanitize(error.message)}</p>`;
-        } finally {
-            DOM.searchBtn.disabled = false; // Re-enable search button
-            DOM.getCin.disabled = false; // Re-enable input
+          } else {
+            showMessage('captureMessage', 'Erreur: Image manquante pour l\'extraction.', 'error');
+            stopIdCapture(true);
+          }
         }
+      }, 'image/jpeg', 0.9);
     }
 
-
-    // --- Patient Creation Functionality ---
-
-    /** Handles the submission of the create patient form. */
-    async function handleCreatePatient(event) {
-        event.preventDefault(); // Prevent default form submission behavior
-        showMessage('message', '', 'info'); // Clear previous form messages
-
-        if (!validateForm()) {
-            // Validation function already showed a toast and focused the first error
-            return;
+    function autofillCreateForm(data) {
+      resetForm();
+      DOM.nom.value = data.last_name || '';
+      DOM.prenom.value = data.first_name || '';
+      DOM.cin.value = data.id_number || '';
+      DOM.adresse.value = data.address || '';
+      DOM.ville.value = data.city || '';
+      DOM.sexe.value = (data.gender === 'F' || String(data.gender).toUpperCase() === 'FEMALE') ? 'F'
+                     : (data.gender === 'M' || String(data.gender).toUpperCase() === 'MALE') ? 'M' : '';
+      if (data.date_of_birth) {
+        let isoDate = '';
+        let parts = String(data.date_of_birth).match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+        if (parts) { isoDate = `${parts[3]}-${parts[2].padStart(2,'0')}-${parts[1].padStart(2,'0')}`; }
+        else {
+          parts = String(data.date_of_birth).match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+          if (parts) { isoDate = `${parts[1]}-${parts[2].padStart(2,'0')}-${parts[3].padStart(2,'0')}`; }
         }
-
-        showToast('Création du patient en cours...', 'info');
-        showMessage('message', 'Envoi des données au serveur...', 'loading');
-        DOM.createPatientBtn.disabled = true; // Disable button to prevent double submission
-
-        // Find selected doctor's matricule based on the input value
-        const medecinReferentValue = DOM.medecinReferent.value.trim();
-        let selectedDoctorMatricule = ''; // Default to empty string (or null depending on API)
-        if (medecinReferentValue) {
-            const selectedDoctor = doctorsList.find(d =>
-                `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === medecinReferentValue.toLowerCase()
-            );
-            if (selectedDoctor && selectedDoctor.matricule) {
-                 selectedDoctorMatricule = selectedDoctor.matricule;
-            } else {
-                // This case should have been caught by validation, but log just in case
-                console.warn("Validation passed but couldn't find matricule for doctor:", medecinReferentValue);
-                // Decide how to handle - API might reject empty/invalid, or accept null/empty string
-                // Assuming API accepts empty string if doctor not found/selected correctly after validation bypass
-            }
-        }
-
-        // Determine mutuelle value (null if checkbox unchecked)
-        const mutuelleValue = DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null;
-
-        // Construct the payload object
-        const payload = {
-            nom: DOM.nom.value.trim(),
-            prenom: DOM.prenom.value.trim(),
-            cin: DOM.cin.value.trim().toUpperCase(), // Standardize CIN case
-            telephone: DOM.telephone.value.trim(),
-            adresse: DOM.adresse.value.trim(),
-            ville: DOM.ville.value.trim(),
-            date_naissance: DOM.dateNaissance.value, // Already YYYY-MM-DD
-            sexe: DOM.sexe.value,
-            mutuelle: mutuelleValue, // Send selected mutuelle name or null
-            medecin_referent: selectedDoctorMatricule // Send matricule or empty string/null
-        };
-        console.log("Submitting patient data:", payload);
-
-        try {
-            const response = await fetchWithAuth(CREATE_PATIENT_ENDPOINT, {
-                method: 'POST',
-                body: JSON.stringify(payload) // Stringify for JSON content type
-            });
-            const data = await response.json();
-            console.log("Create patient response:", data);
-
-            if (data && data.data && data.data.ipp) {
-                const patientIpp = data.data.ipp;
-                const { qrImageUrl } = generateQrData(patientIpp);
-
-                // Display success message and QR code in the designated result area
-                DOM.createResultMessage.textContent = `Patient créé avec succès! IPP: ${sanitize(patientIpp)}`;
-                DOM.createQrCodeImage.src = sanitize(qrImageUrl);
-                DOM.createQrCodeImage.alt = `QR Code pour ${sanitize(payload.nom)} ${sanitize(payload.prenom)}`;
-                DOM.createPrintButton.disabled = false;
-                 // Ensure onclick uses the *current* QR URL
-                DOM.createPrintButton.onclick = () => window.printQRCode(qrImageUrl);
-                DOM.createResult.style.display = 'block'; // Show the result section
-
-                // Show success messages
-                showMessage('message', `Patient ${sanitize(payload.nom)} ${sanitize(payload.prenom)} créé (IPP: ${patientIpp}).`, 'success');
-                showToast('Patient créé avec succès!', 'success');
-                resetForm(); // Clear the form for the next patient
-
-            } else {
-                // Handle API success status but unexpected data structure or missing IPP
-                 throw new Error(data.message || 'Réponse inattendue reçue du serveur après la création.');
-            }
-        } catch (error) {
-            // Error already logged/toasted by fetchWithAuth or console
-            showMessage('message', `Erreur lors de la création: ${sanitize(error.message)}`, 'error');
-            // Optionally display specific error details if available and safe
-        } finally {
-            DOM.createPatientBtn.disabled = false; // Re-enable button regardless of outcome
-        }
-    }
-
-
-    // --- Logout Functionality ---
-
-    /** Logs the user out, clears storage, and redirects. */
-    // Made globally accessible via window property
-    window.logout = function() {
-      console.log("Logging out...");
-      if (sessionTimeoutId) clearTimeout(sessionTimeoutId); // Clear any pending timeout
-      localStorage.removeItem(CONFIG.TOKEN_KEY); // Clear authentication token
-      showToast('Déconnexion en cours...', 'info');
-      // Redirect to login page after a brief delay
-      setTimeout(() => {
-          window.location.href = CONFIG.LOGIN_PAGE_URL;
-      }, 500);
-    }
-
-    // --- Initialization ---
-
-    /** Initializes the application: checks auth, fetches data, sets up listeners. */
-    function initializeApp() {
-      console.log("Initializing Reception Dashboard...");
-
-      // 1. Authentication Check (Critical First Step)
-      if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
-        console.log("No auth token found, redirecting to login.");
-        window.location.href = CONFIG.LOGIN_PAGE_URL;
-        return; // Stop initialization if not authenticated
+        DOM.dateNaissance.value = isoDate && !isNaN(new Date(isoDate + 'T00:00:00')) ? isoDate : '';
+      } else {
+        DOM.dateNaissance.value = '';
       }
-      console.log("Auth token found.");
+      DOM.telephone.value = data.phone_number || '';
+      showMessage('message', 'Formulaire pré-rempli depuis la CIN. Veuillez vérifier les informations.', 'success');
+    }
 
-      // 2. Start Session Timeout Management
+    async function handlePatientSearch() {
+      const cinValue = DOM.getCin.value.trim();
+      if (!cinValue) {
+        showToast('Veuillez entrer un CIN pour la recherche.', 'warning');
+        DOM.resultDiv.innerHTML = '<p class="message message-warning">Veuillez entrer un CIN.</p>';
+        return;
+      }
+      if (!/^[A-Za-z]{1,2}\d{5,6}$/.test(cinValue)) {
+        showToast('Format CIN invalide pour la recherche.', 'error');
+        DOM.resultDiv.innerHTML = '<p class="message message-error">Format CIN invalide (ex: AB123456).</p>';
+        return;
+      }
+      showToast('Recherche du patient...', 'info');
+      DOM.resultDiv.innerHTML = '<p class="message message-loading"><i class="fas fa-spinner fa-spin me-2"></i>Recherche en cours...</p>';
+      DOM.searchBtn.disabled = true;
+      DOM.getCin.disabled = true;
+      try {
+        const searchUrl = `${GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(cinValue)}`;
+        const res = await fetchWithAuth(searchUrl);
+        const data = await res.json();
+        if (data && data.data && data.data.ipp) {
+          const p = data.data;
+          let formattedDob = 'N/A';
+          if (p.date_naissance) {
+            const d = new Date(p.date_naissance + 'T00:00:00Z');
+            if (!isNaN(d)) formattedDob = d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric' });
+          }
+          const { qrImageUrl } = generateQrData(p.ipp);
+          DOM.resultDiv.innerHTML = `
+            <div class="patient-result-container">
+              <div class="patient-result-info">
+                <div><strong>Nom:</strong> ${sanitize(p.nom)}</div>
+                <div><strong>Prénom:</strong> ${sanitize(p.prenom)}</div>
+                <div><strong>IPP:</strong> ${sanitize(p.ipp)}</div>
+                <div><strong>CIN:</strong> ${sanitize(p.cin || 'N/A')}</div>
+                <div><strong>Téléphone:</strong> ${sanitize(p.telephone || 'N/A')}</div>
+                <div><strong>Adresse:</strong> ${sanitize(p.adresse || 'N/A')}</div>
+                <div><strong>Ville:</strong> ${sanitize(p.ville || 'N/A')}</div>
+                <div><strong>Naissance:</strong> ${formattedDob}</div>
+                <div><strong>Sexe:</strong> ${p.sexe === 'M' ? 'Homme' : (p.sexe === 'F' ? 'Femme' : 'N/A')}</div>
+                <div><strong>Mutuelle:</strong> ${sanitize(p.mutuelle || 'Aucune')}</div>
+                <div><strong>Médecin Réf.:</strong> ${sanitize(p.medecin_referent_nom || 'N/A')}</div>
+              </div>
+              <div class="patient-result-qr">
+                <img src="${sanitize(qrImageUrl)}" alt="QR Code pour ${sanitize(p.nom)} ${sanitize(p.prenom)}">
+                <button onclick="window.printQRCode('${sanitize(qrImageUrl)}')" class="btn btn-secondary btn-sm no-print">
+                  <i class="fas fa-print"></i> Imprimer QR
+                </button>
+              </div>
+            </div>`;
+          showToast('Patient trouvé.', 'success');
+        } else {
+          DOM.resultDiv.innerHTML = '<p class="message message-info">Aucun patient trouvé avec ce CIN.</p>';
+          showToast('Patient non trouvé.', 'info');
+        }
+      } catch (e) {
+        DOM.resultDiv.innerHTML = `<p class="message message-error">Erreur lors de la recherche: ${sanitize(e.message)}</p>`;
+      } finally {
+        DOM.searchBtn.disabled = false;
+        DOM.getCin.disabled = false;
+      }
+    }
+
+    async function handleCreatePatient(e) {
+      e.preventDefault();
+      showMessage('message', '', 'info');
+      if (!validateForm()) return;
+      showToast('Création du patient en cours...', 'info');
+      showMessage('message', 'Envoi des données au serveur...', 'loading');
+      DOM.createPatientBtn.disabled = true;
+      const medRef = DOM.medecinReferent.value.trim();
+      let doctorId = '';
+      if (medRef) {
+        const doc = doctorsList.find(d => `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === medRef.toLowerCase());
+        if (doc) doctorId = doc.matricule;
+      }
+      const mutuelleVal = DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null;
+      const payload = {
+        nom: DOM.nom.value.trim(),
+        prenom: DOM.prenom.value.trim(),
+        cin: DOM.cin.value.trim().toUpperCase(),
+        telephone: DOM.telephone.value.trim(),
+        adresse: DOM.adresse.value.trim(),
+        ville: DOM.ville.value.trim(),
+        date_naissance: DOM.dateNaissance.value,
+        sexe: DOM.sexe.value,
+        mutuelle: mutuelleVal,
+        medecin_referent: doctorId
+      };
+      try {
+        const res = await fetchWithAuth(CREATE_PATIENT_ENDPOINT, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data && data.data && data.data.ipp) {
+          const patientIpp = data.data.ipp;
+          const { qrImageUrl } = generateQrData(patientIpp);
+          DOM.createResultMessage.textContent = `Patient créé avec succès! IPP: ${sanitize(patientIpp)}`;
+          DOM.createQrCodeImage.src = sanitize(qrImageUrl);
+          DOM.createQrCodeImage.alt = `QR Code pour ${sanitize(payload.nom)} ${sanitize(payload.prenom)}`;
+          DOM.createPrintButton.disabled = false;
+          DOM.createPrintButton.onclick = () => window.printQRCode(qrImageUrl);
+          DOM.createResult.style.display = 'block';
+          showMessage('message', `Patient ${sanitize(payload.nom)} ${sanitize(payload.prenom)} créé (IPP: ${patientIpp}).`, 'success');
+          showToast('Patient créé avec succès!', 'success');
+          resetForm();
+        } else {
+          throw new Error(data.message || 'Réponse inattendue du serveur.');
+        }
+      } catch (e) {
+        showMessage('message', `Erreur lors de la création: ${sanitize(e.message)}`, 'error');
+      } finally {
+        DOM.createPatientBtn.disabled = false;
+      }
+    }
+
+    window.logout = function() {
+      if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
+      localStorage.removeItem(CONFIG.TOKEN_KEY);
+      showToast('Déconnexion en cours...', 'info');
+      setTimeout(() => { window.location.href = CONFIG.LOGIN_PAGE_URL; }, 500);
+    };
+
+    function initializeApp() {
+      if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
+        window.location.href = CONFIG.LOGIN_PAGE_URL;
+        return;
+      }
       resetSessionTimeout();
-      console.log("Session timeout started.");
-
-      // 3. Populate Dynamic Data (Doctors & Mutuelles) Asynchronously
-      Promise.all([
-          populateMedecinReferent(),
-          populateMutuelles()
-      ]).then(() => {
-          console.log("Initial data population complete (or attempted).");
-      }).catch(error => {
-          // This catch is for potential errors within Promise.all itself, though individual fetches handle their errors
-          console.error("Error during initial data population Promise.all:", error);
-          showToast("Erreur critique lors du chargement des données initiales.", "error");
-      });
-
-      // 4. Setup Initial UI State
-      handleMutuelleChange(); // Set correct state for mutuelle input based on checkbox
-
-      // 5. Add Event Listeners
+      populateDataLists();
+      handleMutuelleChange();
       DOM.hasInsurance.addEventListener('change', handleMutuelleChange);
       DOM.createForm.addEventListener('submit', handleCreatePatient);
       DOM.searchBtn.addEventListener('click', handlePatientSearch);
-      // Allow Enter key in CIN search input to trigger search
-      DOM.getCin.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-              e.preventDefault(); // Prevent potential default behaviors
-              handlePatientSearch();
-          }
-      });
-
-      // ID Capture Listeners
+      DOM.getCin.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); handlePatientSearch(); }});
       DOM.captureIdButton.addEventListener('click', startIdCapture);
       DOM.takePhotoButton.addEventListener('click', takePhotoAndExtract);
-      DOM.cancelCaptureButton.addEventListener('click', () => stopIdCapture(true)); // Ensure full cleanup on cancel
-
-      // Add listeners for user activity to reset session timeout
+      DOM.cancelCaptureButton.addEventListener('click', () => stopIdCapture(true));
       ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'].forEach(eventType => {
         document.addEventListener(eventType, resetSessionTimeout, { passive: true });
       });
-
-      console.log("Reception Dashboard Initialized and Ready.");
     }
 
-    // --- Run Initialization ---
-    // Ensure the DOM is fully loaded before running initialization logic
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeApp);
+      document.addEventListener('DOMContentLoaded', initializeApp);
     } else {
-        // DOMContentLoaded has already fired
-        initializeApp();
+      initializeApp();
     }
-
   })();
   </script>
 </body>
