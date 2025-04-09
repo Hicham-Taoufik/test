@@ -116,6 +116,15 @@
                   <div class="error-text">Veuillez entrer le nom de la mutuelle</div>
                 </div>
               </div>
+              <!-- New Médecin référent Dropdown -->
+              <div class="input-group">
+                <label for="medecin_referent">Médecin référent</label>
+                <select id="medecin_referent" name="medecin_referent">
+                  <option value="">Sélectionnez un médecin</option>
+                  <!-- Options will be populated dynamically -->
+                </select>
+                <div class="error-text">Veuillez sélectionner un médecin</div>
+              </div>
               <div class="form-submit-button">
                 <button type="submit" class="btn btn-success" id="createPatientBtn">
                   <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient
@@ -169,6 +178,8 @@
         MESSAGE_DISPLAY_TIME: 7000,
         TOAST_DISPLAY_TIME: 4000
       };
+      // Define the doctors endpoint from n8n
+      const DOCTORS_ENDPOINT = 'https://workflows.aphelionxinnovations.com/webhook/get-doctors';
 
       // Cache DOM elements
       const DOM = {
@@ -325,13 +336,36 @@
         }
       };
 
+      /* --- Populate Médecin référent Dropdown --- */
+      const populateMedecinReferent = async () => {
+        try {
+          const res = await fetchWithAuth(DOCTORS_ENDPOINT);
+          const data = await res.json();
+          if (data.success && Array.isArray(data.doctors)) {
+            const select = document.getElementById('medecin_referent');
+            // Remove all options except for the default one.
+            select.querySelectorAll('option:not(:first-child)').forEach(opt => opt.remove());
+            data.doctors.forEach(doctor => {
+              const option = document.createElement('option');
+              option.value = doctor.matricule;
+              option.textContent = `${doctor.nom} ${doctor.prenom} - ${doctor.specialite}`;
+              select.appendChild(option);
+            });
+          } else {
+            console.error('Réponse inattendue:', data);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la récupération des médecins:', error);
+        }
+      };
+
       /* --- QR Code Functions --- */
       const generateQrData = ipp => {
         if (!ipp) return null;
         const targetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
         return { 
           qrTargetUrl: targetUrl, 
-          qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}&q=M` 
+          qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}&q=M`
         };
       };
 
@@ -555,7 +589,8 @@
           ville: DOM.createForm.ville.value.trim(),
           date_naissance: DOM.createForm.date_naissance.value,
           sexe: DOM.createForm.sexe.value,
-          mutuelle: DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null
+          mutuelle: DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null,
+          medecin_referent: document.getElementById('medecin_referent').value
         };
         try {
           const res = await apiService.createPatient(payload);
@@ -606,6 +641,7 @@
         DOM.body.classList.add('loaded');
         resetSessionTimeout();
         handleMutuelleChange();
+        populateMedecinReferent(); // Populate the doctor list on load.
         ['mousemove', 'keypress', 'click', 'scroll'].forEach(event =>
           document.addEventListener(event, resetSessionTimeout, { passive: true })
         );
