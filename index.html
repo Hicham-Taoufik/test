@@ -7,85 +7,234 @@
   <title>Réception - MediClinic</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <!-- Assume style.css contains necessary styles for .container, .header, .card, .btn, .input-group, .form-grid, .message, .toast etc. -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Assume style.css provides comprehensive styling. Basic styles included below for demonstration. -->
+  <!-- <link rel="stylesheet" href="style.css"> -->
   <style>
-    /* Basic styles for demonstration if style.css is missing */
-    body { font-family: 'Inter', sans-serif; margin: 0; background-color: #f4f7f6; color: #333; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 15px; }
-    .header { display: flex; justify-content: space-between; align-items: center; background-color: #fff; padding: 10px 20px; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+    /* Basic styles for demonstration if style.css is missing or incomplete */
+    :root {
+      --primary-color: #3498db;
+      --success-color: #2ecc71;
+      --error-color: #e74c3c;
+      --warning-color: #f39c12;
+      --info-color: #3498db;
+      --light-grey: #ecf0f1;
+      --medium-grey: #bdc3c7;
+      --dark-grey: #34495e;
+      --text-color: #333;
+      --bg-color: #f4f7f6;
+      --card-bg: #fff;
+      --border-color: #ccc;
+      --border-radius: 4px;
+      --box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--card-bg);
+      padding: 10px 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+      box-shadow: var(--box-shadow);
+    }
     .header-main-content { display: flex; align-items: center; }
     .logo-img { max-height: 40px; margin-right: 15px; }
-    .header-title { font-size: 1.5rem; margin: 0; color: #2c3e50; }
+    .header-title { font-size: 1.5rem; margin: 0; color: var(--dark-grey); }
     .flex-row { display: flex; flex-wrap: wrap; gap: 20px; }
-    .card { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex: 1 1 400px; display: flex; flex-direction: column; } /* Flex settings */
-    .card-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; }
-    .card-title { font-size: 1.2rem; margin: 0; color: #34495e; }
-    .card-title i { margin-right: 8px; color: #3498db; }
-    .card-actions i { color: #bdc3c7; }
+    .card {
+      background-color: var(--card-bg);
+      border-radius: calc(var(--border-radius) * 2);
+      box-shadow: var(--box-shadow);
+      flex: 1 1 400px; /* Flex-grow, flex-shrink, flex-basis */
+      display: flex;
+      flex-direction: column;
+      min-width: 300px; /* Prevent cards from becoming too narrow */
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+    }
+    .card-title { font-size: 1.2rem; margin: 0; color: var(--dark-grey); }
+    .card-title i { margin-right: 8px; color: var(--primary-color); }
+    .card-actions i { color: var(--medium-grey); }
     .card-body { padding: 20px; flex-grow: 1; } /* Allows body to grow */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+      gap: 15px 20px; /* Row gap, column gap */
+    }
     .input-group { display: flex; flex-direction: column; }
-    .input-group label { margin-bottom: 5px; font-weight: 500; font-size: 0.9rem; }
+    .input-group label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .input-group label .req-star { color: var(--error-color); } /* Style asterisk */
     .input-group input[type="text"],
     .input-group input[type="tel"],
     .input-group input[type="date"],
     .input-group select,
     .input-group textarea {
       padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
       font-size: 1rem;
       width: 100%; /* Ensure full width within grid cell */
       box-sizing: border-box; /* Include padding/border in width */
+      transition: border-color 0.2s ease;
     }
-     .input-group textarea.professional { min-height: 100px; resize: vertical; }
-    .input-group .error-text { color: #e74c3c; font-size: 0.8rem; min-height: 1.2em; margin-top: 3px;}
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+    .input-group textarea.professional { min-height: 100px; resize: vertical; }
+    .input-group .error-text {
+      color: var(--error-color);
+      font-size: 0.8rem;
+      min-height: 1.2em; /* Reserve space to prevent layout shifts */
+      margin-top: 4px;
+      display: block; /* Ensure it takes space even when empty */
+    }
     .input-group.has-error input,
     .input-group.has-error select,
-    .input-group.has-error textarea { border-color: #e74c3c; }
-    .input-group.has-error .error-text { display: block; }
-    .mutuelle-group { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px; } /* Span full width */
+    .input-group.has-error textarea {
+      border-color: var(--error-color);
+      background-color: #fffafa; /* Light red background on error */
+    }
+    .input-group.has-error input:focus,
+    .input-group.has-error select:focus,
+    .input-group.has-error textarea:focus {
+      box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+    }
+    .mutuelle-group {
+      grid-column: 1 / -1; /* Span full width */
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid #eee; /* Separator */
+      padding-top: 15px;
+      margin-top: 5px;
+    }
     .mutuelle-group > div:first-child { display: flex; align-items: center; }
-    .mutuelle-group input[type="checkbox"] { margin-right: 8px; }
+    .mutuelle-group input[type="checkbox"] { margin-right: 8px; width: auto; transform: scale(1.1); accent-color: var(--primary-color); }
     #mutuelle-input-container { width: 100%; }
     #mutuelle-input-container input { width: 100%; }
-    .form-submit-button { grid-column: 1 / -1; text-align: right; margin-top: 10px; } /* Span full width */
-    .btn { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.95rem; transition: background-color 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
-    .btn-primary { background-color: #3498db; color: white; }
-    .btn-primary:hover { background-color: #2980b9; }
-    .btn-success { background-color: #2ecc71; color: white; }
-    .btn-success:hover { background-color: #27ae60; }
-    .btn-secondary { background-color: #ecf0f1; color: #34495e; border: 1px solid #bdc3c7;}
-    .btn-secondary:hover { background-color: #bdc3c7; }
-    .btn-outline { background-color: transparent; border: 1px solid #3498db; color: #3498db; }
-    .btn-outline:hover { background-color: #3498db; color: white; }
-    .btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+    .form-submit-button {
+      grid-column: 1 / -1; /* Span full width */
+      text-align: right;
+      margin-top: 15px;
+    }
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .btn i { line-height: 1; /* Align icons better */ }
+    .btn-primary { background-color: var(--primary-color); color: white; }
+    .btn-primary:hover { background-color: #2980b9; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+    .btn-success { background-color: var(--success-color); color: white; }
+    .btn-success:hover { background-color: #27ae60; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+    .btn-secondary { background-color: var(--light-grey); color: var(--dark-grey); border: 1px solid var(--medium-grey); }
+    .btn-secondary:hover { background-color: var(--medium-grey); border-color: #95a5a6; }
+    .btn-outline { background-color: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); }
+    .btn-outline:hover { background-color: var(--primary-color); color: white; }
+    .btn:disabled, .btn[disabled] { background-color: #bdc3c7 !important; color: #7f8c8d !important; border-color: #bdc3c7 !important; cursor: not-allowed; box-shadow: none; }
+    .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
-    .search-bar input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-    .message { padding: 10px; margin-top: 15px; border-radius: 4px; font-size: 0.9rem; }
-    .message-info { background-color: #eaf2f8; color: #3498db; border: 1px solid #aed6f1; }
-    .message-success { background-color: #e9f7ef; color: #2ecc71; border: 1px solid #a9dfbf; }
-    .message-warning { background-color: #fef9e7; color: #f39c12; border: 1px solid #fdebd0; }
-    .message-error { background-color: #fdedec; color: #e74c3c; border: 1px solid #fadbd8; }
-    .message-loading { background-color: #eaf2f8; color: #3498db; border: 1px solid #aed6f1; }
-    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #333; color: white; padding: 12px 20px; border-radius: 25px; font-size: 0.9rem; z-index: 1000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: opacity 0.3s ease; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-    .toast.show { opacity: 1; }
-    .toast.success { background-color: #2ecc71; }
-    .toast.error { background-color: #e74c3c; }
-    #createResult { margin-top: 20px; text-align: center; }
-    #createResult img { max-width: 180px; display: block; margin: 10px auto; }
+    .search-bar input { flex-grow: 1; } /* Let input take available space */
+    .message {
+      padding: 12px 15px;
+      margin-top: 15px;
+      border-radius: var(--border-radius);
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      grid-column: 1 / -1; /* Span full grid */
+    }
+    .message i { font-size: 1.1em; }
+    .message-info    { background-color: #eaf2f8; color: #3498db; border-color: #aed6f1; }
+    .message-success { background-color: #e9f7ef; color: #2ecc71; border-color: #a9dfbf; }
+    .message-warning { background-color: #fef9e7; color: #f39c12; border-color: #fdebd0; }
+    .message-error   { background-color: #fdedec; color: #e74c3c; border-color: #fadbd8; }
+    .message-loading { background-color: #eaf2f8; color: #3498db; border-color: #aed6f1; }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(51, 51, 51, 0.95); /* Dark with slight transparency */
+      color: white;
+      padding: 12px 20px;
+      border-radius: 25px; /* Pill shape */
+      font-size: 0.9rem;
+      z-index: 1050; /* Ensure it's above most elements */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.4s ease, bottom 0.4s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      max-width: 90%;
+    }
+    .toast.show { opacity: 1; bottom: 30px; }
+    .toast.success { background-color: rgba(46, 204, 113, 0.95); } /* Success color with transparency */
+    .toast.error   { background-color: rgba(231, 76, 60, 0.95); } /* Error color */
+    .toast.info    { background-color: rgba(52, 152, 219, 0.95); } /* Info color */
+    .toast i { font-size: 1.1em; }
+    #createResult { margin-top: 20px; text-align: center; padding: 15px; background-color: #f9f9f9; border-radius: var(--border-radius); border: 1px solid #eee; }
+    #createResult p { margin-bottom: 10px; font-weight: 500; }
+    #createResult img { max-width: 180px; height: auto; display: block; margin: 10px auto; border: 1px solid var(--border-color); }
     #createResult button { margin-top: 10px; }
     #getResult { margin-top: 20px; }
-    .patient-result-container { display: flex; flex-wrap: wrap; gap: 20px; background-color: #f8f9f9; padding: 15px; border-radius: 5px; border: 1px solid #e0e0e0; }
-    .patient-result-info { flex: 1; min-width: 250px; }
-    .patient-result-info div { margin-bottom: 8px; line-height: 1.4; }
-    .patient-result-info strong { margin-right: 5px; color: #555; }
-    .patient-result-qr { text-align: center; }
-    .patient-result-qr img { max-width: 150px; display: block; margin: 0 auto 10px auto; }
-    .patient-result-qr button { margin-top: 5px; }
-    .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
-    .skip-link:focus { position: static; width: auto; height: auto; }
+    .patient-result-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      background-color: #f8f9f9;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      border: 1px solid #e0e0e0;
+    }
+    .patient-result-info { flex: 2; min-width: 280px; } /* Give more space to info */
+    .patient-result-info div { margin-bottom: 8px; line-height: 1.5; font-size: 0.95rem; }
+    .patient-result-info strong { margin-right: 8px; color: #555; display: inline-block; min-width: 100px; } /* Align labels */
+    .patient-result-qr { flex: 1; min-width: 150px; text-align: center; }
+    .patient-result-qr img { max-width: 150px; height: auto; display: block; margin: 0 auto 15px auto; border: 1px solid var(--border-color); }
+    .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; z-index: -1; }
+    .skip-link:focus { position: fixed; top: 10px; left: 10px; background: var(--primary-color); color: white; padding: 10px; z-index: 1100; width: auto; height: auto; clip: auto; overflow: visible; }
     .no-print { /* Class to hide elements during printing */ }
     .mb-4 { margin-bottom: 1.5rem !important; }
     .mt-2 { margin-top: 0.5rem !important; }
@@ -95,18 +244,32 @@
     .justify-content-center { justify-content: center !important; }
     .gap-2 { gap: 0.5rem !important; }
     .btn-group { position: relative; display: inline-flex; vertical-align: middle; }
-    .capture-preview { max-width: 150px; max-height: 100px; border: 1px solid #ccc; object-fit: contain; }
-    #idVideo { max-width: 100%; height: auto; border: 1px solid #ccc; }
+    .capture-preview { max-width: 150px; max-height: 100px; border: 1px solid var(--border-color); object-fit: contain; background-color: #eee; }
+    #idVideo { max-width: 100%; height: auto; border: 1px solid var(--border-color); display: block; background-color: #333; }
+    #idCaptureContainer { border: 1px dashed var(--medium-grey); padding: 15px; border-radius: var(--border-radius); background-color: #fafafa; }
+    #captureInstruction { font-weight: 500; margin-bottom: 10px; text-align: center; }
 
+    @media (max-width: 768px) {
+      .flex-row { flex-direction: column; }
+      .form-grid { grid-template-columns: 1fr; } /* Single column on smaller screens */
+      .header { flex-direction: column; gap: 10px; }
+      .header-logout { width: 100%; text-align: center; }
+      .search-bar { flex-direction: column; }
+      .btn { width: 100%; } /* Make buttons full width */
+      .search-bar .btn { width: auto; } /* Except search button */
+      .header-logout .btn { width: auto; } /* And logout button */
+    }
 
     @media print {
-      body { background-color: #fff; }
-      .no-print, .header, #createForm, #search-patient-heading, .search-bar, #create-patient-heading, .skip-link, #toast, .card-actions { display: none !important; }
-      .card { box-shadow: none; border: none; }
-      .container, main, section { padding: 0; margin: 0; }
-      #getResult { display: block !important; } /* Ensure search result is printed if generated */
-      #createResult { display: block !important; } /* Ensure create result is printed if generated */
-      .patient-result-container { border: none; padding: 0; }
+      body { background-color: #fff; color: #000; font-size: 10pt; }
+      .no-print, .header, #createForm, #search-patient-heading, .search-bar, #create-patient-heading, .skip-link, #toast, .card-actions, .id-capture-section, .form-submit-button button, .patient-result-qr button { display: none !important; }
+      .container, main, section, .card, .card-body { padding: 0 !important; margin: 0 !important; border: none !important; box-shadow: none !important; }
+      #getResult, #createResult { display: block !important; margin-top: 0; }
+      .patient-result-container { border: none; padding: 0; display: block; } /* Stack info and QR */
+      .patient-result-info, .patient-result-qr { width: 100%; flex: none; }
+      .patient-result-qr img { margin: 10px 0; }
+      a[href]:after { content: none !important; } /* Remove URL display */
+      img { max-width: 100% !important; }
     }
   </style>
 </head>
@@ -116,18 +279,21 @@
     <header class="header no-print">
       <div class="header-main-content">
         <div class="logo">
-          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img">
+          <!-- Use a real or placeholder image -->
+          <img src="https://via.placeholder.com/150x40?text=MediClinic" alt="MediClinic Logo" class="logo-img">
+          <!-- <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> -->
         </div>
         <h1 class="header-title">Réception</h1>
       </div>
       <div class="header-logout">
-        <button onclick="logout()" class="btn btn-outline logout-btn no-print" aria-label="Déconnexion">
+        <button onclick="window.logout()" class="btn btn-outline logout-btn" aria-label="Déconnexion">
           <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion
         </button>
       </div>
     </header>
 
     <main id="main-content" class="flex-row">
+      <!-- Create Patient Card -->
       <section class="card" aria-labelledby="create-patient-heading">
         <header class="card-header no-print">
           <h2 id="create-patient-heading" class="card-title">
@@ -143,13 +309,13 @@
             </button>
             <div id="idCaptureContainer" style="display:none;">
               <p id="captureInstruction">Positionnez le RECTO de la CIN et prenez la photo.</p>
-              <video id="idVideo" playsinline style="max-width: 100%; height: auto; border: 1px solid #ccc;"></video>
+              <video id="idVideo" playsinline></video>
               <canvas id="idCanvas" style="display:none;"></canvas>
               <div class="d-flex justify-content-center gap-2 my-2">
                 <img id="frontPreview" class="capture-preview" alt="Aperçu Recto" style="display: none;">
                 <img id="backPreview" class="capture-preview" alt="Aperçu Verso" style="display: none;">
               </div>
-              <div class="btn-group mt-2">
+              <div class="d-flex justify-content-center gap-2 mt-2"> <!-- Use flex for buttons too -->
                 <button id="takePhotoButton" type="button" class="btn btn-success" disabled>
                   <i class="fas fa-camera-retro"></i> Prendre Photo
                 </button>
@@ -157,7 +323,7 @@
                   Annuler
                 </button>
               </div>
-              <div id="captureMessage" class="message message-info mt-2" style="display: none;"></div>
+              <div id="captureMessage" class="message mt-2" style="display: none;" role="alert"></div>
             </div>
           </div>
           <!-- End ID Capture Section -->
@@ -165,27 +331,27 @@
           <form id="createForm" class="no-print" novalidate>
             <div class="form-grid">
               <div class="input-group">
-                <label for="nom">Nom <span aria-hidden="true">*</span></label>
+                <label for="nom">Nom <span class="req-star" aria-hidden="true">*</span></label>
                 <input id="nom" name="nom" type="text" placeholder="Nom de famille" required autocomplete="family-name">
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
-                <label for="prenom">Prénom <span aria-hidden="true">*</span></label>
+                <label for="prenom">Prénom <span class="req-star" aria-hidden="true">*</span></label>
                 <input id="prenom" name="prenom" type="text" placeholder="Prénom" required autocomplete="given-name">
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
-                <label for="cin">CIN <span aria-hidden="true">*</span></label>
+                <label for="cin">CIN <span class="req-star" aria-hidden="true">*</span></label>
                 <input id="cin" name="cin" type="text" placeholder="Ex: AB123456" required pattern="^[A-Za-z]{1,2}\d{5,6}$" autocomplete="off">
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
-                <label for="telephone">Téléphone <span aria-hidden="true">*</span></label>
+                <label for="telephone">Téléphone <span class="req-star" aria-hidden="true">*</span></label>
                 <input id="telephone" name="telephone" type="tel" placeholder="Ex: 0612345678" required autocomplete="tel" pattern="^0[5-7]\d{8}$">
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
-                <label for="adresse">Adresse <span aria-hidden="true">*</span></label>
+                <label for="adresse">Adresse <span class="req-star" aria-hidden="true">*</span></label>
                 <textarea
                   id="adresse"
                   name="adresse"
@@ -197,23 +363,38 @@
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
-                <label for="ville">Ville <span aria-hidden="true">*</span></label>
+                <label for="ville">Ville <span class="req-star" aria-hidden="true">*</span></label>
                 <input id="ville" name="ville" type="text" placeholder="Ville" required autocomplete="address-level2">
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
-                <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label>
+                <label for="date_naissance">Date de Naissance <span class="req-star" aria-hidden="true">*</span></label>
                 <input id="date_naissance" name="date_naissance" type="date" required autocomplete="bday" max="9999-12-31"> <!-- Added max date -->
                 <div class="error-text"></div>
               </div>
               <div class="input-group">
-                <label for="sexe">Sexe <span aria-hidden="true">*</span></label>
+                <label for="sexe">Sexe <span class="req-star" aria-hidden="true">*</span></label>
                 <select id="sexe" name="sexe" required autocomplete="sex">
                   <option value="">-- Sélectionnez --</option>
                   <option value="M">Homme</option>
                   <option value="F">Femme</option>
                 </select>
                 <div class="error-text"></div>
+              </div>
+
+              <!-- Médecin référent searchable field -->
+              <div class="input-group">
+                <label for="medecin_referent">Médecin référent</label>
+                <input
+                  type="text"
+                  list="doctors"
+                  id="medecin_referent"
+                  name="medecin_referent"
+                  placeholder="Rechercher un médecin"
+                  autocomplete="off"
+                >
+                <datalist id="doctors"></datalist>
+                <div class="error-text"></div> <!-- Added error text div -->
               </div>
 
               <!-- Mutuelle checkbox + searchable field -->
@@ -237,31 +418,17 @@
                 </div>
               </div>
 
-              <!-- Médecin référent searchable field -->
-              <div class="input-group">
-                <label for="medecin_referent">Médecin référent</label>
-                <input
-                  type="text"
-                  list="doctors"
-                  id="medecin_referent"
-                  name="medecin_referent"
-                  placeholder="Rechercher un médecin"
-                  autocomplete="off"
-                >
-                <datalist id="doctors"></datalist>
-                <div class="error-text"></div> <!-- Added error text div -->
-              </div>
-
               <div class="form-submit-button">
                 <button type="submit" class="btn btn-success" id="createPatientBtn">
                   <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient
                 </button>
               </div>
-              <div id="message" class="message" role="alert" aria-live="polite" style="grid-column: 1 / -1;"></div>
+              <div id="message" class="message" role="alert" aria-live="polite" style="display: none;"></div>
             </div>
           </form>
 
-          <div id="createResult" style="display: none;"> <!-- Initially hidden -->
+          <!-- Result Area for Creation -->
+          <div id="createResult" style="display: none;">
             <p id="createResultMessage"></p>
             <img id="createQrCodeImage" src="" alt="QR Code Patient" loading="lazy">
             <button id="createPrintButton" class="btn btn-secondary no-print" disabled>
@@ -271,6 +438,7 @@
         </div>
       </section>
 
+      <!-- Search Patient Card -->
       <section class="card" aria-labelledby="search-patient-heading">
         <header class="card-header no-print">
           <h2 id="search-patient-heading" class="card-title">
@@ -280,12 +448,14 @@
         </header>
         <div class="card-body">
           <div class="search-bar no-print">
-            <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient">
+            <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient" class="input-group">
             <button id="searchBtn" class="btn btn-primary">
               <i class="fas fa-search" aria-hidden="true"></i> Rechercher
             </button>
           </div>
-          <div id="getResult" role="region" aria-live="polite"></div>
+          <div id="getResult" role="region" aria-live="polite">
+             <!-- Search results will appear here -->
+          </div>
         </div>
       </section>
     </main>
@@ -295,11 +465,15 @@
 
   <script>
   (function() {
-    // Configuration
+    'use strict'; // Enable strict mode
+
+    // --- Configuration ---
     const CONFIG = {
-      API_BASE_URL: 'https://workflows.aphelionxinnovations.com',
-      QR_TARGET_BASE_URL: 'app://medilink/patient', // Example deep link URL
-      LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', // Example login URL
+      // IMPORTANT: Replace with your actual backend URLs
+      API_BASE_URL: 'https://workflows.aphelionxinnovations.com', // Example backend
+      LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', // Example login page
+      // ---
+      QR_TARGET_BASE_URL: 'app://medilink/patient', // Example deep link for QR code
       TOKEN_KEY: 'authToken',
       SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutes
       MESSAGE_DISPLAY_TIME: 7000, // 7 seconds for form messages
@@ -307,8 +481,11 @@
     };
     const DOCTORS_ENDPOINT   = CONFIG.API_BASE_URL + '/webhook/get-doctors';
     const MUTUELLES_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/get-mutuelles';
+    const EXTRACT_ID_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/extract-id-info';
+    const CREATE_PATIENT_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/create-patient';
+    const GET_PATIENT_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/get-patient'; // Base URL for GET
 
-    // State
+    // --- State ---
     let doctorsList   = [];
     let mutuellesList = [];
     let sessionTimeoutId = null;
@@ -317,7 +494,8 @@
     let backImageBlob    = null;
     let isCapturingFront = true;
 
-    // DOM refs
+    // --- DOM References ---
+    // Using const for references that won't change
     const DOM = {
       body: document.body,
       createForm: document.getElementById('createForm'),
@@ -332,6 +510,8 @@
       hasInsurance: document.getElementById('has_insurance'),
       mutuelle: document.getElementById('mutuelle'),
       medecinReferent: document.getElementById('medecin_referent'),
+      doctorsDatalist: document.getElementById('doctors'), // Added reference
+      mutuellesDatalist: document.getElementById('mutuelles'), // Added reference
       captureIdButton: document.getElementById('captureIdButton'),
       idCaptureContainer: document.getElementById('idCaptureContainer'),
       idVideo: document.getElementById('idVideo'),
@@ -344,38 +524,71 @@
       captureMessage: document.getElementById('captureMessage'),
       createPatientBtn: document.getElementById('createPatientBtn'),
       createResult: document.getElementById('createResult'),
-      createResultMessage: document.getElementById('createResultMessage'), // Added ref
+      createResultMessage: document.getElementById('createResultMessage'),
       createQrCodeImage: document.getElementById('createQrCodeImage'),
       createPrintButton: document.getElementById('createPrintButton'),
-      message: document.getElementById('message'),
+      message: document.getElementById('message'), // Form-level message area
       searchBtn: document.getElementById('searchBtn'),
-      getCin: document.getElementById('getCin'),
-      resultDiv: document.getElementById('getResult'),
+      getCin: document.getElementById('getCin'), // Search input
+      resultDiv: document.getElementById('getResult'), // Search result area
       toast: document.getElementById('toast')
     };
 
     // --- Utility Functions ---
 
-    function showToast(msg, type='success') {
+    /**
+     * Sanitizes HTML string to prevent XSS.
+     * @param {string} input The string to sanitize.
+     * @returns {string} Sanitized string.
+     */
+    function sanitize(input) {
+      const temp = document.createElement('div');
+      temp.textContent = input || '';
+      return temp.innerHTML;
+    }
+
+    /**
+     * Shows a toast notification.
+     * @param {string} msg The message to display.
+     * @param {'success' | 'error' | 'info'} type The type of toast.
+     */
+    function showToast(msg, type = 'info') {
       if (!msg || !DOM.toast) return;
       const icons = {
         success: '<i class="fas fa-check-circle"></i>',
-        error:   '<i class="fas fa-exclamation-circle"></i>',
-        info:    '<i class="fas fa-info-circle"></i>' // Added info type
+        error:   '<i class="fas fa-exclamation-triangle"></i>', // Changed icon
+        info:    '<i class="fas fa-info-circle"></i>'
       };
-      DOM.toast.innerHTML = `${icons[type] || icons.info} ${sanitize(msg)}`; // Sanitize msg
-      DOM.toast.className = `toast ${type} show`;
-      // Clear previous timeout if any
+      DOM.toast.innerHTML = `${icons[type] || icons.info} ${sanitize(msg)}`;
+      DOM.toast.className = `toast ${type}`; // Remove show initially
+
+      // Clear previous timeout if any to prevent overlapping animations/removals
       if (DOM.toast.timeoutId) clearTimeout(DOM.toast.timeoutId);
-      DOM.toast.timeoutId = setTimeout(() => {
-         DOM.toast.classList.remove('show');
-         DOM.toast.timeoutId = null;
-      }, CONFIG.TOAST_DISPLAY_TIME);
+      if (DOM.toast.animationFrameId) cancelAnimationFrame(DOM.toast.animationFrameId);
+
+      // Use rAF for smoother transition start
+      DOM.toast.animationFrameId = requestAnimationFrame(() => {
+          DOM.toast.classList.add('show');
+          DOM.toast.timeoutId = setTimeout(() => {
+              DOM.toast.classList.remove('show');
+              DOM.toast.timeoutId = null;
+              DOM.toast.animationFrameId = null; // Clean up animation frame id
+          }, CONFIG.TOAST_DISPLAY_TIME);
+      });
     }
 
+    /**
+     * Displays a message in a designated element.
+     * @param {string} elementId The ID of the message container element.
+     * @param {string} message The message text.
+     * @param {'info' | 'success' | 'warning' | 'error' | 'loading' | 'result'} type The message type.
+     */
     function showMessage(elementId, message, type = 'info') {
       const el = document.getElementById(elementId);
-      if (!el) return;
+      if (!el) {
+        console.warn(`Element with ID '${elementId}' not found for showMessage.`);
+        return;
+      }
       const icons = {
         info:    'fas fa-info-circle',
         success: 'fas fa-check-circle',
@@ -383,39 +596,44 @@
         error:   'fas fa-times-circle',
         loading: 'fas fa-spinner fa-spin'
       };
-      const iconHtml = message && type !== 'result'
-        ? `<i class="${icons[type] || icons.info} me-2" aria-hidden="true"></i>`
+      const iconHtml = message && type !== 'result' && icons[type]
+        ? `<i class="${icons[type]} me-2" aria-hidden="true"></i>`
         : '';
 
-      el.innerHTML = message ? `${iconHtml}${sanitize(message)}` : ''; // Sanitize message
-      el.style.display = message ? 'block' : 'none';
+      el.innerHTML = message ? `${iconHtml}${sanitize(message)}` : '';
+      el.style.display = message ? 'flex' : 'none'; // Use flex for alignment with icon
       el.className = type === 'result' ? '' : `message message-${type}`;
-      // Make sure parent container is visible if needed (e.g., capture message)
-      if (message && el.parentElement && el.parentElement.style.display === 'none') {
-          el.parentElement.style.display = 'block';
+
+      // Special handling for capture message container visibility
+      if (elementId === 'captureMessage' && el.parentElement) {
+          el.parentElement.style.display = message ? 'block' : 'none';
+          if (message) el.style.display = 'flex'; // Ensure message itself is visible
       }
     }
 
-    function sanitize(input) {
-      const tmp = document.createElement('div');
-      tmp.textContent = input || '';
-      return tmp.innerHTML;
-    }
-
+    /**
+     * Performs fetch requests with authorization header and session management.
+     * @param {string} url The URL to fetch.
+     * @param {object} opts Fetch options (method, body, etc.).
+     * @returns {Promise<Response>} The fetch Response object.
+     */
     async function fetchWithAuth(url, opts = {}) {
       const token = localStorage.getItem(CONFIG.TOKEN_KEY);
       if (!token) {
         alert('Session expirée ou jeton manquant. Redirection vers la page de connexion.');
         window.location.href = CONFIG.LOGIN_PAGE_URL;
-        return Promise.reject(new Error('No authentication token found.')); // Return rejected promise
+        // Prevent further execution by throwing an error that stops the promise chain
+        throw new Error('No authentication token found.');
       }
 
-      resetSessionTimeout(); // Reset timeout on activity
+      resetSessionTimeout(); // Reset timeout on authenticated activity
 
       const headers = { ...opts.headers, 'Authorization': `Bearer ${token}` };
-      // Set Content-Type for non-FormData POST/PUT requests
-      if (opts.body && !(opts.body instanceof FormData) && (opts.method === 'POST' || opts.method === 'PUT')) {
-        headers['Content-Type'] = 'application/json';
+      // Automatically set Content-Type for JSON bodies if not FormData
+      if (opts.body && !(opts.body instanceof FormData) && !headers['Content-Type']) {
+         if (typeof opts.body === 'string'){ // Assume JSON if stringified
+              headers['Content-Type'] = 'application/json';
+         }
       }
 
       try {
@@ -425,64 +643,93 @@
           localStorage.removeItem(CONFIG.TOKEN_KEY);
           alert('Session invalide ou expirée. Veuillez vous reconnecter.');
           window.location.href = CONFIG.LOGIN_PAGE_URL;
-          throw new Error('Authentication failed.'); // Throw specific error
+          throw new Error('Authentication failed.'); // Specific error for auth failure
         }
 
         if (!response.ok) {
-          // Try to get error message from response body
           let errorBody = '';
           try {
-            errorBody = await response.text();
+            // Attempt to read error details from response, prioritizing JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorBody = errorData.message || errorData.error || JSON.stringify(errorData);
+            } else {
+                errorBody = await response.text();
+            }
           } catch (e) { /* Ignore error reading body */ }
-          throw new Error(errorBody || `HTTP error! Status: ${response.status} ${response.statusText}`);
+          // Construct a more informative error message
+          throw new Error(errorBody || `HTTP error ${response.status} - ${response.statusText}`);
         }
 
-        return response; // Return the full response object
+        return response; // Return the full response object on success
 
       } catch (error) {
         console.error('Fetch error:', error);
-        // Don't automatically logout on network errors, only on auth errors
+        // Show toast only for non-auth related errors, as auth errors trigger alerts/redirects
         if (error.message !== 'Authentication failed.' && error.message !== 'No authentication token found.') {
           showToast(`Erreur réseau ou serveur: ${error.message}`, 'error');
         }
-        throw error; // Re-throw the error to be caught by the caller
+        throw error; // Re-throw to allow caller to handle
       }
     }
 
+    /** Resets the session inactivity timer. */
     function resetSessionTimeout() {
       if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
-      sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT);
+      sessionTimeoutId = setTimeout(window.logout, CONFIG.SESSION_TIMEOUT);
     }
 
     // --- Validation ---
 
+    /**
+     * Validates a single form field.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} input The input element.
+     * @param {function(string): boolean} testFn Validation function returning true if valid.
+     * @param {string} [errorMessage] Custom error message.
+     * @returns {boolean} True if the field is valid.
+     */
     function validateField(input, testFn, errorMessage) {
+        if (!input) return true; // Should not happen but safeguard
+
         const value = input.value.trim();
         const group = input.closest('.input-group');
         const errorDiv = group ? group.querySelector('.error-text') : null;
         let isValid = false;
+        let message = errorMessage || 'Valeur invalide.'; // Default message
 
-        // Handle required check separately if input is required and testFn is provided
         if (input.required && value === '') {
             isValid = false;
-            errorMessage = errorMessage || 'Ce champ est requis.'; // Generic required message
+            message = 'Ce champ est requis.';
         } else if (!input.required && value === '') {
-            isValid = true; // Not required and empty is valid
+            isValid = true; // Not required and empty is always valid
         } else {
-            // Use the provided test function if input is not empty or not required
-            isValid = testFn ? testFn(value) : true; // Assume valid if no test function provided for non-empty/non-required
+            // For non-empty or non-required fields, use test function if provided
+            isValid = testFn ? testFn(value) : true; // Assume valid if no specific test needed
+        }
+
+        // Date specific validation: Ensure date is not in the future
+        if (isValid && input.type === 'date' && value !== '') {
+           const inputDate = new Date(value + 'T00:00:00'); // Use T00:00:00 for consistent comparison
+           const today = new Date();
+           today.setHours(0, 0, 0, 0); // Compare against start of today
+
+           if (inputDate > today) {
+               isValid = false;
+               message = 'La date ne peut pas être dans le futur.';
+           }
         }
 
         if (group) group.classList.toggle('has-error', !isValid);
         input.classList.toggle('input-error', !isValid);
         if (errorDiv) {
-            errorDiv.textContent = isValid ? '' : errorMessage || 'Valeur invalide.';
+            errorDiv.textContent = isValid ? '' : message;
         }
 
         return isValid;
     }
 
-
+    /** Clears all validation errors from the create form. */
     function clearErrors() {
         DOM.createForm.querySelectorAll('.input-group').forEach(group => {
             group.classList.remove('has-error');
@@ -490,38 +737,49 @@
             const errorDiv = group.querySelector('.error-text');
             if (errorDiv) errorDiv.textContent = '';
         });
-        showMessage('message', '', 'info'); // Clear form-level message
+        showMessage('message', '', 'info'); // Clear form-level message too
     }
 
+    /**
+     * Validates the entire patient creation form.
+     * @returns {boolean} True if the form is valid.
+     */
     function validateForm() {
-        clearErrors();
-        let isValid = true;
+        clearErrors(); // Start fresh
+        let isValid = true; // Assume valid initially
 
-        // Use specific validation functions or regex directly
+        // Validate required fields with specific patterns/checks
         isValid &= validateField(DOM.nom,           v => v.length > 0,                     'Nom requis');
         isValid &= validateField(DOM.prenom,        v => v.length > 0,                     'Prénom requis');
         isValid &= validateField(DOM.cin,           v => /^[A-Za-z]{1,2}\d{5,6}$/.test(v), 'Format CIN invalide (ex: AB123456)');
         isValid &= validateField(DOM.telephone,     v => /^0[5-7]\d{8}$/.test(v),          'Format téléphone invalide (ex: 0612345678)');
         isValid &= validateField(DOM.adresse,       v => v.length > 0,                     'Adresse requise');
         isValid &= validateField(DOM.ville,         v => v.length > 0,                     'Ville requise');
-        isValid &= validateField(DOM.dateNaissance, v => v !== '' && new Date(v) < new Date(), 'Date de naissance valide requise (ne peut être dans le futur)');
+        isValid &= validateField(DOM.dateNaissance, v => v !== '',                         'Date de naissance requise'); // Date format/future check done in validateField
         isValid &= validateField(DOM.sexe,          v => v !== '',                         'Sélection du sexe requise');
 
+        // Conditional validation for Mutuelle
         if (DOM.hasInsurance.checked) {
-            // Validate that the selected value is one of the known mutuelles
-            isValid &= validateField(DOM.mutuelle, v => mutuellesList.some(m => m.toLowerCase() === v.toLowerCase()), 'Veuillez sélectionner une mutuelle valide dans la liste');
-            // Also ensure it's not empty if checkbox is checked
             isValid &= validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
+            // Additionally check if the value exists in the datalist (case-insensitive)
+            isValid &= validateField(DOM.mutuelle,
+                                     v => v !== '' && mutuellesList.some(m => m.toLowerCase() === v.toLowerCase()),
+                                     'Veuillez sélectionner une mutuelle valide de la liste');
         }
 
-        // Optional field validation (only if not empty) - Doctor
+        // Conditional validation for Medecin Referent (only if a value is entered)
         if (DOM.medecinReferent.value.trim() !== '') {
-             isValid &= validateField(DOM.medecinReferent, v => doctorsList.some(d => `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === v.toLowerCase()), 'Médecin référent invalide');
+             const doctorFormat = v => doctorsList.some(d => `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === v.toLowerCase());
+             isValid &= validateField(DOM.medecinReferent, doctorFormat, 'Médecin référent invalide ou non trouvé dans la liste');
         }
-
 
         if (!isValid) {
             showToast('Veuillez corriger les erreurs dans le formulaire.', 'error');
+            // Find first invalid field and focus it for accessibility
+            const firstError = DOM.createForm.querySelector('.has-error input, .has-error select, .has-error textarea');
+            if (firstError) {
+                firstError.focus();
+            }
         }
         return isValid;
     }
@@ -529,114 +787,136 @@
 
     // --- Form Handling ---
 
+    /** Resets the create patient form to its initial state. */
     function resetForm() {
       DOM.createForm.reset();
       clearErrors();
-      handleMutuelleChange(); // Reset mutuelle state
-      // Hide result area
+      handleMutuelleChange(); // Reset mutuelle input state
+      // Hide and clear the creation result area
       DOM.createResult.style.display = 'none';
-      DOM.createQrCodeImage.src = '';
-      DOM.createPrintButton.disabled = true;
       DOM.createResultMessage.textContent = '';
-      showMessage('message','', 'info'); // Clear form message
+      DOM.createQrCodeImage.src = '';
+      DOM.createQrCodeImage.alt = '';
+      DOM.createPrintButton.disabled = true;
+      DOM.createPrintButton.onclick = null; // Remove previous handler
+      showMessage('message','', 'info'); // Clear form-level message
     }
 
+    /** Handles changes to the "Has Insurance" checkbox. */
     function handleMutuelleChange() {
       const isEnabled = DOM.hasInsurance.checked;
       DOM.mutuelle.disabled = !isEnabled;
-      DOM.mutuelle.required = isEnabled; // Make required only if checked
+      DOM.mutuelle.required = isEnabled; // Set required based on checkbox
       if (!isEnabled) {
           DOM.mutuelle.value = ''; // Clear value if disabled
           // Clear potential validation error if unchecked
-          validateField(DOM.mutuelle, v => true); // Mark as valid when disabled
+          validateField(DOM.mutuelle, () => true); // Mark as valid (or clear error) when disabled
       } else {
-           // Re-validate if enabled and potentially empty
+           // Re-validate if enabled and potentially empty (will show required message if empty)
            validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
       }
     }
 
-    // --- Data Fetching ---
+    // --- Data Fetching & Population ---
 
+    /** Fetches and populates the doctors datalist. */
     async function populateMedecinReferent() {
       try {
         const response = await fetchWithAuth(DOCTORS_ENDPOINT);
         const text = await response.text();
         if (!text) {
           console.warn('Received empty response body when fetching doctors.');
-          doctorsList = []; // Ensure list is empty
-          return; // Exit if no data
+          doctorsList = [];
+          DOM.doctorsDatalist.innerHTML = ''; // Clear list
+          return;
         }
-        const data = JSON.parse(text); // Parse only if text is not empty
+        const data = JSON.parse(text);
 
         if (data.success && Array.isArray(data.doctors)) {
-          doctorsList = data.doctors; // Store the full doctor objects
-          const datalist = document.getElementById('doctors');
-          datalist.innerHTML = ''; // Clear existing options
+          doctorsList = data.doctors; // Store full objects
+          DOM.doctorsDatalist.innerHTML = ''; // Clear existing options
           doctorsList.forEach(d => {
             const option = document.createElement('option');
-            // Use a consistent format for display and validation lookup
+            // Value combines name and specialty for display and lookup
             option.value = `${d.nom} ${d.prenom} - ${d.specialite}`;
-            // You could add the matricule as a data attribute if needed later, though datalist makes this hard to retrieve reliably
-            // option.dataset.matricule = d.matricule;
-            datalist.appendChild(option);
+            // Store matricule in a data attribute for easy retrieval (though datalist makes this tricky)
+            // We'll retrieve by matching the value string later
+            DOM.doctorsDatalist.appendChild(option);
           });
+          console.log("Doctors list populated:", doctorsList.length);
         } else {
           console.error('Failed to parse doctors or unexpected data structure:', data);
           showToast('Erreur lors du chargement des médecins.', 'error');
         }
       } catch (error) {
-        console.error('Error fetching doctors:', error);
-        // Error already shown by fetchWithAuth or console logged here
+        // Error is logged and potentially toasted by fetchWithAuth
+        console.error('Error fetching/populating doctors:', error);
       }
     }
 
+    /** Fetches and populates the mutuelles datalist. */
     async function populateMutuelles() {
       try {
         const response = await fetchWithAuth(MUTUELLES_ENDPOINT);
         const text = await response.text();
         if (!text) {
           console.warn('Received empty response body when fetching mutuelles.');
-          mutuellesList = []; // Ensure list is empty
-          return; // Exit if no data
+          mutuellesList = [];
+          DOM.mutuellesDatalist.innerHTML = ''; // Clear list
+          return;
         }
-        const data = JSON.parse(text); // Parse only if text is not empty
+        const data = JSON.parse(text);
 
         if (data.success && Array.isArray(data.mutuelles)) {
-          mutuellesList = data.mutuelles; // Store the list of names
-          const datalist = document.getElementById('mutuelles');
-          datalist.innerHTML = ''; // Clear existing options
+          mutuellesList = data.mutuelles; // Store names
+          DOM.mutuellesDatalist.innerHTML = ''; // Clear existing options
           mutuellesList.forEach(m => {
             const option = document.createElement('option');
-            option.value = m; // The value is the name itself
-            datalist.appendChild(option);
+            option.value = m; // Value is the name itself
+            DOM.mutuellesDatalist.appendChild(option);
           });
+           console.log("Mutuelles list populated:", mutuellesList.length);
         } else {
           console.error('Failed to parse mutuelles or unexpected data structure:', data);
           showToast('Erreur lors du chargement des mutuelles.', 'error');
         }
       } catch (error) {
-        console.error('Error fetching mutuelles:', error);
-        // Error already shown by fetchWithAuth or console logged here
+         // Error is logged and potentially toasted by fetchWithAuth
+         console.error('Error fetching/populating mutuelles:', error);
       }
     }
 
-    // --- QR Code ---
+    // --- QR Code Functionality ---
 
+    /**
+     * Generates QR code image URL and target URL for a given IPP.
+     * @param {string} ipp Patient Identifier.
+     * @returns {{qrImageUrl: string, targetUrl: string}} Object containing URLs.
+     */
     function generateQrData(ipp) {
       const encodedIpp = encodeURIComponent(ipp);
       const targetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodedIpp}`;
       const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}`;
-      return { qrImageUrl: qrApiUrl, targetUrl: targetUrl }; // Return both URLs
+      return { qrImageUrl: qrApiUrl, targetUrl: targetUrl };
     }
 
-    // CORRECTED: Expose printQRCode to the global scope
+    /**
+     * Opens a new window to print the QR code.
+     * Made globally accessible for dynamic onclick handlers.
+     * @param {string} imgUrl The URL of the QR code image.
+     */
     window.printQRCode = function(imgUrl) {
-      if (!imgUrl) return;
+      if (!imgUrl) {
+          console.error("printQRCode called with no image URL.");
+          return;
+      }
       const printWindow = window.open('', '_blank', 'width=400,height=450,resizable=yes,scrollbars=yes');
       if (!printWindow) {
         showToast('Veuillez autoriser les pop-ups pour imprimer.', 'warning');
         return;
       }
+      // Sanitize the imgUrl before injecting into HTML
+      const sanitizedImgUrl = sanitize(imgUrl);
       printWindow.document.write(`
         <!DOCTYPE html>
         <html lang="fr">
@@ -645,96 +925,94 @@
           <title>Imprimer QR Code</title>
           <style>
             body { margin: 20px; text-align: center; font-family: sans-serif; }
-            img { max-width: 90%; height: auto; }
+            img { max-width: 90%; height: auto; border: 1px solid #ccc; }
+            p { margin-top: 20px; }
             @media print {
-              body { margin: 0; }
-              button { display: none; } /* Hide button in print view */
+              body { margin: 10px; } /* Adjust print margin */
+              button { display: none; }
             }
           </style>
         </head>
         <body>
-          <img src="${sanitize(imgUrl)}" alt="QR Code Patient">
-          <p style="margin-top: 15px;"><button onclick="window.print();">Imprimer</button></p>
+          <img src="${sanitizedImgUrl}" alt="QR Code Patient">
+          <p><button onclick="window.print(); this.style.display='none';">Imprimer</button></p>
           <script>
-            // Automatically trigger print and close after printing
+            // Automatically trigger print when window loads
             window.onload = function() {
-              window.print();
-              // Using setTimeout to allow print dialog to potentially finish
-              // Note: onafterprint is not universally reliable for closing
+              // Short delay seems to help ensure image is loaded in some browsers
               setTimeout(function() {
-                  // Check if the window is still open before trying to close
-                  if (window.opener && !window.closed) {
-                     // window.close(); // Closing can be unreliable/blocked
-                  }
-              }, 1000); // Adjust delay if needed
-            }
-            window.onafterprint = function() {
-               // This might not always fire, or might fire too early
-               // if (window.opener && !window.closed) {
-               //    window.close();
-               // }
-            }
+                  window.print();
+                  // Closing window after print can be problematic/blocked by browsers
+                  // Best practice is often to let the user close manually or via the button.
+                  // window.onafterprint = function() { if (window.opener && !window.closed) { /* window.close(); */ } };
+              }, 250);
+            };
           <\/script>
         </body>
         </html>
       `);
-      printWindow.document.close(); // Important for some browsers
+      printWindow.document.close(); // Important for rendering
     }
 
-    // --- ID Capture ---
+    // --- ID Capture Functionality ---
 
+    /** Starts the ID capture process using the camera. */
     async function startIdCapture() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showMessage('captureMessage', 'La fonctionnalité de caméra n\'est pas supportée par votre navigateur.', 'error');
+        showMessage('captureMessage', 'La fonctionnalité caméra n\'est pas supportée.', 'error');
         return;
       }
 
-      showMessage('captureMessage', 'Demande d\'accès à la caméra...', 'loading');
+      showMessage('captureMessage', 'Demande d\'accès caméra...', 'loading');
       DOM.captureIdButton.disabled = true;
       DOM.idCaptureContainer.style.display = 'block';
       DOM.frontPreview.style.display = 'none'; // Reset previews
       DOM.backPreview.style.display = 'none';
+      if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src); // Clean previous URLs
+      if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
+      DOM.frontPreview.src = DOM.backPreview.src = '';
       frontImageBlob = backImageBlob = null; // Clear previous blobs
       isCapturingFront = true; // Always start with front
       DOM.captureInstruction.textContent = 'Positionnez le RECTO de la CIN dans le cadre et prenez la photo.';
 
       try {
         idCaptureStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: 'environment', // Prefer rear camera
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
+          video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
         });
-
         DOM.idVideo.srcObject = idCaptureStream;
-        await DOM.idVideo.play(); // Wait for video to start playing
-
-        showMessage('captureMessage', 'Caméra prête. Prenez la photo du RECTO.', 'info');
-        DOM.takePhotoButton.disabled = false;
-        DOM.cancelCaptureButton.disabled = false;
-
+        // Use 'loadedmetadata' event to ensure video dimensions are available
+        DOM.idVideo.onloadedmetadata = () => {
+            DOM.idVideo.play()
+              .then(() => {
+                 showMessage('captureMessage', 'Caméra prête. Prenez la photo du RECTO.', 'info');
+                 DOM.takePhotoButton.disabled = false;
+                 DOM.cancelCaptureButton.disabled = false;
+              })
+              .catch(playErr => {
+                  console.error("Video play error:", playErr);
+                  showMessage('captureMessage', `Erreur lecture vidéo: ${playErr.message}`, 'error');
+                  stopIdCapture(true);
+              });
+        };
       } catch (err) {
-        console.error("Camera Error:", err);
-        let errMsg = `Erreur d'accès caméra: ${err.message}`;
-        if (err.name === "NotAllowedError") {
-          errMsg = "Permission d'accès à la caméra refusée. Veuillez autoriser l'accès dans les paramètres de votre navigateur.";
-        } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
-           errMsg = "Aucune caméra compatible trouvée.";
-        } else if (err.name === "NotReadableError") {
-           errMsg = "Impossible d'accéder à la caméra (peut-être utilisée par une autre application).";
-        }
+        console.error("Camera Access Error:", err);
+        let errMsg = `Erreur caméra: ${err.message}`;
+        if (err.name === "NotAllowedError") errMsg = "Permission caméra refusée.";
+        else if (err.name === "NotFoundError") errMsg = "Aucune caméra compatible trouvée.";
+        else if (err.name === "NotReadableError") errMsg = "Caméra déjà utilisée ou inaccessible.";
         showMessage('captureMessage', errMsg, 'error');
-        stopIdCapture(true); // Clean up on error
+        stopIdCapture(true); // Clean up fully
       }
     }
 
+    /** Stops the ID capture stream and resets the UI. */
     function stopIdCapture(clearBlobsAndPreviews = true) {
         if (idCaptureStream) {
             idCaptureStream.getTracks().forEach(track => track.stop());
             idCaptureStream = null;
         }
         DOM.idVideo.srcObject = null;
+        DOM.idVideo.onloadedmetadata = null; // Remove listener
         DOM.idCaptureContainer.style.display = 'none';
         DOM.takePhotoButton.disabled = true;
         DOM.cancelCaptureButton.disabled = true;
@@ -745,218 +1023,240 @@
             frontImageBlob = backImageBlob = null;
             if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src);
             if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
-            DOM.frontPreview.src = '';
-            DOM.backPreview.src = '';
+            DOM.frontPreview.src = DOM.backPreview.src = '';
+            DOM.frontPreview.alt = DOM.backPreview.alt = '';
             DOM.frontPreview.style.display = 'none';
             DOM.backPreview.style.display = 'none';
         }
     }
 
-
+   /** Takes a photo from the video stream and handles extraction process. */
    async function takePhotoAndExtract() {
+        // Ensure video stream exists and is ready
         if (!idCaptureStream || DOM.idVideo.readyState < DOM.idVideo.HAVE_METADATA) {
-            showMessage('captureMessage', 'La caméra n\'est pas encore prête.', 'warning');
+            showMessage('captureMessage', 'Caméra non prête ou flux vidéo non disponible.', 'warning');
             return;
         }
 
         showMessage('captureMessage', 'Capture de l\'image...', 'loading');
-        DOM.takePhotoButton.disabled = true; // Disable buttons during processing
+        DOM.takePhotoButton.disabled = true; // Disable buttons during capture/processing
         DOM.cancelCaptureButton.disabled = true;
 
         const canvas = DOM.idCanvas;
-        // Set canvas dimensions based on the video's actual dimensions
+        // Ensure canvas dimensions match the video source for accurate capture
         canvas.width = DOM.idVideo.videoWidth;
         canvas.height = DOM.idVideo.videoHeight;
 
         const context = canvas.getContext('2d');
         if (!context) {
-             showMessage('captureMessage', 'Erreur de contexte Canvas.', 'error');
-             stopIdCapture(true);
+             showMessage('captureMessage', 'Impossible d\'obtenir le contexte Canvas.', 'error');
+             stopIdCapture(true); // Stop everything if canvas fails
              return;
         }
         context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height);
 
+        // Convert canvas to Blob
         canvas.toBlob(async (blob) => {
             if (!blob) {
                 showMessage('captureMessage', 'Erreur lors de la création de l\'image (blob).', 'error');
-                stopIdCapture(true); // Stop capture on blob error
+                stopIdCapture(true);
                 return;
             }
 
             if (isCapturingFront) {
-                // Revoke previous URL if exists
-                if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src);
+                if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src); // Clean previous URL
                 frontImageBlob = blob;
                 DOM.frontPreview.src = URL.createObjectURL(blob);
+                DOM.frontPreview.alt = "Aperçu Recto CIN";
                 DOM.frontPreview.style.display = 'inline-block';
-                isCapturingFront = false; // Move to capturing back
+                isCapturingFront = false; // Now capture the back
                 DOM.captureInstruction.textContent = 'Positionnez le VERSO de la CIN et prenez la photo.';
                 showMessage('captureMessage', 'Image RECTO capturée. Préparez le VERSO.', 'info');
-                DOM.takePhotoButton.disabled = false; // Re-enable buttons
+                DOM.takePhotoButton.disabled = false; // Re-enable buttons for next step
                 DOM.cancelCaptureButton.disabled = false;
             } else {
-                // Revoke previous URL if exists
-                if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
+                if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src); // Clean previous URL
                 backImageBlob = blob;
                 DOM.backPreview.src = URL.createObjectURL(blob);
+                DOM.backPreview.alt = "Aperçu Verso CIN";
                 DOM.backPreview.style.display = 'inline-block';
 
-                // Both images captured, stop video and proceed to extraction
-                stopIdCapture(false); // Stop camera, but keep blobs/previews
-                showMessage('captureMessage', 'Images RECTO et VERSO capturées. Analyse en cours...', 'loading');
+                // Both images captured - Stop video feed, keep blobs/previews for now
+                stopIdCapture(false);
+                showMessage('captureMessage', 'Images RECTO et VERSO capturées. Analyse OCR en cours...', 'loading');
 
+                // Proceed with extraction only if both blobs are present
                 if (frontImageBlob && backImageBlob) {
                     const formData = new FormData();
-                    // Use specific filenames if the backend expects them
                     formData.append('id_image_front', frontImageBlob, 'cin_recto.jpg');
                     formData.append('id_image_back', backImageBlob, 'cin_verso.jpg');
 
                     try {
-                        const response = await fetchWithAuth(CONFIG.API_BASE_URL + '/webhook/extract-id-info', {
+                        console.log("Sending images for extraction...");
+                        const response = await fetchWithAuth(EXTRACT_ID_ENDPOINT, {
                             method: 'POST',
-                            body: formData // No Content-Type header needed for FormData
+                            body: formData
                         });
-                        const data = await response.json(); // Assume response is JSON
+                        const data = await response.json();
+                        console.log("Extraction response:", data);
 
-                        if (data && data.data) { // Check if data and nested data exist
+                        if (data && data.data) {
                             autofillCreateForm(data.data);
-                            showToast('Informations extraites et formulaire pré-rempli!', 'success');
-                            showMessage('captureMessage', 'Extraction réussie.', 'success');
-                             // Optionally clear previews after successful extraction
-                             // setTimeout(() => {
-                             //     if (DOM.frontPreview.src) URL.revokeObjectURL(DOM.frontPreview.src);
-                             //     if (DOM.backPreview.src) URL.revokeObjectURL(DOM.backPreview.src);
-                             //     DOM.frontPreview.style.display = 'none';
-                             //     DOM.backPreview.style.display = 'none';
-                             //     showMessage('captureMessage', '', 'info');
-                             // }, 3000);
+                            showToast('Informations CIN extraites!', 'success');
+                            showMessage('captureMessage', 'Extraction réussie. Vérifiez le formulaire.', 'success');
+                            // Keep previews visible for verification
                         } else {
-                            throw new Error(data.message || 'Aucune donnée n\'a pu être extraite ou format de réponse inattendu.');
+                            throw new Error(data.message || 'Aucune donnée extraite ou format de réponse invalide.');
                         }
                     } catch (error) {
                         console.error("Extraction Error:", error);
-                        showMessage('captureMessage', `Erreur lors de l'extraction: ${error.message}`, 'error');
-                        // Keep previews for potential retry or manual entry
+                        showMessage('captureMessage', `Erreur extraction: ${error.message}`, 'error');
+                        // Keep previews in case of error for manual entry aid
                     } finally {
-                         // Clean up blobs after attempt (success or fail) as they are memory intensive
+                         // Clean up blobs after attempt (success or fail) to free memory
                          frontImageBlob = backImageBlob = null;
-                         // Re-enable capture button in case of failure
+                         // Re-enable capture button if process failed/finished
                          DOM.captureIdButton.disabled = false;
                     }
                 } else {
-                     showMessage('captureMessage', 'Erreur: Il manque une des images (recto ou verso).', 'error');
-                     stopIdCapture(true); // Clean up thoroughly
+                     // This state should ideally not be reached if logic is correct
+                     showMessage('captureMessage', 'Erreur: Image recto ou verso manquante pour l\'extraction.', 'error');
+                     stopIdCapture(true); // Full cleanup
                 }
             }
-        }, 'image/jpeg', 0.9); // Use JPEG format with quality 0.9
+        }, 'image/jpeg', 0.9); // Use JPEG format, quality 90%
     }
 
 
+    /**
+     * Autofills the creation form with data extracted from the ID.
+     * @param {object} extractedData Data object from the OCR API.
+     */
     function autofillCreateForm(extractedData) {
         const d = extractedData;
+        console.log("Autofilling form with:", d);
 
-        // Clear previous form state but keep errors cleared
-        DOM.createForm.reset();
-        handleMutuelleChange(); // Ensure mutuelle state is correct after reset
+        // Reset form fields but keep datalists populated
+        resetForm(); // This also calls clearErrors and handleMutuelleChange
 
-        // Autofill fields - use || '' to prevent 'null' or 'undefined' strings
+        // Fill fields, providing fallbacks for potentially missing data
         DOM.nom.value = d.last_name || '';
         DOM.prenom.value = d.first_name || '';
         DOM.cin.value = d.id_number || '';
         DOM.adresse.value = d.address || '';
-        DOM.ville.value = d.city || ''; // Assuming 'city' exists in response
-        DOM.sexe.value = (d.gender === 'F' || d.gender === 'Female') ? 'F' : (d.gender === 'M' || d.gender === 'Male' ? 'M' : '');
+        DOM.ville.value = d.city || ''; // Assuming OCR provides city
+        DOM.sexe.value = (d.gender === 'F' || String(d.gender).toUpperCase() === 'FEMALE') ? 'F'
+                       : (d.gender === 'M' || String(d.gender).toUpperCase() === 'MALE') ? 'M'
+                       : '';
 
-        // Handle date format conversion (assuming dd/mm/yyyy from OCR)
+        // Handle date: OCR format might vary (DD/MM/YYYY, YYYY-MM-DD, etc.)
         if (d.date_of_birth) {
-            const parts = d.date_of_birth.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+            let isoDate = '';
+            // Try parsing DD/MM/YYYY
+            let parts = String(d.date_of_birth).match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
             if (parts) {
-                // parts[0] is full match, parts[1] is day, parts[2] is month, parts[3] is year
-                const isoDate = `${parts[3]}-${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
-                DOM.dateNaissance.value = isoDate;
+                isoDate = `${parts[3]}-${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
             } else {
-                 console.warn("Could not parse extracted date_of_birth:", d.date_of_birth);
-                 DOM.dateNaissance.value = ''; // Clear if format is wrong
+                // Try parsing YYYY-MM-DD directly
+                parts = String(d.date_of_birth).match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+                if (parts) {
+                     isoDate = `${parts[1]}-${parts[2].padStart(2, '0')}-${parts[3].padStart(2, '0')}`;
+                } else {
+                     console.warn("Could not parse extracted date_of_birth format:", d.date_of_birth);
+                }
             }
+            // Validate the resulting date string before setting
+             if (isoDate && !isNaN(new Date(isoDate + 'T00:00:00'))) {
+                  DOM.dateNaissance.value = isoDate;
+             } else {
+                  DOM.dateNaissance.value = '';
+                  console.warn("Invalid date constructed:", isoDate);
+             }
+
         } else {
              DOM.dateNaissance.value = ''; // Clear if not provided
         }
 
-        // Note: Phone number might not be reliably extracted from CIN
-        DOM.telephone.value = d.phone_number || ''; // Fill if available
+        // Phone number is less likely to be on CIN
+        DOM.telephone.value = d.phone_number || '';
 
-        clearErrors(); // Clear any previous validation errors after filling
-        showMessage('message', 'Formulaire pré-rempli à partir de la CIN. Vérifiez les informations.', 'success');
+        showMessage('message', 'Formulaire pré-rempli depuis la CIN. Veuillez vérifier toutes les informations.', 'success');
 
-        // Optional: Trigger validation visually for filled fields
-        validateField(DOM.nom, v => v.length > 0);
-        validateField(DOM.prenom, v => v.length > 0);
-        validateField(DOM.cin, v => /^[A-Za-z]{1,2}\d{5,6}$/.test(v));
-        validateField(DOM.adresse, v => v.length > 0);
-        validateField(DOM.ville, v => v.length > 0);
-        validateField(DOM.sexe, v => v !== '');
-        validateField(DOM.dateNaissance, v => v !== '');
-        // Dont auto-validate phone as it might be missing/incorrect
+        // Visually trigger validation status update for filled fields
+        Object.values(DOM).forEach(el => {
+           if (el && typeof el.matches === 'function' && el.matches('#createForm input, #createForm select, #createForm textarea')) {
+               // Re-run validation for the specific field to update its style/error message
+               // This uses the existing validation logic bound to the field type/patterns
+               validateField(el, () => true); // Simplified check to update visuals based on current value
+           }
+        });
+        // Explicitly re-validate conditionally required fields
+        if (DOM.hasInsurance.checked) validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
     }
 
 
-    // --- Patient Search ---
+    // --- Patient Search Functionality ---
 
+    /** Handles the patient search request. */
     async function handlePatientSearch() {
         const cinValue = DOM.getCin.value.trim();
         if (!cinValue) {
-            showToast('Veuillez entrer un numéro CIN pour la recherche.', 'error');
+            showToast('Veuillez entrer un CIN pour la recherche.', 'warning');
             DOM.resultDiv.innerHTML = '<p class="message message-warning">Veuillez entrer un CIN.</p>';
             return;
         }
-        // Optional: Basic CIN format check before API call
+        // Basic format check (optional but good practice)
         if (!/^[A-Za-z]{1,2}\d{5,6}$/.test(cinValue)) {
              showToast('Format CIN invalide pour la recherche.', 'error');
-             DOM.resultDiv.innerHTML = '<p class="message message-error">Format CIN invalide.</p>';
+             DOM.resultDiv.innerHTML = '<p class="message message-error">Format CIN invalide (ex: AB123456).</p>';
              return;
         }
 
-
-        showToast('Recherche du patient en cours...', 'info');
-        DOM.resultDiv.innerHTML = '<p class="message message-loading"><i class="fas fa-spinner fa-spin me-2"></i>Recherche en cours...</p>'; // Loading indicator
-        DOM.searchBtn.disabled = true; // Disable button during search
+        showToast('Recherche du patient...', 'info');
+        DOM.resultDiv.innerHTML = '<p class="message message-loading"><i class="fas fa-spinner fa-spin me-2"></i>Recherche en cours...</p>';
+        DOM.searchBtn.disabled = true;
+        DOM.getCin.disabled = true; // Disable input during search
 
         try {
-            const response = await fetchWithAuth(CONFIG.API_BASE_URL + `/webhook/get-patient?cin=${encodeURIComponent(cinValue)}`);
-            const data = await response.json(); // Assume JSON response
+            // Construct URL with query parameter
+            const searchUrl = `${GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(cinValue)}`;
+            const response = await fetchWithAuth(searchUrl); // GET is default method
+            const data = await response.json();
 
-            if (data && data.data && data.data.ipp) { // Check for data and essential field (ipp)
+            if (data && data.data && data.data.ipp) { // Check for successful response structure
                 const p = data.data;
                 let formattedDob = 'N/A';
                 if (p.date_naissance) {
                     try {
-                         // Assuming YYYY-MM-DD from API
-                         const date = new Date(p.date_naissance + 'T00:00:00Z'); // Treat as UTC to avoid timezone issues
-                         if (!isNaN(date)) {
-                             formattedDob = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }); // Format as DD/MM/YYYY
-                         }
+                        // Assuming API returns YYYY-MM-DD. Add time and treat as UTC to avoid timezone issues.
+                        const date = new Date(p.date_naissance + 'T00:00:00Z');
+                        if (!isNaN(date)) {
+                             // Format for French locale
+                             formattedDob = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                        }
                     } catch (e) { console.error("Error formatting date:", e); }
                 }
 
-                const { qrImageUrl } = generateQrData(p.ipp); // Generate QR data
+                const { qrImageUrl } = generateQrData(p.ipp);
 
-                // Use template literals for cleaner HTML generation and sanitize all patient data
+                // Build result HTML - SANITIZE ALL DATA from API
                 DOM.resultDiv.innerHTML = `
                 <div class="patient-result-container">
                   <div class="patient-result-info">
                     <div><strong>Nom:</strong> ${sanitize(p.nom)}</div>
                     <div><strong>Prénom:</strong> ${sanitize(p.prenom)}</div>
+                    <div><strong>IPP:</strong> ${sanitize(p.ipp)}</div>
                     <div><strong>CIN:</strong> ${sanitize(p.cin || 'N/A')}</div>
                     <div><strong>Téléphone:</strong> ${sanitize(p.telephone || 'N/A')}</div>
                     <div><strong>Adresse:</strong> ${sanitize(p.adresse || 'N/A')}</div>
                     <div><strong>Ville:</strong> ${sanitize(p.ville || 'N/A')}</div>
-                    <div><strong>Date Naissance:</strong> ${formattedDob}</div>
+                    <div><strong>Naissance:</strong> ${formattedDob}</div>
                     <div><strong>Sexe:</strong> ${p.sexe === 'M' ? 'Homme' : (p.sexe === 'F' ? 'Femme' : 'N/A')}</div>
                     <div><strong>Mutuelle:</strong> ${sanitize(p.mutuelle || 'Aucune')}</div>
-                    <div><strong>IPP:</strong> ${sanitize(p.ipp)}</div>
+                    <div><strong>Médecin Réf.:</strong> ${sanitize(p.medecin_referent_nom || 'N/A')}</div> <!-- Assuming API provides name -->
                   </div>
                   <div class="patient-result-qr">
-                    <img src="${sanitize(qrImageUrl)}" alt="QR Code pour le patient ${sanitize(p.nom)} ${sanitize(p.prenom)}">
+                    <img src="${sanitize(qrImageUrl)}" alt="QR Code pour ${sanitize(p.nom)} ${sanitize(p.prenom)}">
                     <button onclick="window.printQRCode('${sanitize(qrImageUrl)}')" class="btn btn-secondary btn-sm no-print">
                       <i class="fas fa-print"></i> Imprimer QR
                     </button>
@@ -964,37 +1264,39 @@
                 </div>`;
                 showToast('Patient trouvé.', 'success');
             } else {
+                // Handle cases where API returns success status but no patient data
                 DOM.resultDiv.innerHTML = '<p class="message message-info">Aucun patient trouvé avec ce CIN.</p>';
                 showToast('Patient non trouvé.', 'info');
             }
         } catch (error) {
-            console.error("Search Error:", error);
+            // Error already logged/toasted by fetchWithAuth or console here
             DOM.resultDiv.innerHTML = `<p class="message message-error">Erreur lors de la recherche: ${sanitize(error.message)}</p>`;
-            // Toast already shown by fetchWithAuth for network/server errors
         } finally {
-            DOM.searchBtn.disabled = false; // Re-enable button
+            DOM.searchBtn.disabled = false; // Re-enable search button
+            DOM.getCin.disabled = false; // Re-enable input
         }
     }
 
 
-    // --- Patient Creation ---
+    // --- Patient Creation Functionality ---
 
+    /** Handles the submission of the create patient form. */
     async function handleCreatePatient(event) {
-        event.preventDefault(); // Prevent default form submission
-        showMessage('message', '', 'info'); // Clear previous messages
+        event.preventDefault(); // Prevent default form submission behavior
+        showMessage('message', '', 'info'); // Clear previous form messages
 
         if (!validateForm()) {
-            // Validation function already shows a toast
+            // Validation function already showed a toast and focused the first error
             return;
         }
 
         showToast('Création du patient en cours...', 'info');
-        showMessage('message', 'Envoi des données...', 'loading');
-        DOM.createPatientBtn.disabled = true; // Disable button during submission
+        showMessage('message', 'Envoi des données au serveur...', 'loading');
+        DOM.createPatientBtn.disabled = true; // Disable button to prevent double submission
 
-        // Find selected doctor's matricule (if any)
+        // Find selected doctor's matricule based on the input value
         const medecinReferentValue = DOM.medecinReferent.value.trim();
-        let selectedDoctorMatricule = ''; // Default to empty string
+        let selectedDoctorMatricule = ''; // Default to empty string (or null depending on API)
         if (medecinReferentValue) {
             const selectedDoctor = doctorsList.find(d =>
                 `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === medecinReferentValue.toLowerCase()
@@ -1002,76 +1304,81 @@
             if (selectedDoctor && selectedDoctor.matricule) {
                  selectedDoctorMatricule = selectedDoctor.matricule;
             } else {
-                // This case should be caught by validation, but double-check
-                console.warn("Selected doctor text doesn't match known list or missing matricule:", medecinReferentValue);
-                // Optionally handle this - perhaps clear the field or show specific error
-                // For now, we proceed with empty matricule if validation passed somehow
+                // This case should have been caught by validation, but log just in case
+                console.warn("Validation passed but couldn't find matricule for doctor:", medecinReferentValue);
+                // Decide how to handle - API might reject empty/invalid, or accept null/empty string
+                // Assuming API accepts empty string if doctor not found/selected correctly after validation bypass
             }
         }
 
-        // Determine mutuelle value
-        const mutuelleValue = DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null; // Use null if no insurance
+        // Determine mutuelle value (null if checkbox unchecked)
+        const mutuelleValue = DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null;
 
-        // Construct the payload
+        // Construct the payload object
         const payload = {
             nom: DOM.nom.value.trim(),
             prenom: DOM.prenom.value.trim(),
-            cin: DOM.cin.value.trim().toUpperCase(), // Optionally standardize CIN case
+            cin: DOM.cin.value.trim().toUpperCase(), // Standardize CIN case
             telephone: DOM.telephone.value.trim(),
             adresse: DOM.adresse.value.trim(),
             ville: DOM.ville.value.trim(),
-            date_naissance: DOM.dateNaissance.value, // Already in YYYY-MM-DD format
+            date_naissance: DOM.dateNaissance.value, // Already YYYY-MM-DD
             sexe: DOM.sexe.value,
-            mutuelle: mutuelleValue,
-            medecin_referent: selectedDoctorMatricule // Send matricule or empty string
+            mutuelle: mutuelleValue, // Send selected mutuelle name or null
+            medecin_referent: selectedDoctorMatricule // Send matricule or empty string/null
         };
+        console.log("Submitting patient data:", payload);
 
         try {
-            const response = await fetchWithAuth(CONFIG.API_BASE_URL + '/webhook/create-patient', {
+            const response = await fetchWithAuth(CREATE_PATIENT_ENDPOINT, {
                 method: 'POST',
-                body: JSON.stringify(payload) // Stringify payload as Content-Type is set to application/json by fetchWithAuth
+                body: JSON.stringify(payload) // Stringify for JSON content type
             });
-            const data = await response.json(); // Assume JSON response
+            const data = await response.json();
+            console.log("Create patient response:", data);
 
             if (data && data.data && data.data.ipp) {
                 const patientIpp = data.data.ipp;
                 const { qrImageUrl } = generateQrData(patientIpp);
 
-                // Display success and QR code
+                // Display success message and QR code in the designated result area
                 DOM.createResultMessage.textContent = `Patient créé avec succès! IPP: ${sanitize(patientIpp)}`;
                 DOM.createQrCodeImage.src = sanitize(qrImageUrl);
-                DOM.createQrCodeImage.alt = `QR Code pour le patient ${payload.nom} ${payload.prenom}`;
+                DOM.createQrCodeImage.alt = `QR Code pour ${sanitize(payload.nom)} ${sanitize(payload.prenom)}`;
                 DOM.createPrintButton.disabled = false;
-                // Ensure the click handler uses the correct, current QR URL
+                 // Ensure onclick uses the *current* QR URL
                 DOM.createPrintButton.onclick = () => window.printQRCode(qrImageUrl);
                 DOM.createResult.style.display = 'block'; // Show the result section
 
-                showMessage('message', `Patient ${payload.nom} ${payload.prenom} créé avec succès (IPP: ${patientIpp}).`, 'success');
+                // Show success messages
+                showMessage('message', `Patient ${sanitize(payload.nom)} ${sanitize(payload.prenom)} créé (IPP: ${patientIpp}).`, 'success');
                 showToast('Patient créé avec succès!', 'success');
-                resetForm(); // Reset form fields for next entry
+                resetForm(); // Clear the form for the next patient
 
             } else {
-                // Handle cases where API returns success status but unexpected data
-                 throw new Error(data.message || 'Réponse invalide reçue du serveur après création.');
+                // Handle API success status but unexpected data structure or missing IPP
+                 throw new Error(data.message || 'Réponse inattendue reçue du serveur après la création.');
             }
         } catch (error) {
-            console.error("Create Patient Error:", error);
+            // Error already logged/toasted by fetchWithAuth or console
             showMessage('message', `Erreur lors de la création: ${sanitize(error.message)}`, 'error');
-            // Toast already shown by fetchWithAuth for network/server errors
+            // Optionally display specific error details if available and safe
         } finally {
             DOM.createPatientBtn.disabled = false; // Re-enable button regardless of outcome
         }
     }
 
 
-    // --- Logout ---
+    // --- Logout Functionality ---
 
-    // CORRECTED: Make logout globally accessible for the button's onclick
+    /** Logs the user out, clears storage, and redirects. */
+    // Made globally accessible via window property
     window.logout = function() {
-      clearTimeout(sessionTimeoutId); // Clear timeout
-      localStorage.removeItem(CONFIG.TOKEN_KEY); // Remove token
-      showToast('Déconnexion...', 'info');
-      // Redirect after a short delay to allow toast to show
+      console.log("Logging out...");
+      if (sessionTimeoutId) clearTimeout(sessionTimeoutId); // Clear any pending timeout
+      localStorage.removeItem(CONFIG.TOKEN_KEY); // Clear authentication token
+      showToast('Déconnexion en cours...', 'info');
+      // Redirect to login page after a brief delay
       setTimeout(() => {
           window.location.href = CONFIG.LOGIN_PAGE_URL;
       }, 500);
@@ -1079,31 +1386,36 @@
 
     // --- Initialization ---
 
+    /** Initializes the application: checks auth, fetches data, sets up listeners. */
     function initializeApp() {
-      // 1. Check Authentication
+      console.log("Initializing Reception Dashboard...");
+
+      // 1. Authentication Check (Critical First Step)
       if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
-        // Redirect immediately if no token
+        console.log("No auth token found, redirecting to login.");
         window.location.href = CONFIG.LOGIN_PAGE_URL;
-        return; // Stop further initialization
+        return; // Stop initialization if not authenticated
       }
+      console.log("Auth token found.");
 
-      // 2. Start Session Timeout
+      // 2. Start Session Timeout Management
       resetSessionTimeout();
+      console.log("Session timeout started.");
 
-      // 3. Populate Dynamic Data (async)
-      // Use Promise.all to fetch concurrently
+      // 3. Populate Dynamic Data (Doctors & Mutuelles) Asynchronously
       Promise.all([
           populateMedecinReferent(),
           populateMutuelles()
-      ]).catch(error => {
-          // Catch potential errors during initial data fetch
-          console.error("Error during initial data population:", error);
-          showToast("Erreur lors du chargement des données initiales.", "error");
+      ]).then(() => {
+          console.log("Initial data population complete (or attempted).");
+      }).catch(error => {
+          // This catch is for potential errors within Promise.all itself, though individual fetches handle their errors
+          console.error("Error during initial data population Promise.all:", error);
+          showToast("Erreur critique lors du chargement des données initiales.", "error");
       });
 
-
       // 4. Setup Initial UI State
-      handleMutuelleChange(); // Set initial state of mutuelle field
+      handleMutuelleChange(); // Set correct state for mutuelle input based on checkbox
 
       // 5. Add Event Listeners
       DOM.hasInsurance.addEventListener('change', handleMutuelleChange);
@@ -1112,7 +1424,7 @@
       // Allow Enter key in CIN search input to trigger search
       DOM.getCin.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
-              e.preventDefault(); // Prevent potential form submission if inside one
+              e.preventDefault(); // Prevent potential default behaviors
               handlePatientSearch();
           }
       });
@@ -1120,18 +1432,24 @@
       // ID Capture Listeners
       DOM.captureIdButton.addEventListener('click', startIdCapture);
       DOM.takePhotoButton.addEventListener('click', takePhotoAndExtract);
-      DOM.cancelCaptureButton.addEventListener('click', () => stopIdCapture(true)); // Ensure blobs are cleared on manual cancel
+      DOM.cancelCaptureButton.addEventListener('click', () => stopIdCapture(true)); // Ensure full cleanup on cancel
 
-      // Activity listeners to reset session timeout
-      ['mousemove', 'keypress', 'click', 'scroll'].forEach(eventType => {
+      // Add listeners for user activity to reset session timeout
+      ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'].forEach(eventType => {
         document.addEventListener(eventType, resetSessionTimeout, { passive: true });
       });
 
-      console.log("Reception Dashboard Initialized.");
+      console.log("Reception Dashboard Initialized and Ready.");
     }
 
-    // Execute initialization when the DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', initializeApp);
+    // --- Run Initialization ---
+    // Ensure the DOM is fully loaded before running initialization logic
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        // DOMContentLoaded has already fired
+        initializeApp();
+    }
 
   })();
   </script>
