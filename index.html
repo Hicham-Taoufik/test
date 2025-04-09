@@ -116,13 +116,13 @@
                   <div class="error-text">Veuillez entrer le nom de la mutuelle</div>
                 </div>
               </div>
-              <!-- New Médecin référent Dropdown -->
+              <!-- New searchable Médecin référent field using datalist -->
               <div class="input-group">
                 <label for="medecin_referent">Médecin référent</label>
-                <select id="medecin_referent" name="medecin_referent">
-                  <option value="">Sélectionnez un médecin</option>
+                <input type="text" list="doctors" id="medecin_referent" name="medecin_referent" placeholder="Rechercher un médecin" autocomplete="off">
+                <datalist id="doctors">
                   <!-- Options will be populated dynamically -->
-                </select>
+                </datalist>
                 <div class="error-text">Veuillez sélectionner un médecin</div>
               </div>
               <div class="form-submit-button">
@@ -336,20 +336,19 @@
         }
       };
 
-      /* --- Populate Médecin référent Dropdown --- */
+      /* --- Populate Médecin référent Datalist --- */
       const populateMedecinReferent = async () => {
         try {
           const res = await fetchWithAuth(DOCTORS_ENDPOINT);
           const data = await res.json();
           if (data.success && Array.isArray(data.doctors)) {
-            const select = document.getElementById('medecin_referent');
-            // Remove all options except for the default one.
-            select.querySelectorAll('option:not(:first-child)').forEach(opt => opt.remove());
+            const datalist = document.getElementById('doctors');
+            datalist.innerHTML = ''; // Clear any existing options.
             data.doctors.forEach(doctor => {
               const option = document.createElement('option');
-              option.value = doctor.matricule;
-              option.textContent = `${doctor.nom} ${doctor.prenom} - ${doctor.specialite}`;
-              select.appendChild(option);
+              // Format: "MATRICULE - Nom Prenom - Spécialité"
+              option.value = `${doctor.matricule} - ${doctor.nom} ${doctor.prenom} - ${doctor.specialite}`;
+              datalist.appendChild(option);
             });
           } else {
             console.error('Réponse inattendue:', data);
@@ -580,6 +579,10 @@
         showMessage('message', '<span class="loading-spinner"></span> Création patient...', 'loading');
         DOM.createPatientBtn.disabled = true;
         DOM.createResult.style.display = 'none';
+        // Retrieve the input value from the searchable medecin référent field.
+        let medecinReferentInput = document.getElementById('medecin_referent').value.trim();
+        // If not empty, assume the value is formatted as "MATRICULE - Nom Prenom - Spécialité"
+        let medecin_referent = medecinReferentInput !== "" ? medecinReferentInput.split(" - ")[0] : "";
         const payload = {
           nom: DOM.createForm.nom.value.trim(),
           prenom: DOM.createForm.prenom.value.trim(),
@@ -590,7 +593,7 @@
           date_naissance: DOM.createForm.date_naissance.value,
           sexe: DOM.createForm.sexe.value,
           mutuelle: DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null,
-          medecin_referent: document.getElementById('medecin_referent').value
+          medecin_referent: medecin_referent
         };
         try {
           const res = await apiService.createPatient(payload);
@@ -641,7 +644,7 @@
         DOM.body.classList.add('loaded');
         resetSessionTimeout();
         handleMutuelleChange();
-        populateMedecinReferent(); // Populate the doctor list on load.
+        populateMedecinReferent(); // Populate the searchable doctor list on load.
         ['mousemove', 'keypress', 'click', 'scroll'].forEach(event =>
           document.addEventListener(event, resetSessionTimeout, { passive: true })
         );
