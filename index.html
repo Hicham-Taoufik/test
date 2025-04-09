@@ -8,140 +8,202 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <!-- Choices.js CSS -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css" />
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Optional: Add specific styles for Choices.js error state if needed */
+    /* Custom styles for Choices.js error states and other adjustments */
     .choices.input-error {
       border: 1px solid var(--danger) !important;
       border-radius: var(--border-radius);
     }
     .choices.input-error .choices__inner {
-      border-color: transparent !important; /* Avoid double borders */
-      background-color: var(--input-bg-error, #fff); /* Optional background */
+      border-color: transparent !important;
+      background-color: var(--input-bg-error, #fff);
     }
     .choices.is-focused.input-error .choices__inner {
        border-color: var(--danger) !important;
-       box-shadow: 0 0 0 2px rgba(var(--danger-rgb), 0.25);
+       box-shadow: 0 0 0 2px rgba(255, 90, 90, 0.25);
     }
     .choices.input-error.is-open .choices__list--dropdown {
         border-color: var(--danger) !important;
     }
-    /* Ensure the custom scrollbar is visible if needed */
-    .choices__list--dropdown .choices__list {
-        overflow-y: auto;
-        max-height: 200px; /* Adjust as needed */
-    }
     .choices__input {
-        background-color: inherit; /* Inherit background from choices__inner */
+        background-color: inherit;
     }
     .choices[data-disabled] .choices__inner,
     .choices[data-disabled] .choices__input {
         background-color: var(--input-disabled-bg, #e9ecef);
         cursor: not-allowed;
     }
-    /* Adjust padding if checkbox label overlaps */
     .mutuelle-group .checkbox-label {
         margin-left: 5px;
         vertical-align: middle;
     }
-    .mutuelle-group > div:first-child { /* Div containing checkbox + label */
-        margin-bottom: 5px; /* Add some space below checkbox line */
+    .mutuelle-group > div:first-child {
+        margin-bottom: 5px;
         display: flex;
         align-items: center;
     }
-    /* Style for placeholder text in Choices.js */
-     .choices__list--single .choices__item[data-value=""] {
-        color: #6c757d; /* Example placeholder color */
+    .choices__list--single .choices__item[data-value=""] {
+        color: #6c757d;
         opacity: 0.8;
      }
   </style>
 </head>
-<body >
+<body>
   <a href="#main-content" class="skip-link">Passer au contenu principal</a>
   <div class="container">
     <div class="header">
       <div class="header-main-content">
-        <div class="logo"> <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> </div>
+        <div class="logo">
+          <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img">
+        </div>
         <h1 class="header-title">Réception</h1>
       </div>
-      <div class="header-logout"> <button onclick="logout()" class="btn btn-outline logout-btn no-print" aria-label="Déconnexion"> <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion </button> </div>
+      <div class="header-logout">
+        <button onclick="logout()" class="btn btn-outline logout-btn no-print" aria-label="Déconnexion">
+          <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion
+        </button>
+      </div>
     </div>
 
     <main id="main-content" class="flex-row">
       <div class="flex-col">
         <section class="card" aria-labelledby="create-patient-heading">
-          <div class="card-header"> <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div> </div>
+          <div class="card-header">
+            <h2 id="create-patient-heading" class="card-title">
+              <i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient
+            </h2>
+            <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div>
+          </div>
           <div class="card-body">
 
             <!-- ID Capture Section -->
             <div class="id-capture-section mb-4 no-print">
-              <button id="captureIdButton" type="button" class="btn btn-primary"> <i class="fas fa-camera"></i> Scanner CIN </button>
+              <button id="captureIdButton" type="button" class="btn btn-primary">
+                <i class="fas fa-camera"></i> Scanner CIN
+              </button>
               <div id="idCaptureContainer" style="display: none;">
-                  <p id="captureInstruction">Positionnez le RECTO de la CIN et prenez la photo.</p>
-                  <video id="idVideo" playsinline></video>
-                  <canvas id="idCanvas" style="display:none;"></canvas>
-                   <div class="d-flex justify-content-center gap-2 my-2">
-                        <img id="frontPreview" class="capture-preview" alt="Aperçu Recto" style="display: none;">
-                        <img id="backPreview" class="capture-preview" alt="Aperçu Verso" style="display: none;">
-                   </div>
-                  <div class="btn-group mt-2">
-                     <button id="takePhotoButton" type="button" class="btn btn-success" disabled> <i class="fas fa-camera-retro"></i> Prendre Photo </button>
-                     <button id="cancelCaptureButton" type="button" class="btn btn-secondary" disabled> Annuler </button>
-                  </div>
-                  <div id="captureMessage" class="message message-info mt-2"></div>
+                <p id="captureInstruction">Positionnez le RECTO de la CIN et prenez la photo.</p>
+                <video id="idVideo" playsinline></video>
+                <canvas id="idCanvas" style="display:none;"></canvas>
+                <div class="d-flex justify-content-center gap-2 my-2">
+                  <img id="frontPreview" class="capture-preview" alt="Aperçu Recto" style="display: none;">
+                  <img id="backPreview" class="capture-preview" alt="Aperçu Verso" style="display: none;">
+                </div>
+                <div class="btn-group mt-2">
+                  <button id="takePhotoButton" type="button" class="btn btn-success" disabled>
+                    <i class="fas fa-camera-retro"></i> Prendre Photo
+                  </button>
+                  <button id="cancelCaptureButton" type="button" class="btn btn-secondary" disabled> Annuler </button>
+                </div>
+                <div id="captureMessage" class="message message-info mt-2"></div>
               </div>
             </div>
-             <!-- END ID Capture Section -->
+            <!-- END ID Capture Section -->
 
             <form id="createForm" novalidate>
               <div class="form-grid">
-                <div class="input-group"> <label for="nom">Nom <span aria-hidden="true">*</span></label> <input id="nom" name="nom" type="text" placeholder="Nom de famille" required aria-required="true" autocomplete="family-name"/> <div class="error-text">Veuillez entrer un nom</div> </div>
-                <div class="input-group"> <label for="prenom">Prénom <span aria-hidden="true">*</span></label> <input id="prenom" name="prenom" type="text" placeholder="Prénom" required aria-required="true" autocomplete="given-name"/> <div class="error-text">Veuillez entrer un prénom</div> </div>
-                <div class="input-group"> <label for="cin">CIN <span aria-hidden="true">*</span></label> <input id="cin" name="cin" type="text" placeholder="Ex: AB123456" required aria-required="true" pattern="^[A-Za-z]{1,2}\d{5,6}$"/> <div class="error-text">Format CIN invalide (ex: AB123456)</div> </div>
-                <div class="input-group"> <label for="telephone">Téléphone <span aria-hidden="true">*</span></label> <input id="telephone" name="telephone" type="tel" placeholder="Ex: 0612345678" required aria-required="true" autocomplete="tel" pattern="^0[5-7]\d{8}$"/> <div class="error-text">Format téléphone invalide (0xxxxxxxx)</div> </div>
-                <div class="input-group"> <label for="adresse">Adresse <span aria-hidden="true">*</span></label> <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required aria-required="true" autocomplete="address-line1"/> <div class="error-text">Veuillez entrer une adresse</div> </div>
-                <div class="input-group"> <label for="ville">Ville <span aria-hidden="true">*</span></label> <input id="ville" name="ville" type="text" placeholder="Ville" required aria-required="true" autocomplete="address-level2"/> <div class="error-text">Veuillez entrer une ville</div> </div>
-                <div class="input-group"> <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label> <input id="date_naissance" name="date_naissance" type="date" required aria-required="true" autocomplete="bday"/> <div class="error-text">Veuillez entrer une date valide</div> </div>
-                <div class="input-group"> <label for="sexe">Sexe <span aria-hidden="true">*</span></label> <select id="sexe" name="sexe" required aria-required="true" autocomplete="sex"> <option value="M">Homme</option> <option value="F">Femme</option> </select> <div class="error-text">Veuillez sélectionner un sexe</div> </div>
+                <div class="input-group">
+                  <label for="nom">Nom <span aria-hidden="true">*</span></label>
+                  <input id="nom" name="nom" type="text" placeholder="Nom de famille" required autocomplete="family-name"/>
+                  <div class="error-text">Veuillez entrer un nom</div>
+                </div>
+                <div class="input-group">
+                  <label for="prenom">Prénom <span aria-hidden="true">*</span></label>
+                  <input id="prenom" name="prenom" type="text" placeholder="Prénom" required autocomplete="given-name"/>
+                  <div class="error-text">Veuillez entrer un prénom</div>
+                </div>
+                <div class="input-group">
+                  <label for="cin">CIN <span aria-hidden="true">*</span></label>
+                  <input id="cin" name="cin" type="text" placeholder="Ex: AB123456" required pattern="^[A-Za-z]{1,2}\d{5,6}$"/>
+                  <div class="error-text">Format CIN invalide (ex: AB123456)</div>
+                </div>
+                <div class="input-group">
+                  <label for="telephone">Téléphone <span aria-hidden="true">*</span></label>
+                  <input id="telephone" name="telephone" type="tel" placeholder="Ex: 0612345678" required autocomplete="tel" pattern="^0[5-7]\d{8}$"/>
+                  <div class="error-text">Format téléphone invalide (0xxxxxxxx)</div>
+                </div>
+                <div class="input-group">
+                  <label for="adresse">Adresse <span aria-hidden="true">*</span></label>
+                  <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required autocomplete="address-line1"/>
+                  <div class="error-text">Veuillez entrer une adresse</div>
+                </div>
+                <div class="input-group">
+                  <label for="ville">Ville <span aria-hidden="true">*</span></label>
+                  <input id="ville" name="ville" type="text" placeholder="Ville" required autocomplete="address-level2"/>
+                  <div class="error-text">Veuillez entrer une ville</div>
+                </div>
+                <div class="input-group">
+                  <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label>
+                  <input id="date_naissance" name="date_naissance" type="date" required autocomplete="bday"/>
+                  <div class="error-text">Veuillez entrer une date valide</div>
+                </div>
+                <div class="input-group">
+                  <label for="sexe">Sexe <span aria-hidden="true">*</span></label>
+                  <select id="sexe" name="sexe" required autocomplete="sex">
+                    <option value="M">Homme</option>
+                    <option value="F">Femme</option>
+                  </select>
+                  <div class="error-text">Veuillez sélectionner un sexe</div>
+                </div>
                 <!-- Doctor Select -->
                 <div class="input-group">
                     <label for="doctor">Médecin</label>
                     <select id="doctor" name="doctor">
-                        <option value=""> </option> <!-- Empty option for Choices.js placeholder -->
-                        <!-- Options will be added by JS -->
+                        <option value=""> </option>
+                        <!-- Options ajoutées via JS -->
                     </select>
-                    <div class="error-text"></div> <!-- Error placeholder -->
+                    <div class="error-text"></div>
                 </div>
-                <!-- Mutuelle Select -->
-                 <div class="input-group mutuelle-group">
-                   <div> <input type="checkbox" id="has_insurance" name="has_insurance" /> <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label> </div>
-                   <div id="mutuelle-input-container">
-                       <!-- Changed to select for Choices.js -->
+                <!-- Mutuelle Select with Choices.js -->
+                <div class="input-group mutuelle-group">
+                  <div>
+                    <input type="checkbox" id="has_insurance" name="has_insurance"/>
+                    <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label>
+                  </div>
+                  <div id="mutuelle-input-container">
                        <select name="mutuelle" id="mutuelle" aria-labelledby="has_insurance" disabled required>
-                           <option value=""> </option> <!-- Empty option for Choices.js placeholder -->
-                           <!-- Options will be added by JS -->
+                           <option value=""> </option>
+                           <!-- Options ajoutées via JS -->
                        </select>
                        <div class="error-text">Veuillez sélectionner une mutuelle</div>
-                   </div>
-                 </div>
-                <div class="form-submit-button"> <button type="submit" class="btn btn-success" id="createPatientBtn"> <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient </button> </div>
+                  </div>
+                </div>
+                <div class="form-submit-button">
+                  <button type="submit" class="btn btn-success" id="createPatientBtn">
+                    <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient
+                  </button>
+                </div>
                 <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
             </form>
-            <div id="createResult"> <p id="createResultMessage"></p> <img id="createQrCodeImage" src="" alt="" loading="lazy" /> <button id="createPrintButton" class="btn btn-secondary" disabled> <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code </button> </div>
+            <div id="createResult">
+              <p id="createResultMessage"></p>
+              <img id="createQrCodeImage" src="" alt="" loading="lazy" />
+              <button id="createPrintButton" class="btn btn-secondary" disabled>
+                <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code
+              </button>
+            </div>
           </div>
         </section>
       </div>
 
       <div class="flex-col">
         <section class="card" aria-labelledby="search-patient-heading">
-          <div class="card-header"> <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div> </div>
+          <div class="card-header">
+            <h2 id="search-patient-heading" class="card-title">
+              <i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient
+            </h2>
+            <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div>
+          </div>
           <div class="card-body">
-            <div class="search-bar"> <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient"/> <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button> </div>
+            <div class="search-bar">
+              <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient"/>
+              <button id="searchBtn" class="btn btn-primary">
+                <i class="fas fa-search" aria-hidden="true"></i> Rechercher
+              </button>
+            </div>
             <div id="getResult" role="region" aria-live="polite"></div>
           </div>
         </section>
@@ -154,37 +216,50 @@
   <!-- Choices.js -->
   <script src="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/scripts/choices.min.js"></script>
 
-  <!-- Your Custom Script -->
+  <!-- Custom Script -->
   <script>
-    // --- Configuration & Constants ---
-    const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, MESSAGE_DISPLAY_TIME: 7000, TOAST_DISPLAY_TIME: 4000 };
+    /***********************
+     * Configuration & DOM
+     ***********************/
+    const CONFIG = {
+      API_BASE_URL: 'https://workflows.aphelionxinnovations.com',
+      QR_TARGET_BASE_URL: 'app://medilink/patient',
+      LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/',
+      TOKEN_KEY: 'authToken',
+      SESSION_TIMEOUT: 30 * 60 * 1000,
+      MESSAGE_DISPLAY_TIME: 7000,
+      TOAST_DISPLAY_TIME: 4000
+    };
     const DOM = {
-        body: document.body,
-        resultDiv: document.getElementById("getResult"),
-        messageDiv: document.getElementById("message"),
-        createForm: document.getElementById("createForm"),
-        createResultDiv: document.getElementById("createResult"),
-        searchButton: document.getElementById("searchBtn"),
-        cinInput: document.getElementById("getCin"),
-        hasInsuranceCheckbox: document.getElementById("has_insurance"),
-        mutuelleField: document.getElementById("mutuelle"), // Renamed from mutuelleInput, now <select>
-        mutuelleInputContainer: document.getElementById("mutuelle-input-container"),
-        doctorSelect: document.getElementById("doctor"), // Added doctor select
-        createPatientBtn: document.getElementById("createPatientBtn"),
-        createResultMessage: document.getElementById("createResultMessage"),
-        createQrCodeImage: document.getElementById("createQrCodeImage"),
-        createPrintButton: document.getElementById("createPrintButton"),
-        toast: document.getElementById("toast"),
-        captureIdButton: document.getElementById('captureIdButton'),
-        idCaptureContainer: document.getElementById('idCaptureContainer'),
-        idVideo: document.getElementById('idVideo'),
-        takePhotoButton: document.getElementById('takePhotoButton'),
-        cancelCaptureButton: document.getElementById('cancelCaptureButton'),
-        captureMessage: document.getElementById('captureMessage'),
-        idCanvas: document.getElementById('idCanvas'),
-        frontPreview: document.getElementById('frontPreview'),
-        backPreview: document.getElementById('backPreview'),
-        captureInstruction: document.getElementById('captureInstruction')
+      body: document.body,
+      resultDiv: document.getElementById("getResult"),
+      messageDiv: document.getElementById("message"),
+      createForm: document.getElementById("createForm"),
+      createResultDiv: document.getElementById("createResult"),
+      searchButton: document.getElementById("searchBtn"),
+      cinInput: document.getElementById("getCin"),
+      hasInsuranceCheckbox: document.getElementById("has_insurance"),
+      // For Mutuelle, now a select element
+      mutuelleField: document.getElementById("mutuelle"),
+      mutuelleInputContainer: document.getElementById("mutuelle-input-container"),
+      // Doctor select
+      doctorSelect: document.getElementById("doctor"),
+      createPatientBtn: document.getElementById("createPatientBtn"),
+      createResultMessage: document.getElementById("createResultMessage"),
+      createQrCodeImage: document.getElementById("createQrCodeImage"),
+      createPrintButton: document.getElementById("createPrintButton"),
+      toast: document.getElementById("toast"),
+      // ID Capture elements
+      captureIdButton: document.getElementById('captureIdButton'),
+      idCaptureContainer: document.getElementById('idCaptureContainer'),
+      idVideo: document.getElementById('idVideo'),
+      takePhotoButton: document.getElementById('takePhotoButton'),
+      cancelCaptureButton: document.getElementById('cancelCaptureButton'),
+      captureMessage: document.getElementById('captureMessage'),
+      idCanvas: document.getElementById('idCanvas'),
+      frontPreview: document.getElementById('frontPreview'),
+      backPreview: document.getElementById('backPreview'),
+      captureInstruction: document.getElementById('captureInstruction')
     };
     let currentIPP = null;
     let currentPatientInfo = null;
@@ -196,112 +271,188 @@
     // Choices.js instances
     let choicesMutuelleInstance = null;
     let choicesDoctorInstance = null;
-
-
-    // --- Utility Functions ---
-    function showToast(message, type = 'success') { if (!message || !DOM.toast) return; const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; DOM.toast.innerHTML = `${icon} ${message}`; DOM.toast.className = `toast ${type}`; DOM.toast.classList.add('show'); setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); }
-    function sanitizeInput(input) { if (!input) return ''; const temp = document.createElement('div'); temp.textContent = input; return temp.innerHTML; }
-    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const iconClass = statusIcons[type] || statusIcons['info']; const iconHtml = message && type !== 'result' ? `<i class="${iconClass} me-2" aria-hidden="true"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; el.className = ""; if (type === 'result') { el.style.backgroundColor = 'var(--success-light)'; el.style.borderLeft = '4px solid var(--success)'; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = 'var(--success-dark)'; if(img) img.style.display = 'block'; if(btn) btn.style.display = 'inline-block'; } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult' && type !== 'result') { const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(img) img.style.display = 'none'; if(btn) btn.style.display = 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { const currentElement = document.getElementById(elementId); if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) { currentElement.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
-
-    // --- Authentication & Session ---
-    function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No token.');alert('Session expirée.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Auth error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide.');redirectToLogin();throw new Error(`Auth failed:${r.status}`);} if(!r.ok){return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);});} return r;}); }
+    
+    /***********************
+     * Utility Functions
+     ***********************/
+    function sanitizeInput(input) {
+      if (!input) return '';
+      const temp = document.createElement('div');
+      temp.textContent = input;
+      return temp.innerHTML;
+    }
+    function showToast(message, type = 'success') {
+      if (!message || !DOM.toast) return;
+      const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>';
+      DOM.toast.innerHTML = `${icon} ${message}`;
+      DOM.toast.className = `toast ${type}`;
+      DOM.toast.classList.add('show');
+      setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME);
+    }
+    function showMessage(elementId, message, type) {
+      const el = document.getElementById(elementId);
+      if (!el) { console.error(`Element "${elementId}" not found`); return; }
+      const statusIcons = {
+        info: 'fas fa-info-circle',
+        success: 'fas fa-check-circle',
+        warning: 'fas fa-exclamation-triangle',
+        error: 'fas fa-times-circle',
+        loading: 'fas fa-spinner fa-spin'
+      };
+      const iconHtml = message && type !== 'result' ? `<i class="${statusIcons[type] || statusIcons.info} me-2" aria-hidden="true"></i>` : '';
+      el.innerHTML = message ? `${iconHtml}${message}` : "";
+      el.style.display = message ? "block" : "none";
+      // Special styling for createResult if type 'result'
+      if (elementId === 'createResult' && type === 'result') {
+          el.style.backgroundColor = 'var(--success-light)';
+          el.style.borderLeft = '4px solid var(--success)';
+          el.style.textAlign = 'center';
+          el.style.marginTop = '20px';
+          el.style.padding = '1rem';
+          el.style.borderRadius = 'var(--border-radius)';
+      }
+    }
+    
+    /***********************
+     * Authentication & Session
+     ***********************/
     function redirectToLogin() { window.location.href = CONFIG.LOGIN_PAGE_URL; }
-    function logout() { localStorage.removeItem(CONFIG.TOKEN_KEY); clearTimeout(sessionTimeoutId); showToast('Déconnecté.', 'success'); setTimeout(redirectToLogin, 1000); }
-    function resetSessionTimeout() { if (sessionTimeoutId) clearTimeout(sessionTimeoutId); sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT); }
-
-    // --- Form Validation ---
+    function logout() {
+      localStorage.removeItem(CONFIG.TOKEN_KEY);
+      clearTimeout(sessionTimeoutId);
+      showToast('Déconnecté.', 'success');
+      setTimeout(redirectToLogin, 1000);
+    }
+    function resetSessionTimeout() {
+      if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
+      sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT);
+    }
+    function fetchWithAuth(url, options = {}) {
+      const token = localStorage.getItem(CONFIG.TOKEN_KEY);
+      if (!token) {
+        console.error('Token non trouvé.');
+        alert('Session expirée.');
+        redirectToLogin();
+        return Promise.reject(new Error('Token non trouvé.'));
+      }
+      resetSessionTimeout();
+      const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+      if (options.body && !(options.body instanceof FormData)) { headers['Content-Type'] = 'application/json'; }
+      return fetch(url, { ...options, headers })
+        .then(r => {
+          if (r.status === 401 || r.status === 403) {
+            console.error('Erreur d\'authentification:', r.status);
+            localStorage.removeItem(CONFIG.TOKEN_KEY);
+            alert('Session invalide.');
+            redirectToLogin();
+            throw new Error(`Auth failed: ${r.status}`);
+          }
+          if (!r.ok) {
+            return r.text().then(t => { throw new Error(`Erreur ${r.status}: ${t || r.statusText}`); });
+          }
+          return r;
+        });
+    }
+    
+    /***********************
+     * Form Validation
+     ***********************/
+    // Use logical AND (&&) to accumulate Boolean values.
     function validateField(input, validationFn, errorMessage) {
-        const value = input.value.trim();
-        const group = input.closest('.input-group');
-        if (!group) return true;
-
-        const isValid = validationFn(value);
-
-        let elementToStyle = input;
-        const choicesContainer = group.querySelector('.choices');
-        if (choicesContainer && (input.tagName === 'SELECT' || input.id === 'mutuelle' || input.id === 'doctor')) {
-             elementToStyle = choicesContainer;
-        }
-
-        group.classList.toggle('has-error', !isValid);
-        elementToStyle.classList.toggle('input-error', !isValid);
-
-        const errorDiv = group.querySelector('.error-text');
-        if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage;
-
-        if (choicesContainer && elementToStyle === choicesContainer && input !== choicesContainer) {
-             input.classList.remove('input-error');
-        }
-
-        return isValid;
+      const value = input.value.trim();
+      const group = input.closest('.input-group');
+      if (!group) return true;
+      const isValid = validationFn(value);
+      // For Choices.js selects, try to find the outer container if available.
+      let elementToStyle = input;
+      const choicesContainer = group.querySelector('.choices');
+      if (choicesContainer && (input.tagName === 'SELECT' || input.id === 'mutuelle' || input.id === 'doctor')) {
+        elementToStyle = choicesContainer;
+      }
+      group.classList.toggle('has-error', !isValid);
+      elementToStyle.classList.toggle('input-error', !isValid);
+      const errorDiv = group.querySelector('.error-text');
+      if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage;
+      return isValid;
     }
-
     function validateCreateForm() {
-        let isValid = true;
-        showMessage('message', '', '');
-        DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
-        DOM.createForm.querySelectorAll('input, select, .choices').forEach(el => el.classList.remove('input-error'));
-        DOM.createForm.querySelectorAll('.error-text').forEach(el => el.textContent = '');
-
-        isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis");
-        isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis");
-        isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)");
-        isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx");
-        isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise");
-        isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise");
-        isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise");
-        isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise");
-
-        if (DOM.hasInsuranceCheckbox.checked) {
-            isValid &= validateField(DOM.mutuelleField, val => val !== '', "Veuillez sélectionner une mutuelle");
-        }
-
-        if (!isValid) {
-            showMessage('message', 'Veuillez corriger les erreurs.', 'error');
-            const firstErrorElement = DOM.createForm.querySelector('.input-error');
-            if(firstErrorElement) {
-                 const choicesInput = firstErrorElement.querySelector('.choices__input--cloned');
-                 if (choicesInput) {
-                     choicesInput.focus();
-                 } else {
-                     const originalInput = firstErrorElement.closest('.input-group')?.querySelector('input, select');
-                     if(originalInput) originalInput.focus();
-                     else firstErrorElement.focus();
-                 }
-            }
-        }
-        return !!isValid;
+      // Chain validations using &&
+      const isValid =
+        validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis") &&
+        validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis") &&
+        validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)") &&
+        validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone invalide (0XXXXXXXXX)") &&
+        validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise") &&
+        validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise") &&
+        validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise") &&
+        validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise");
+    
+      let finalValid = isValid;
+      if (DOM.hasInsuranceCheckbox.checked) {
+          finalValid = finalValid && validateField(DOM.mutuelleField, val => val !== '', "Veuillez sélectionner une mutuelle");
+      }
+      if (!finalValid) {
+          showMessage('message', 'Veuillez corriger les erreurs.', 'error');
+          const firstError = DOM.createForm.querySelector('.input-error');
+          if (firstError) firstError.focus();
+      }
+      return finalValid;
     }
-
-    // --- API Service ---
-    const apiService = {
-        async fetchPatient(cin) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`); return await res.json(); } catch (e) { console.error("Pat fetch err:", e); throw e; } },
-        async createPatient(payload) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) }); return await res.json(); } catch (e) { console.error("Pat create err:", e); throw e; } },
-        async extractIdInfo(formData) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, { method: 'POST', body: formData }); return await res.json(); } catch (e) { console.error("ID Extract err:", e); throw e; } },
-        async getMutuelles() { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-mutuelles`); return await res.json(); } catch (e) { console.error("Mutuelles fetch err:", e); throw e; } },
-        async getDoctors() { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-doctors`); return await res.json(); } catch (e) { console.error("Doctors fetch err:", e); throw e; } }
-    };
-
-    // --- QR Code Functions ---
-    function generateQrData(ipp) { if (!ipp) { console.error("IPP missing QR."); return null; } const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`; const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`; console.log("QR Target:", qrTargetUrl); console.log("QR Image:", qrImageUrl); return { qrTargetUrl, qrImageUrl }; }
-    function printQRCode(qrImageUrl) { const printWindow = window.open('', '_blank', 'width=400,height=450'); if (!printWindow) { alert('Veuillez autoriser les pop-ups.'); return; } printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Imprimer QR</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/><style>body{font-family:'Inter',sans-serif;text-align:center;margin:0;padding-top:20px} img.logo{display:block;width:60px;margin:0 auto 10px auto} img.qrcode{display:block;width:200px;height:200px;margin:0 auto 15px auto;border:1px solid #eee;padding:5px;background:white} button{display:none;} @media print{body{margin:5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact} img.logo, img.qrcode{margin-bottom:8px}}</style></head><body><img src="./clinique-nakhil-logo-horizontal.webp" alt="Logo" class="logo" onerror="this.style.display='none'" /><img src="${qrImageUrl}" alt="QR Code Patient" class="qrcode" /><script>let p=false;const a=()=>{if(!p){window.print();p=true;window.onafterprint=()=>window.close();setTimeout(()=>window.close(),1500)}};let i=document.querySelectorAll('img'),l=0,e=0,t=i.length;if(t===0)a();else{i.forEach(m=>{const c=()=>{if(l+e===t)a()};if(m.complete)l++,c();else{m.onload=()=>{l++;c()};m.onerror=()=>{e++;c()}}});setTimeout(()=>{if(!p)a()},3000)}<\/script></body></html>`); printWindow.document.close(); }
-
-    // --- ID Capture Functions ---
-    function updateCaptureMessage(message, type = 'info') { showMessage('captureMessage', message, type); }
-    async function startIdCapture() { if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { updateCaptureMessage('Demande caméra...', 'loading'); DOM.captureIdButton.disabled = true; DOM.idCaptureContainer.style.display = 'block'; DOM.frontPreview.style.display = 'none'; DOM.backPreview.style.display = 'none'; isCapturingFront = true; DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo."; try { idCaptureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } }); DOM.idVideo.srcObject = idCaptureStream; await DOM.idVideo.play(); updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info'); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; } catch (err) { updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error'); stopIdCapture(false); } } else { alert("Accès caméra non supporté."); updateCaptureMessage("Caméra non supportée.", 'error'); DOM.captureIdButton.disabled = false;} }
-    function stopIdCapture(clearBlobs = true) { if (idCaptureStream) { idCaptureStream.getTracks().forEach(track => track.stop()); } DOM.idVideo.srcObject = null; DOM.idCaptureContainer.style.display = 'none'; DOM.takePhotoButton.disabled = true; DOM.cancelCaptureButton.disabled = true; DOM.captureIdButton.disabled = false; idCaptureStream = null; updateCaptureMessage('', ''); if (clearBlobs) { frontImageBlob = null; backImageBlob = null; DOM.frontPreview.src = ''; DOM.backPreview.src = ''; DOM.frontPreview.style.display = 'none'; DOM.backPreview.style.display = 'none'; console.log("ID Capture cancelled and blobs cleared."); } }
-    async function takePhotoAndExtract() { if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) { updateCaptureMessage('Caméra non prête.', 'warning'); return; } updateCaptureMessage('Capture et analyse...', 'loading'); DOM.takePhotoButton.disabled = true; DOM.cancelCaptureButton.disabled = true; const canvas = DOM.idCanvas; canvas.width = DOM.idVideo.videoWidth; canvas.height = DOM.idVideo.videoHeight; const context = canvas.getContext('2d'); context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height); canvas.toBlob(async (blob) => { if (!blob) { updateCaptureMessage('Erreur capture image.', 'error'); stopIdCapture(); return; } if (isCapturingFront) { frontImageBlob = blob; console.log("Recto captured"); DOM.frontPreview.src = URL.createObjectURL(frontImageBlob); DOM.frontPreview.style.display = 'inline-block'; isCapturingFront = false; DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo."; updateCaptureMessage('Recto OK. Préparez le verso.', 'info'); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; } else { backImageBlob = blob; console.log("Verso captured"); DOM.backPreview.src = URL.createObjectURL(backImageBlob); DOM.backPreview.style.display = 'inline-block'; stopIdCapture(false); updateCaptureMessage('Verso OK. Analyse en cours...', 'loading'); if (frontImageBlob && backImageBlob) { const formData = new FormData(); formData.append('id_image_front', frontImageBlob, 'id_card_front.jpg'); formData.append('id_image_back', backImageBlob, 'id_card_back.jpg'); try { const extractedData = await apiService.extractIdInfo(formData); console.log("Extracted ID Data:", extractedData); if (extractedData && extractedData.data) { autofillCreateForm(extractedData); showToast('Formulaire pré-rempli!', 'success'); updateCaptureMessage('Données extraites!', 'success'); } else { const errorMessage = extractedData && extractedData.message ? extractedData.message : "Aucune donnée extraite."; throw new Error(errorMessage); } } catch (error) { console.error("Error extraction API call:", error); updateCaptureMessage(`Erreur extraction: ${error.message}`, 'error'); } finally { frontImageBlob = null; backImageBlob = null; } } else { console.error("Missing blobs."); updateCaptureMessage('Erreur: Images manquantes.', 'error'); } } }, 'image/jpeg', 0.9); }
-    function autofillCreateForm(data) { const form = DOM.createForm; if (!form || !data || !data.data) { console.warn("Autofill failed: Form or data object missing."); return; } const extracted = data.data; console.log("Extracted from API for Autofill:", extracted); let formattedDateOfBirth = ""; if (extracted.date_of_birth) { const originalDateString = extracted.date_of_birth; const dateParts = originalDateString.split('/'); if (dateParts.length === 3) { const day = dateParts[0]; const month = dateParts[1]; const year = dateParts[2]; formattedDateOfBirth = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`; console.log("Formatted date_of_birth:", formattedDateOfBirth); } else { console.warn("Date of birth format not as expected (DD/MM/YYYY):", originalDateString); } } else { console.warn("Date of birth missing from extracted data."); } form.nom.value = extracted.last_name ?? ''; form.prenom.value = extracted.first_name ?? ''; form.cin.value = extracted.id_number ?? ''; form.date_naissance.value = formattedDateOfBirth; form.adresse.value = extracted.address ?? ''; form.ville.value = extracted.city ?? ''; form.sexe.value = extracted.gender === 'F' ? 'F' : 'M'; form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); form.querySelectorAll('input, select, .choices').forEach(el => el.classList.remove('input-error')); form.querySelectorAll('.error-text').forEach(el => el.textContent = ''); showMessage('message', 'Formulaire pré-rempli. Vérifiez les informations.', 'info'); }
-
-    // --- Dropdown Population Functions ---
+    function resetForm() {
+      DOM.createForm.reset();
+      DOM.createForm.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+      DOM.createForm.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+      DOM.createForm.querySelectorAll('.error-text').forEach(el => el.textContent = '');
+      handleMutuelleChange();
+      DOM.createResultDiv.style.display = 'none';
+      DOM.createResultMessage.textContent = '';
+      DOM.createQrCodeImage.src = '';
+      DOM.createQrCodeImage.alt = '';
+      DOM.createPrintButton.disabled = true;
+      showMessage('message', '', '');
+    }
+    function handleMutuelleChange() {
+      if (!DOM.hasInsuranceCheckbox || !DOM.mutuelleField) return;
+      const isChecked = DOM.hasInsuranceCheckbox.checked;
+      DOM.mutuelleField.required = isChecked;
+      if (choicesMutuelleInstance) {
+        if (isChecked) {
+          choicesMutuelleInstance.enable();
+        } else {
+          choicesMutuelleInstance.disable();
+          choicesMutuelleInstance.setValue([]);
+          const mutuelleGroup = DOM.mutuelleField.closest('.input-group');
+          if (mutuelleGroup) mutuelleGroup.classList.remove('has-error');
+          const choicesEl = mutuelleGroup?.querySelector('.choices');
+          if (choicesEl) choicesEl.classList.remove('input-error');
+          const errorDiv = mutuelleGroup?.querySelector('.error-text');
+          if (errorDiv) errorDiv.textContent = '';
+        }
+      } else {
+         DOM.mutuelleField.disabled = !isChecked;
+         if (!isChecked) {
+            DOM.mutuelleField.value = '';
+            const group = DOM.mutuelleField.closest('.input-group');
+            if (group) {
+                group.classList.remove('has-error');
+                const errorDiv = group.querySelector('.error-text');
+                if (errorDiv) errorDiv.textContent = '';
+            }
+            DOM.mutuelleField.classList.remove('input-error');
+         }
+      }
+    }
+    
+    /***********************
+     * Dropdown Population Functions
+     ***********************/
     function populateDropdown(selectElement, items, placeholderValue = '', valueKey = null, textKeyOrFn = null) {
         if (!selectElement || !Array.isArray(items)) {
             console.warn("Cannot populate dropdown:", selectElement?.id, items);
-            if(selectElement) selectElement.innerHTML = `<option value="${placeholderValue}">Erreur/Vide</option>`;
+            selectElement.innerHTML = `<option value="${placeholderValue}">Erreur/Vide</option>`;
             return;
         }
         selectElement.innerHTML = `<option value="${placeholderValue}"></option>`;
-
         items.forEach(item => {
             const option = document.createElement('option');
             let value, text;
@@ -311,67 +462,44 @@
                 else if (typeof textKeyOrFn === 'string') { text = item[textKeyOrFn]; }
                 else { text = value; }
             } else { value = item; text = item; }
-
-            if (String(value) !== String(placeholderValue) && value !== undefined && value !== null && text !== undefined && text !== null) {
+            if (String(value) !== String(placeholderValue) && value != null && text != null) {
                  option.value = value;
                  option.textContent = text;
                  selectElement.appendChild(option);
-            } else if (String(value) === String(placeholderValue)) {
-                // Skip placeholder value if present in data
-            } else {
-                 console.warn(`Skipping invalid item for ${selectElement.id}: value=${value}, text=${text}`);
             }
         });
-
-        if(selectElement.options.length <= 1 && items.length > 0) {
-             console.warn(`Dropdown ${selectElement.id} appears empty despite receiving ${items.length} items. Check valueKey/textKeyOrFn logic.`);
-        } else if (selectElement.options.length <= 1 && items.length === 0) {
-             console.log(`Dropdown ${selectElement.id} is empty as no items were provided.`);
-        }
     }
-
-
     async function initializeDropdowns() {
+        // Destroy previous Choices instances if they exist.
         choicesMutuelleInstance?.destroy();
         choicesDoctorInstance?.destroy();
         choicesMutuelleInstance = null;
         choicesDoctorInstance = null;
-
         try {
             if (DOM.mutuelleField) DOM.mutuelleField.disabled = true;
             if (DOM.doctorSelect) DOM.doctorSelect.disabled = true;
-
             console.log("Fetching dropdown data...");
             const [mutuellesResponse, doctorsResponse] = await Promise.all([
                 apiService.getMutuelles(),
                 apiService.getDoctors()
             ]).catch(error => {
-                console.error("Failed during API fetch for dropdowns:", error);
+                console.error("API fetch dropdowns error:", error);
                 showToast("Erreur chargement des listes.", "error");
-                return [ { mutuelles: [] }, { doctors: [] } ];
+                return [{ mutuelles: [] }, { doctors: [] }];
             });
-
             console.log("Mutuelles Response:", mutuellesResponse);
             console.log("Doctors Response:", doctorsResponse);
-
             const mutuellesList = mutuellesResponse?.mutuelles ?? [];
             const doctorsList = doctorsResponse?.doctors ?? [];
-
-
-            // --- Populate the original selects FIRST ---
             if (DOM.mutuelleField) {
                  populateDropdown(DOM.mutuelleField, mutuellesList, '');
             }
             if (DOM.doctorSelect) {
-                 populateDropdown(
-                     DOM.doctorSelect, doctorsList, '', 'matricule',
-                     (item) => `${item.prenom} ${item.nom} (${item.specialite})`
+                 populateDropdown(DOM.doctorSelect, doctorsList, '', 'matricule',
+                   (item) => `${item.prenom} ${item.nom} (${item.specialite})`
                  );
             }
-            console.log("Original selects populated.");
-
-            // --- Initialize Choices.js AFTER population ---
-            // FIXED: Removed allowHTML
+            console.log("Dropdown selects populated.");
             const choicesOptions = {
                 searchEnabled: true,
                 shouldSort: false,
@@ -384,98 +512,318 @@
                 searchPlaceholderValue: "Rechercher...",
                 removeItemButton: true,
             };
-
             if (DOM.mutuelleField) {
                 if (mutuellesList.length > 0) {
                     choicesMutuelleInstance = new Choices(DOM.mutuelleField, choicesOptions);
                 } else {
                     DOM.mutuelleField.disabled = true;
-                    console.log("Mutuelle list is empty, select disabled.");
+                    console.log("Liste des mutuelles vide, select désactivé.");
                 }
             }
-
             if (DOM.doctorSelect) {
-                 if (doctorsList.length > 0) {
+                if (doctorsList.length > 0) {
                     choicesDoctorInstance = new Choices(DOM.doctorSelect, choicesOptions);
                     DOM.doctorSelect.disabled = false;
                     choicesDoctorInstance.enable();
                 } else {
                     DOM.doctorSelect.disabled = true;
-                    console.log("Doctor list is empty, select disabled.");
+                    console.log("Liste des médecins vide, select désactivé.");
                 }
             }
-
-             handleMutuelleChange(); // Set initial state AFTER potential init
-
-            console.log("Choices.js initialized.");
-
-
+            handleMutuelleChange();
+            console.log("Choices.js initialisé.");
         } catch (error) {
-            console.error("Failed to populate dropdowns or initialize Choices:", error);
+            console.error("Erreur lors de l'initialisation des dropdowns:", error);
             showToast("Erreur initialisation des listes.", "error");
-             if (DOM.mutuelleField && !choicesMutuelleInstance) {
-                 DOM.mutuelleField.innerHTML = '<option value="">Erreur Init</option>';
-                 DOM.mutuelleField.disabled = true;
-             }
-             if (DOM.doctorSelect && !choicesDoctorInstance) {
-                 DOM.doctorSelect.innerHTML = '<option value="">Erreur Init</option>';
-                 DOM.doctorSelect.disabled = true;
-             }
+            if (DOM.mutuelleField && !choicesMutuelleInstance) {
+                DOM.mutuelleField.innerHTML = '<option value="">Erreur Init</option>';
+                DOM.mutuelleField.disabled = true;
+            }
+            if (DOM.doctorSelect && !choicesDoctorInstance) {
+                DOM.doctorSelect.innerHTML = '<option value="">Erreur Init</option>';
+                DOM.doctorSelect.disabled = true;
+            }
         }
     }
+    
+    /***********************
+     * API Service
+     ***********************/
+    const apiService = {
+        async fetchPatient(cin) {
+            try { 
+              const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${encodeURIComponent(cin)}`);
+              return await res.json();
+            } catch (e) { console.error("Erreur fetch patient:", e); throw e; }
+        },
+        async createPatient(payload) {
+            try { 
+              const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) });
+              return await res.json();
+            } catch (e) { console.error("Erreur création patient:", e); throw e; }
+        },
+        async extractIdInfo(formData) {
+            try { 
+              const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, { method: 'POST', body: formData });
+              return await res.json();
+            } catch (e) { console.error("Erreur extraction ID:", e); throw e; }
+        },
+        async getMutuelles() {
+            try { 
+              const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-mutuelles`);
+              return await res.json();
+            } catch (e) { console.error("Erreur fetch mutuelles:", e); throw e; }
+        },
+        async getDoctors() {
+            try { 
+              const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-doctors`);
+              return await res.json();
+            } catch (e) { console.error("Erreur fetch médecins:", e); throw e; }
+        }
+    };
 
-    // --- Event Handlers ---
+    /***********************
+     * QR Code Functions
+     ***********************/
+    function generateQrData(ipp) {
+      if (!ipp) { console.error("IPP manquant pour QR Code."); return null; }
+      const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`;
+      console.log("QR Target URL:", qrTargetUrl);
+      console.log("QR Image URL:", qrImageUrl);
+      return { qrTargetUrl, qrImageUrl };
+    }
+    function printQRCode(qrImageUrl) {
+      const printWindow = window.open('', '_blank', 'width=400,height=450');
+      if (!printWindow) { alert('Veuillez autoriser les pop-ups.'); return; }
+      printWindow.document.write(`<!DOCTYPE html>
+        <html><head><meta charset="UTF-8"><title>Imprimer QR Code</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/>
+        <style>
+          body { font-family:'Inter',sans-serif; text-align:center; margin-top:20px; }
+          img.logo { display:block; width:60px; margin:0 auto 10px auto; }
+          img.qrcode { display:block; width:200px; height:200px; margin:0 auto 15px auto; border:1px solid #eee; padding:5px; background:white; }
+          @media print { body { margin:5mm; } }
+        </style></head>
+        <body>
+          <img src="./clinique-nakhil-logo-horizontal.webp" alt="Logo" class="logo" onerror="this.style.display='none'"/>
+          <img src="${qrImageUrl}" alt="QR Code Patient" class="qrcode"/>
+          <script>
+            window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 250); }
+          </script>
+        </body></html>`);
+      printWindow.document.close();
+    }
+
+    /***********************
+     * ID Capture Functions
+     ***********************/
+    function updateCaptureMessage(message, type = 'info') {
+      showMessage('captureMessage', message, type);
+    }
+    async function startIdCapture() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showMessage('captureMessage', 'La fonctionnalité caméra n’est pas supportée.', 'error');
+        return;
+      }
+      updateCaptureMessage('Demande d’accès caméra...', 'loading');
+      DOM.captureIdButton.disabled = true;
+      DOM.idCaptureContainer.style.display = 'block';
+      DOM.frontPreview.style.display = 'none';
+      DOM.backPreview.style.display = 'none';
+      isCapturingFront = true;
+      DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo.";
+      try {
+        idCaptureStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+        DOM.idVideo.srcObject = idCaptureStream;
+        await DOM.idVideo.play();
+        updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info');
+        DOM.takePhotoButton.disabled = false;
+        DOM.cancelCaptureButton.disabled = false;
+      } catch (err) {
+        updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error');
+        stopIdCapture(false);
+      }
+    }
+    function stopIdCapture(clearBlobs = true) {
+      if (idCaptureStream) {
+        idCaptureStream.getTracks().forEach(track => track.stop());
+        idCaptureStream = null;
+      }
+      DOM.idVideo.srcObject = null;
+      DOM.idCaptureContainer.style.display = 'none';
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      DOM.captureIdButton.disabled = false;
+      updateCaptureMessage('', '');
+      if (clearBlobs) {
+        frontImageBlob = null;
+        backImageBlob = null;
+        DOM.frontPreview.src = '';
+        DOM.backPreview.src = '';
+        DOM.frontPreview.style.display = 'none';
+        DOM.backPreview.style.display = 'none';
+        console.log("ID Capture annulé et blobs effacés.");
+      }
+    }
+    async function takePhotoAndExtract() {
+      if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) {
+        updateCaptureMessage('Caméra non prête.', 'warning');
+        return;
+      }
+      updateCaptureMessage('Capture et analyse...', 'loading');
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      const canvas = DOM.idCanvas;
+      canvas.width = DOM.idVideo.videoWidth;
+      canvas.height = DOM.idVideo.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          updateCaptureMessage('Erreur capture image.', 'error');
+          stopIdCapture();
+          return;
+        }
+        if (isCapturingFront) {
+          frontImageBlob = blob;
+          console.log("Recto capturé");
+          DOM.frontPreview.src = URL.createObjectURL(frontImageBlob);
+          DOM.frontPreview.style.display = 'inline-block';
+          isCapturingFront = false;
+          DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo.";
+          updateCaptureMessage('Recto OK. Préparez le verso.', 'info');
+          DOM.takePhotoButton.disabled = false;
+          DOM.cancelCaptureButton.disabled = false;
+        } else {
+          backImageBlob = blob;
+          console.log("Verso capturé");
+          DOM.backPreview.src = URL.createObjectURL(backImageBlob);
+          DOM.backPreview.style.display = 'inline-block';
+          stopIdCapture(false);
+          updateCaptureMessage('Verso OK. Analyse en cours...', 'loading');
+          if (frontImageBlob && backImageBlob) {
+            const formData = new FormData();
+            formData.append('id_image_front', frontImageBlob, 'id_card_front.jpg');
+            formData.append('id_image_back', backImageBlob, 'id_card_back.jpg');
+            try {
+              const extractedData = await apiService.extractIdInfo(formData);
+              console.log("Données extraites:", extractedData);
+              if (extractedData && extractedData.data) {
+                autofillCreateForm(extractedData);
+                showToast('Formulaire pré-rempli!', 'success');
+                updateCaptureMessage('Données extraites!', 'success');
+              } else {
+                const errMsg = extractedData && extractedData.message ? extractedData.message : "Aucune donnée extraite.";
+                throw new Error(errMsg);
+              }
+            } catch (error) {
+              console.error("Erreur extraction ID:", error);
+              updateCaptureMessage(`Erreur extraction: ${error.message}`, 'error');
+            } finally {
+              frontImageBlob = null;
+              backImageBlob = null;
+            }
+          } else {
+            console.error("Blobs manquants.");
+            updateCaptureMessage('Erreur: Images manquantes.', 'error');
+          }
+        }
+      }, 'image/jpeg', 0.9);
+    }
+    function autofillCreateForm(data) {
+      if (!data || !data.data) {
+        console.warn("Données d'extraction manquantes pour autofill.");
+        return;
+      }
+      const extracted = data.data;
+      console.log("Données extraites pour autofill:", extracted);
+      let formattedDate = "";
+      if (extracted.date_of_birth) {
+        const parts = extracted.date_of_birth.split('/');
+        if (parts.length === 3) {
+          formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        } else {
+          console.warn("Format de date inattendu:", extracted.date_of_birth);
+        }
+      }
+      DOM.createForm.nom.value = extracted.last_name ?? '';
+      DOM.createForm.prenom.value = extracted.first_name ?? '';
+      DOM.createForm.cin.value = extracted.id_number ?? '';
+      DOM.createForm.date_naissance.value = formattedDate;
+      DOM.createForm.adresse.value = extracted.address ?? '';
+      DOM.createForm.ville.value = extracted.city ?? '';
+      DOM.createForm.sexe.value = extracted.gender === 'F' ? 'F' : 'M';
+      DOM.createForm.telephone.value = extracted.phone_number ?? '';
+      showMessage('message', 'Formulaire pré-rempli automatiquement. Vérifiez les informations.', 'info');
+    }
+    
+    /***********************
+     * Event Handlers
+     ***********************/
     async function handlePatientSearch() {
       showMessage('getResult', '', '');
-      const cinInput = DOM.cinInput;
-      if (!cinInput) { console.error("Search CIN input not found"); return; }
-      const cin = cinInput.value.trim();
-      if (!cin) { showMessage('getResult', 'Veuillez entrer un CIN.', 'warning'); return; }
+      const cin = DOM.cinInput.value.trim();
+      if (!cin) {
+        showMessage('getResult', 'Veuillez entrer un CIN.', 'warning');
+        return;
+      }
       showMessage('getResult', '<span class="loading-spinner"></span> Recherche patient...', 'info');
-      DOM.getResult.style.display = 'block';
-
+      DOM.resultDiv.style.display = 'block';
       try {
         const patientData = await apiService.fetchPatient(cin);
         if (patientData && patientData.data) {
           currentPatientInfo = patientData.data;
           currentIPP = currentPatientInfo.ipp;
-          if (!currentIPP) { console.warn("IPP not found for CIN:", cin); }
-          const qrCodeData = generateQrData(currentIPP);
+          if (!currentIPP) { console.warn("IPP non trouvé pour CIN:", cin); }
+          const qrData = generateQrData(currentIPP);
           let displayDate = "N/A";
-          if (currentPatientInfo.date_naissance) { const dateParts = currentPatientInfo.date_naissance.split('-'); if (dateParts.length === 3) { displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; } else { displayDate = sanitizeInput(currentPatientInfo.date_naissance); } }
+          if (currentPatientInfo.date_naissance) {
+            const parts = currentPatientInfo.date_naissance.split('-');
+            displayDate = (parts.length === 3) ? `${parts[2]}/${parts[1]}/${parts[0]}` : sanitizeInput(currentPatientInfo.date_naissance);
+          }
           const infoHtml = Object.entries({
-              Nom: currentPatientInfo.nom, Prénom: currentPatientInfo.prenom, CIN: currentPatientInfo.cin,
-              Téléphone: currentPatientInfo.telephone, Adresse: currentPatientInfo.adresse, Ville: currentPatientInfo.ville,
-              'Date Naissance': displayDate, Sexe: currentPatientInfo.sexe === 'M' ? 'Homme' : 'Femme',
-              Mutuelle: currentPatientInfo.mutuelle || 'N/A', IPP: currentIPP || 'N/A'
-            }).map(([label, value]) => `<div class="info-group"><div class="info-label">${label}:</div><div class="info-value">${sanitizeInput(value)}</div></div>`).join('');
-
-          const qrHtml = qrCodeData ?
-            `<div class="patient-result-qr"> <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient" loading="lazy" /> <p>Scannez ce QR Code avec l'appli patient.</p> <button onclick="printQRCode('${qrCodeData.qrImageUrl}')" class="btn btn-secondary btn-sm"><i class="fas fa-print"></i> Imprimer QR</button> </div>`
-            : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>';
-
-          DOM.getResult.innerHTML = `<div class="patient-result-container"><div class="patient-result-info">${infoHtml}</div>${qrHtml}</div>`;
+              Nom: currentPatientInfo.nom,
+              Prénom: currentPatientInfo.prenom,
+              CIN: currentPatientInfo.cin,
+              Téléphone: currentPatientInfo.telephone,
+              Adresse: currentPatientInfo.adresse,
+              Ville: currentPatientInfo.ville,
+              'Date Naissance': displayDate,
+              Sexe: currentPatientInfo.sexe === 'M' ? 'Homme' : 'Femme',
+              Mutuelle: currentPatientInfo.mutuelle || 'N/A',
+              IPP: currentIPP || 'N/A'
+            })
+            .map(([label, value]) => `<div class="info-group"><div class="info-label">${label}:</div><div class="info-value">${sanitizeInput(value)}</div></div>`)
+            .join('');
+          const qrHtml = qrData ?
+            `<div class="patient-result-qr">
+               <img src="${qrData.qrImageUrl}" alt="QR Code Patient" loading="lazy" />
+               <p>Scannez ce QR Code avec l'appli patient.</p>
+               <button onclick="printQRCode('${qrData.qrImageUrl}')" class="btn btn-secondary btn-sm"><i class="fas fa-print"></i> Imprimer QR</button>
+             </div>` : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>';
+          DOM.resultDiv.innerHTML = `<div class="patient-result-container"><div class="patient-result-info">${infoHtml}</div>${qrHtml}</div>`;
+          showToast('Patient trouvé.', 'success');
         } else {
           showMessage('getResult', 'Patient non trouvé.', 'warning');
-          DOM.getResult.innerHTML = '<div class="patient-result-container"><p>Patient non trouvé.</p></div>';
+          DOM.resultDiv.innerHTML = '<div class="patient-result-container"><p>Patient non trouvé.</p></div>';
         }
       } catch (error) {
         showMessage('getResult', `Erreur recherche: ${error.message}`, 'error');
-        DOM.getResult.innerHTML = `<div class="patient-result-container"><p class="message message-error">Erreur: ${error.message}</p></div>`;
+        DOM.resultDiv.innerHTML = `<div class="patient-result-container"><p class="message message-error">Erreur: ${error.message}</p></div>`;
       }
     }
-
+    
     async function handleCreatePatient(event) {
       event.preventDefault();
       if (!validateCreateForm()) return;
-
       showMessage('message', '<span class="loading-spinner"></span> Création patient...', 'loading');
       DOM.createPatientBtn.disabled = true;
       DOM.createResultDiv.style.display = 'none';
       DOM.createPrintButton.disabled = true;
-
-      let birthDateToSend = DOM.createForm.date_naissance.value;
-
+      
       const payload = {
         nom: DOM.createForm.nom.value.trim(),
         prenom: DOM.createForm.prenom.value.trim(),
@@ -483,119 +831,177 @@
         telephone: DOM.createForm.telephone.value.trim(),
         adresse: DOM.createForm.adresse.value.trim(),
         ville: DOM.createForm.ville.value.trim(),
-        date_naissance: birthDateToSend,
+        date_naissance: DOM.createForm.date_naissance.value,
         sexe: DOM.createForm.sexe.value,
         mutuelle: DOM.hasInsuranceCheckbox.checked ? DOM.mutuelleField.value : null,
-        doctorId: DOM.doctorSelect.value || null,
+        doctorId: DOM.doctorSelect.value || null
       };
-
       console.log("Payload for Create Patient:", payload);
-
       try {
         const response = await apiService.createPatient(payload);
         console.log("Create Patient API Response:", response);
-
         if (response && response.data && response.data.ipp) {
           currentIPP = response.data.ipp;
-          const qrCodeData = generateQrData(currentIPP);
-          if (qrCodeData) {
+          const qrData = generateQrData(currentIPP);
+          if (qrData) {
             showMessage('createResult', 'Patient créé avec succès !', 'result');
-            DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
+            DOM.createQrCodeImage.src = qrData.qrImageUrl;
+            DOM.createQrCodeImage.alt = `QR Code pour ${sanitizeInput(payload.nom)} ${sanitizeInput(payload.prenom)}`;
             DOM.createPrintButton.disabled = false;
-            DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
-
-            DOM.createForm.reset();
-
-            // FIXED: Use setValue([]) for reset
+            DOM.createPrintButton.onclick = () => printQRCode(qrData.qrImageUrl);
+            DOM.createResultDiv.style.display = 'block';
+            resetForm();
             choicesMutuelleInstance?.setValue([]);
             choicesDoctorInstance?.setValue([]);
-
             handleMutuelleChange();
-
           } else {
             showMessage('createResult', `Patient créé (IPP: ${currentIPP}), mais erreur QR Code.`, 'warning');
-            DOM.createForm.reset();
-             // FIXED: Use setValue([]) for reset
+            resetForm();
             choicesMutuelleInstance?.setValue([]);
             choicesDoctorInstance?.setValue([]);
             handleMutuelleChange();
           }
         } else {
-           const errorMessage = response?.message || "Erreur inconnue lors de la création.";
-           throw new Error(errorMessage);
+          throw new Error(response?.message || "Erreur inconnue lors de la création du patient.");
         }
       } catch (apiError) {
-        console.error("Create Patient API Error:", apiError);
+        console.error("Erreur création patient:", apiError);
         showMessage('message', `Erreur création: ${apiError.message}`, 'error');
         DOM.createResultDiv.style.display = 'none';
       } finally {
         DOM.createPatientBtn.disabled = false;
       }
     }
-
-    function handleMutuelleChange() {
-        if (!DOM.hasInsuranceCheckbox || !DOM.mutuelleField ) return;
-
-        const isChecked = DOM.hasInsuranceCheckbox.checked;
-        DOM.mutuelleField.required = isChecked;
-
-        if(choicesMutuelleInstance) {
-            if (isChecked) {
-                choicesMutuelleInstance.enable();
-            } else {
-                choicesMutuelleInstance.disable();
-                choicesMutuelleInstance.setValue([]); // <-- FIXED: Use empty array
-
-                const mutuelleGroup = DOM.mutuelleField.closest('.input-group');
-                const choicesElement = mutuelleGroup?.querySelector('.choices');
-                if(mutuelleGroup) mutuelleGroup.classList.remove('has-error');
-                if(choicesElement) choicesElement.classList.remove('input-error');
-                const errorDiv = mutuelleGroup?.querySelector('.error-text');
-                if(errorDiv) errorDiv.textContent = '';
-            }
-        } else {
-             DOM.mutuelleField.disabled = !isChecked;
-             if (!isChecked) {
-                DOM.mutuelleField.value = '';
-                const mutuelleGroup = DOM.mutuelleField.closest('.input-group');
-                if(mutuelleGroup) mutuelleGroup.classList.remove('has-error');
-                DOM.mutuelleField.classList.remove('input-error');
-                const errorDiv = mutuelleGroup?.querySelector('.error-text');
-                if(errorDiv) errorDiv.textContent = '';
-             }
-        }
+    
+    /***********************
+     * Dropdowns & Choices.js Initialization
+     ***********************/
+    function populateDropdown(selectElement, items, placeholderValue = '', valueKey = null, textKeyOrFn = null) {
+      if (!selectElement || !Array.isArray(items)) {
+          console.warn("Impossible de remplir le dropdown:", selectElement?.id, items);
+          selectElement.innerHTML = `<option value="${placeholderValue}">Erreur/Vide</option>`;
+          return;
+      }
+      selectElement.innerHTML = `<option value="${placeholderValue}"></option>`;
+      items.forEach(item => {
+          const option = document.createElement('option');
+          let value, text;
+          if (typeof item === 'object' && item !== null) {
+              value = valueKey ? item[valueKey] : JSON.stringify(item);
+              if (typeof textKeyOrFn === 'function') { text = textKeyOrFn(item); }
+              else if (typeof textKeyOrFn === 'string') { text = item[textKeyOrFn]; }
+              else { text = value; }
+          } else { value = item; text = item; }
+          if (value != null && text != null) {
+              option.value = value;
+              option.textContent = text;
+              selectElement.appendChild(option);
+          }
+      });
+    }
+    async function initializeDropdowns() {
+      // Destroy previous Choices instances if any.
+      choicesMutuelleInstance?.destroy();
+      choicesDoctorInstance?.destroy();
+      choicesMutuelleInstance = null;
+      choicesDoctorInstance = null;
+      try {
+          if (DOM.mutuelleField) DOM.mutuelleField.disabled = true;
+          if (DOM.doctorSelect) DOM.doctorSelect.disabled = true;
+          console.log("Fetching dropdown data...");
+          const [mutuellesResponse, doctorsResponse] = await Promise.all([
+              apiService.getMutuelles(),
+              apiService.getDoctors()
+          ]).catch(error => {
+              console.error("Erreur lors de la récupération des listes:", error);
+              showToast("Erreur chargement des listes.", "error");
+              return [{ mutuelles: [] }, { doctors: [] }];
+          });
+          console.log("Mutuelles Response:", mutuellesResponse);
+          console.log("Doctors Response:", doctorsResponse);
+          const mutuellesList = mutuellesResponse?.mutuelles ?? [];
+          const doctorsList = doctorsResponse?.doctors ?? [];
+          if (DOM.mutuelleField) populateDropdown(DOM.mutuelleField, mutuellesList, '');
+          if (DOM.doctorSelect) populateDropdown(DOM.doctorSelect, doctorsList, '', 'matricule', (item) => `${item.prenom} ${item.nom} (${item.specialite})`);
+          console.log("Dropdowns remplis.");
+          const choicesOptions = {
+              searchEnabled: true,
+              shouldSort: false,
+              itemSelectText: '',
+              loadingText: 'Chargement...',
+              noResultsText: 'Aucun résultat',
+              noChoicesText: 'Aucune option disponible',
+              placeholder: true,
+              placeholderValue: '',
+              searchPlaceholderValue: "Rechercher...",
+              removeItemButton: true,
+          };
+          if (DOM.mutuelleField) {
+              if (mutuellesList.length > 0) {
+                  choicesMutuelleInstance = new Choices(DOM.mutuelleField, choicesOptions);
+              } else {
+                  DOM.mutuelleField.disabled = true;
+                  console.log("Liste des mutuelles vide, désactivé.");
+              }
+          }
+          if (DOM.doctorSelect) {
+              if (doctorsList.length > 0) {
+                  choicesDoctorInstance = new Choices(DOM.doctorSelect, choicesOptions);
+                  DOM.doctorSelect.disabled = false;
+                  choicesDoctorInstance.enable();
+              } else {
+                  DOM.doctorSelect.disabled = true;
+                  console.log("Liste des médecins vide, désactivé.");
+              }
+          }
+          handleMutuelleChange();
+          console.log("Choices.js initialisé.");
+      } catch (error) {
+          console.error("Erreur initialisation dropdowns:", error);
+          showToast("Erreur initialisation des listes.", "error");
+          if (DOM.mutuelleField && !choicesMutuelleInstance) {
+              DOM.mutuelleField.innerHTML = '<option value="">Erreur Init</option>';
+              DOM.mutuelleField.disabled = true;
+          }
+          if (DOM.doctorSelect && !choicesDoctorInstance) {
+              DOM.doctorSelect.innerHTML = '<option value="">Erreur Init</option>';
+              DOM.doctorSelect.disabled = true;
+          }
+      }
     }
 
-    // --- Event Listeners ---
-    DOM.searchButton?.addEventListener('click', handlePatientSearch);
-    DOM.cinInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handlePatientSearch(); });
-    DOM.createForm?.addEventListener('submit', handleCreatePatient);
-    DOM.hasInsuranceCheckbox?.addEventListener('change', handleMutuelleChange);
-    DOM.captureIdButton?.addEventListener('click', startIdCapture);
-    DOM.takePhotoButton?.addEventListener('click', takePhotoAndExtract);
-    DOM.cancelCaptureButton?.addEventListener('click', () => stopIdCapture(true));
-
-    // --- Initial Setup ---
+    /***********************
+     * Event Listeners & Initial Setup
+     ***********************/
+    DOM.searchButton.addEventListener('click', handlePatientSearch);
+    DOM.cinInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); handlePatientSearch(); } });
+    DOM.createForm.addEventListener('submit', handleCreatePatient);
+    DOM.hasInsuranceCheckbox.addEventListener('change', handleMutuelleChange);
+    DOM.captureIdButton.addEventListener('click', startIdCapture);
+    DOM.takePhotoButton.addEventListener('click', takePhotoAndExtract);
+    DOM.cancelCaptureButton.addEventListener('click', () => stopIdCapture(true));
+    
     window.onload = () => {
-        console.log("Window loaded. Checking authentication...");
+        console.log("Window loaded. Vérification du token...");
         if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
-            console.log("Reception: No token found. Redirecting to login.");
+            console.log("Aucun token trouvé, redirection vers login.");
             redirectToLogin();
             return;
         }
         DOM.body.classList.add('loaded');
-        console.log("Reception: Authenticated. Setting up page.");
-        resetSessionTimeout(); // Start session timeout
-
-        initializeDropdowns(); // Fetch and populate dropdowns, then initialize Choices.js
-
-        // Add activity listeners to reset timeout
+        console.log("Token présent. Initialisation de la page.");
+        resetSessionTimeout();
+        initializeDropdowns();  // Initialize dropdowns and Choices.js
         ['mousemove', 'keypress', 'click', 'scroll'].forEach(event =>
             document.addEventListener(event, resetSessionTimeout, { passive: true })
         );
         console.log("Initial setup complete.");
     };
-
+    
+    // Expose logout and printQRCode globally.
+    window.logout = logout;
+    window.printQRCode = printQRCode;
+    
   </script>
 </body>
 </html>
