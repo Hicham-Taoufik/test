@@ -211,31 +211,26 @@
 
     // --- Form Validation ---
     function validateField(input, validationFn, errorMessage) {
-        // Read value directly from the input/select element
-        // Choices.js updates the original select's value
         const value = input.value.trim();
         const group = input.closest('.input-group');
         if (!group) return true;
 
         const isValid = validationFn(value);
 
-        // Find the element to apply visual error state
         let elementToStyle = input;
-        const choicesContainer = group.querySelector('.choices'); // Find Choices container in the group
-        // Apply error to Choices container if it exists for this input/select
+        const choicesContainer = group.querySelector('.choices');
         if (choicesContainer && (input.tagName === 'SELECT' || input.id === 'mutuelle' || input.id === 'doctor')) {
              elementToStyle = choicesContainer;
         }
 
         group.classList.toggle('has-error', !isValid);
-        elementToStyle.classList.toggle('input-error', !isValid); // Apply to input OR Choices container
+        elementToStyle.classList.toggle('input-error', !isValid);
 
         const errorDiv = group.querySelector('.error-text');
         if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage;
 
-        // Special handling to remove error from the original hidden select if Choices is used
         if (choicesContainer && elementToStyle === choicesContainer && input !== choicesContainer) {
-             input.classList.remove('input-error'); // Ensure original select doesn't show error border
+             input.classList.remove('input-error');
         }
 
         return isValid;
@@ -244,10 +239,9 @@
     function validateCreateForm() {
         let isValid = true;
         showMessage('message', '', '');
-        // Clear previous errors on groups and inputs/choices containers
         DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
         DOM.createForm.querySelectorAll('input, select, .choices').forEach(el => el.classList.remove('input-error'));
-        DOM.createForm.querySelectorAll('.error-text').forEach(el => el.textContent = ''); // Clear all error texts
+        DOM.createForm.querySelectorAll('.error-text').forEach(el => el.textContent = '');
 
         isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis");
         isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis");
@@ -258,30 +252,21 @@
         isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise");
         isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise");
 
-        // Mutuelle Validation (using the select field now)
         if (DOM.hasInsuranceCheckbox.checked) {
-            // Validate the select element - check if a non-empty value is selected
             isValid &= validateField(DOM.mutuelleField, val => val !== '', "Veuillez sélectionner une mutuelle");
         }
-        // No else needed as errors are cleared at the start if unchecked
-
-        // Doctor Validation (Optional - currently no validation rule)
-        // isValid &= validateField(DOM.doctorSelect, val => val !== '', "Veuillez sélectionner un médecin"); // Example if it becomes mandatory
 
         if (!isValid) {
             showMessage('message', 'Veuillez corriger les erreurs.', 'error');
-            // Focus the first element that has the input-error class (could be input, select, or .choices)
             const firstErrorElement = DOM.createForm.querySelector('.input-error');
             if(firstErrorElement) {
-                 // If it's a Choices container, try to focus the search input inside it
                  const choicesInput = firstErrorElement.querySelector('.choices__input--cloned');
                  if (choicesInput) {
                      choicesInput.focus();
                  } else {
-                     // Otherwise focus the original input/select or the container itself
                      const originalInput = firstErrorElement.closest('.input-group')?.querySelector('input, select');
                      if(originalInput) originalInput.focus();
-                     else firstErrorElement.focus(); // Fallback
+                     else firstErrorElement.focus();
                  }
             }
         }
@@ -309,68 +294,50 @@
     function autofillCreateForm(data) { const form = DOM.createForm; if (!form || !data || !data.data) { console.warn("Autofill failed: Form or data object missing."); return; } const extracted = data.data; console.log("Extracted from API for Autofill:", extracted); let formattedDateOfBirth = ""; if (extracted.date_of_birth) { const originalDateString = extracted.date_of_birth; const dateParts = originalDateString.split('/'); if (dateParts.length === 3) { const day = dateParts[0]; const month = dateParts[1]; const year = dateParts[2]; formattedDateOfBirth = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`; console.log("Formatted date_of_birth:", formattedDateOfBirth); } else { console.warn("Date of birth format not as expected (DD/MM/YYYY):", originalDateString); } } else { console.warn("Date of birth missing from extracted data."); } form.nom.value = extracted.last_name ?? ''; form.prenom.value = extracted.first_name ?? ''; form.cin.value = extracted.id_number ?? ''; form.date_naissance.value = formattedDateOfBirth; form.adresse.value = extracted.address ?? ''; form.ville.value = extracted.city ?? ''; form.sexe.value = extracted.gender === 'F' ? 'F' : 'M'; form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); form.querySelectorAll('input, select, .choices').forEach(el => el.classList.remove('input-error')); form.querySelectorAll('.error-text').forEach(el => el.textContent = ''); showMessage('message', 'Formulaire pré-rempli. Vérifiez les informations.', 'info'); }
 
     // --- Dropdown Population Functions ---
-    // Enhanced populateDropdown function (FIXED)
     function populateDropdown(selectElement, items, placeholderValue = '', valueKey = null, textKeyOrFn = null) {
         if (!selectElement || !Array.isArray(items)) {
             console.warn("Cannot populate dropdown:", selectElement?.id, items);
             if(selectElement) selectElement.innerHTML = `<option value="${placeholderValue}">Erreur/Vide</option>`;
             return;
         }
-        // Start with only the placeholder option
         selectElement.innerHTML = `<option value="${placeholderValue}"></option>`;
 
         items.forEach(item => {
             const option = document.createElement('option');
             let value, text;
-
             if (typeof item === 'object' && item !== null) {
-                // Item is an object
-                value = valueKey ? item[valueKey] : JSON.stringify(item); // Use specified key or stringify
+                value = valueKey ? item[valueKey] : JSON.stringify(item);
+                if (typeof textKeyOrFn === 'function') { text = textKeyOrFn(item); }
+                else if (typeof textKeyOrFn === 'string') { text = item[textKeyOrFn]; }
+                else { text = value; }
+            } else { value = item; text = item; }
 
-                if (typeof textKeyOrFn === 'function') {
-                    text = textKeyOrFn(item); // Use function for display text
-                } else if (typeof textKeyOrFn === 'string') {
-                    text = item[textKeyOrFn]; // Use specified key for display text
-                } else {
-                    text = value; // Fallback: use the value
-                }
-            } else {
-                // Item is a simple string or number
-                value = item;
-                text = item;
-            }
-
-            // Add option only if value/text are valid and not the placeholder value itself
             if (String(value) !== String(placeholderValue) && value !== undefined && value !== null && text !== undefined && text !== null) {
                  option.value = value;
                  option.textContent = text;
                  selectElement.appendChild(option);
             } else if (String(value) === String(placeholderValue)) {
-                 // console.log(`Skipping item with same value as placeholder: ${value}`); // Optional log
+                // Skip placeholder value if present in data
             } else {
                  console.warn(`Skipping invalid item for ${selectElement.id}: value=${value}, text=${text}`);
             }
         });
 
-        // Log if dropdown is empty after populating
         if(selectElement.options.length <= 1 && items.length > 0) {
              console.warn(`Dropdown ${selectElement.id} appears empty despite receiving ${items.length} items. Check valueKey/textKeyOrFn logic.`);
         } else if (selectElement.options.length <= 1 && items.length === 0) {
              console.log(`Dropdown ${selectElement.id} is empty as no items were provided.`);
-             // Placeholder text is handled by Choices.js or the initial <option>
         }
     }
 
 
     async function initializeDropdowns() {
-        // Clear previous instances if re-initializing
         choicesMutuelleInstance?.destroy();
         choicesDoctorInstance?.destroy();
         choicesMutuelleInstance = null;
         choicesDoctorInstance = null;
 
         try {
-            // Disable original selects while loading
             if (DOM.mutuelleField) DOM.mutuelleField.disabled = true;
             if (DOM.doctorSelect) DOM.doctorSelect.disabled = true;
 
@@ -381,85 +348,71 @@
             ]).catch(error => {
                 console.error("Failed during API fetch for dropdowns:", error);
                 showToast("Erreur chargement des listes.", "error");
-                return [ { mutuelles: [] }, { doctors: [] } ]; // Return structure with empty arrays on error
+                return [ { mutuelles: [] }, { doctors: [] } ];
             });
 
             console.log("Mutuelles Response:", mutuellesResponse);
             console.log("Doctors Response:", doctorsResponse);
 
-            // Correct data extraction (FIXED)
             const mutuellesList = mutuellesResponse?.mutuelles ?? [];
             const doctorsList = doctorsResponse?.doctors ?? [];
 
 
             // --- Populate the original selects FIRST ---
             if (DOM.mutuelleField) {
-                // Mutuelles: Simple string array (FIXED call)
-                 populateDropdown(DOM.mutuelleField, mutuellesList, ''); // Item is value and text
+                 populateDropdown(DOM.mutuelleField, mutuellesList, '');
             }
             if (DOM.doctorSelect) {
-                 // Doctors: Object array (FIXED call)
                  populateDropdown(
-                     DOM.doctorSelect,
-                     doctorsList,
-                     '', // Placeholder value
-                     'matricule', // Key for option value
-                     (item) => `${item.prenom} ${item.nom} (${item.specialite})` // Function for option text
+                     DOM.doctorSelect, doctorsList, '', 'matricule',
+                     (item) => `${item.prenom} ${item.nom} (${item.specialite})`
                  );
             }
             console.log("Original selects populated.");
 
             // --- Initialize Choices.js AFTER population ---
+            // FIXED: Removed allowHTML
             const choicesOptions = {
                 searchEnabled: true,
                 shouldSort: false,
                 itemSelectText: '',
                 loadingText: 'Chargement...',
                 noResultsText: 'Aucun résultat',
-                noChoicesText: 'Aucune option disponible', // Displayed when list is empty after filtering/loading
-                placeholder: true, // Use the <option value=""> as placeholder
-                placeholderValue: '', // Matches the value attribute of the placeholder <option>
+                noChoicesText: 'Aucune option disponible',
+                placeholder: true,
+                placeholderValue: '',
                 searchPlaceholderValue: "Rechercher...",
-                removeItemButton: true, // Adds a small 'x' button
-                allowHTML: false
+                removeItemButton: true,
             };
 
-            // Initialize Choices for Mutuelle if list is not empty (FIXED logic)
             if (DOM.mutuelleField) {
                 if (mutuellesList.length > 0) {
                     choicesMutuelleInstance = new Choices(DOM.mutuelleField, choicesOptions);
-                    // Initial state set by handleMutuelleChange
                 } else {
-                    // List is empty, keep select disabled. Placeholder text is set by populateDropdown.
                     DOM.mutuelleField.disabled = true;
                     console.log("Mutuelle list is empty, select disabled.");
                 }
             }
 
-            // Initialize Choices for Doctor if list is not empty (FIXED logic)
             if (DOM.doctorSelect) {
                  if (doctorsList.length > 0) {
                     choicesDoctorInstance = new Choices(DOM.doctorSelect, choicesOptions);
-                    DOM.doctorSelect.disabled = false; // Enable original select (important for Choices)
-                    choicesDoctorInstance.enable();   // Enable Choices instance
+                    DOM.doctorSelect.disabled = false;
+                    choicesDoctorInstance.enable();
                 } else {
-                    // List is empty, keep select disabled.
                     DOM.doctorSelect.disabled = true;
                     console.log("Doctor list is empty, select disabled.");
                 }
             }
 
-             // Set initial state for Mutuelle based on checkbox AFTER potential initialization
-             handleMutuelleChange();
+             handleMutuelleChange(); // Set initial state AFTER potential init
 
             console.log("Choices.js initialized.");
 
 
         } catch (error) {
-            // Catch errors during population or Choices initialization
             console.error("Failed to populate dropdowns or initialize Choices:", error);
             showToast("Erreur initialisation des listes.", "error");
-             // Fallback: ensure selects show an error state if init failed badly
              if (DOM.mutuelleField && !choicesMutuelleInstance) {
                  DOM.mutuelleField.innerHTML = '<option value="">Erreur Init</option>';
                  DOM.mutuelleField.disabled = true;
@@ -490,7 +443,6 @@
           const qrCodeData = generateQrData(currentIPP);
           let displayDate = "N/A";
           if (currentPatientInfo.date_naissance) { const dateParts = currentPatientInfo.date_naissance.split('-'); if (dateParts.length === 3) { displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; } else { displayDate = sanitizeInput(currentPatientInfo.date_naissance); } }
-          // Simplified result display generation
           const infoHtml = Object.entries({
               Nom: currentPatientInfo.nom, Prénom: currentPatientInfo.prenom, CIN: currentPatientInfo.cin,
               Téléphone: currentPatientInfo.telephone, Adresse: currentPatientInfo.adresse, Ville: currentPatientInfo.ville,
@@ -534,7 +486,6 @@
         date_naissance: birthDateToSend,
         sexe: DOM.createForm.sexe.value,
         mutuelle: DOM.hasInsuranceCheckbox.checked ? DOM.mutuelleField.value : null,
-        // Use doctor 'matricule' (value of the selected option) or null
         doctorId: DOM.doctorSelect.value || null,
       };
 
@@ -553,20 +504,20 @@
             DOM.createPrintButton.disabled = false;
             DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
 
-            DOM.createForm.reset(); // Reset standard inputs
+            DOM.createForm.reset();
 
-            // Manually reset Choices.js fields to their placeholder state
-            choicesMutuelleInstance?.setValue(''); // Use setValue('') to select the placeholder
-            choicesDoctorInstance?.setValue('');
+            // FIXED: Use setValue([]) for reset
+            choicesMutuelleInstance?.setValue([]);
+            choicesDoctorInstance?.setValue([]);
 
-            // Reset Mutuelle state (disable Choices instance, clear errors)
             handleMutuelleChange();
 
           } else {
             showMessage('createResult', `Patient créé (IPP: ${currentIPP}), mais erreur QR Code.`, 'warning');
             DOM.createForm.reset();
-            choicesMutuelleInstance?.setValue('');
-            choicesDoctorInstance?.setValue('');
+             // FIXED: Use setValue([]) for reset
+            choicesMutuelleInstance?.setValue([]);
+            choicesDoctorInstance?.setValue([]);
             handleMutuelleChange();
           }
         } else {
@@ -586,19 +537,15 @@
         if (!DOM.hasInsuranceCheckbox || !DOM.mutuelleField ) return;
 
         const isChecked = DOM.hasInsuranceCheckbox.checked;
-
-        // Update required attribute on the original select
         DOM.mutuelleField.required = isChecked;
 
         if(choicesMutuelleInstance) {
-            // Enable/disable the Choices instance
             if (isChecked) {
                 choicesMutuelleInstance.enable();
             } else {
                 choicesMutuelleInstance.disable();
-                choicesMutuelleInstance.setValue(''); // Clear selection when disabled
+                choicesMutuelleInstance.setValue([]); // <-- FIXED: Use empty array
 
-                // Also clear potential validation errors visually from the Choices element
                 const mutuelleGroup = DOM.mutuelleField.closest('.input-group');
                 const choicesElement = mutuelleGroup?.querySelector('.choices');
                 if(mutuelleGroup) mutuelleGroup.classList.remove('has-error');
@@ -607,11 +554,9 @@
                 if(errorDiv) errorDiv.textContent = '';
             }
         } else {
-             // Fallback if Choices didn't initialize (e.g., list was empty)
              DOM.mutuelleField.disabled = !isChecked;
              if (!isChecked) {
-                DOM.mutuelleField.value = ''; // Clear value
-                // Clear errors for the group/original select
+                DOM.mutuelleField.value = '';
                 const mutuelleGroup = DOM.mutuelleField.closest('.input-group');
                 if(mutuelleGroup) mutuelleGroup.classList.remove('has-error');
                 DOM.mutuelleField.classList.remove('input-error');
