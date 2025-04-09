@@ -382,41 +382,53 @@
       handleMutuelleChange();
     }
 
-    // Populate doctors
-    async function populateMedecinReferent() {
-      try {
-        const res  = await fetchWithAuth(DOCTORS_ENDPOINT);
-        const data = await res.json();
-        if (data.success && Array.isArray(data.doctors)) {
-          doctorsList = data.doctors;
-          const dl = document.getElementById('doctors');
-          dl.innerHTML = '';
-          data.doctors.forEach(d => {
-            const o = document.createElement('option');
-            o.value = `${d.nom} ${d.prenom} - ${d.specialite}`;
-            dl.appendChild(o);
-          });
-        }
-      } catch(e){ console.error(e) }
-    }
+// Populate doctors
+async function populateMedecinReferent() {
+  try {
+    const res = await fetchWithAuth(DOCTORS_ENDPOINT);
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    const text = await res.text();
+    if (!text) throw new Error('Empty response body');
+    const data = JSON.parse(text);
 
-    // Populate mutuelles
-    async function populateMutuelles() {
-      try {
-        const res  = await fetchWithAuth(MUTUELLES_ENDPOINT);
-        const data = await res.json();
-        if (data.success && Array.isArray(data.mutuelles)) {
-          mutuellesList = data.mutuelles;
-          const dl = document.getElementById('mutuelles');
-          dl.innerHTML = '';
-          data.mutuelles.forEach(m => {
-            const o = document.createElement('option');
-            o.value = m;
-            dl.appendChild(o);
-          });
-        }
-      } catch(e){ console.error(e) }
+    if (data.success && Array.isArray(data.doctors)) {
+      doctorsList = data.doctors;
+      const dl = document.getElementById('doctors');
+      dl.innerHTML = '';
+      data.doctors.forEach(d => {
+        const o = document.createElement('option');
+        o.value = `${d.nom} ${d.prenom} - ${d.specialite}`;
+        dl.appendChild(o);
+      });
     }
+  } catch (e) {
+    console.error('Error fetching doctors:', e.message);
+  }
+}
+
+// Populate mutuelles
+async function populateMutuelles() {
+  try {
+    const res = await fetchWithAuth(MUTUELLES_ENDPOINT);
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    const text = await res.text();
+    if (!text) throw new Error('Empty response body');
+    const data = JSON.parse(text);
+
+    if (data.success && Array.isArray(data.mutuelles)) {
+      mutuellesList = data.mutuelles;
+      const dl = document.getElementById('mutuelles');
+      dl.innerHTML = '';
+      data.mutuelles.forEach(m => {
+        const o = document.createElement('option');
+        o.value = m;
+        dl.appendChild(o);
+      });
+    }
+  } catch (e) {
+    console.error('Error fetching mutuelles:', e.message);
+  }
+}
 
     // Toggle mutuelle field
     function handleMutuelleChange() {
