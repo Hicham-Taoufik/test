@@ -47,12 +47,12 @@
           <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div>
         </header>
         <div class="card-body">
-          <!-- ID Capture Section (unchanged) -->
+          <!-- ID Capture Section -->
           <div class="id-capture-section mb-4 no-print">
             <button id="captureIdButton" type="button" class="btn btn-primary">
               <i class="fas fa-camera"></i> Scanner CIN
             </button>
-            <div id="idCaptureContainer">
+            <div id="idCaptureContainer" style="display:none;">
               <p id="captureInstruction">Positionnez le RECTO de la CIN et prenez la photo.</p>
               <video id="idVideo" playsinline></video>
               <canvas id="idCanvas" style="display:none;"></canvas>
@@ -120,6 +120,7 @@
               <div class="input-group">
                 <label for="sexe">Sexe <span aria-hidden="true">*</span></label>
                 <select id="sexe" name="sexe" required autocomplete="sex">
+                  <option value="">-- Sélectionnez --</option>
                   <option value="M">Homme</option>
                   <option value="F">Femme</option>
                 </select>
@@ -181,7 +182,6 @@
         </div>
       </section>
 
-      <!-- Search patient section (unchanged) -->
       <section class="card" aria-labelledby="search-patient-heading">
         <header class="card-header">
           <h2 id="search-patient-heading" class="card-title">
@@ -206,7 +206,7 @@
 
   <script>
   (function() {
-    // Config
+    // Configuration
     const CONFIG = {
       API_BASE_URL: 'https://workflows.aphelionxinnovations.com',
       QR_TARGET_BASE_URL: 'app://medilink/patient',
@@ -222,40 +222,49 @@
     // State
     let doctorsList   = [];
     let mutuellesList = [];
+    let sessionTimeoutId = null;
+    let idCaptureStream  = null;
+    let frontImageBlob   = null;
+    let backImageBlob    = null;
+    let isCapturingFront = true;
 
     // DOM refs
     const DOM = {
       body: document.body,
       createForm: document.getElementById('createForm'),
-      hasInsurance: document.getElementById('has_insurance'),
-      mutuelle: document.getElementById('mutuelle'),
-      captureIdButton: document.getElementById('captureIdButton'),
-      takePhotoButton: document.getElementById('takePhotoButton'),
-      cancelCaptureButton: document.getElementById('cancelCaptureButton'),
-      searchBtn: document.getElementById('searchBtn'),
-      getCin: document.getElementById('getCin'),
-      toast: document.getElementById('toast'),
-      createPatientBtn: document.getElementById('createPatientBtn'),
-      createResult: document.getElementById('createResult'),
-      message: document.getElementById('message'),
-      idCaptureContainer: document.getElementById('idCaptureContainer'),
-      idVideo: document.getElementById('idVideo'),
-      idCanvas: document.getElementById('idCanvas'),
-      frontPreview: document.getElementById('frontPreview'),
-      backPreview: document.getElementById('backPreview'),
-      captureInstruction: document.getElementById('captureInstruction'),
-      resultDiv: document.getElementById('getResult'),
-      adresse: document.getElementById('adresse'),
-      ville: document.getElementById('ville'),
-      dateNaissance: document.getElementById('date_naissance'),
-      sexe: document.getElementById('sexe'),
       nom: document.getElementById('nom'),
       prenom: document.getElementById('prenom'),
       cin: document.getElementById('cin'),
       telephone: document.getElementById('telephone'),
+      adresse: document.getElementById('adresse'),
+      ville: document.getElementById('ville'),
+      dateNaissance: document.getElementById('date_naissance'),
+      sexe: document.getElementById('sexe'),
+      hasInsurance: document.getElementById('has_insurance'),
+      mutuelle: document.getElementById('mutuelle'),
+      medecinReferent: document.getElementById('medecin_referent'),
+      captureIdButton: document.getElementById('captureIdButton'),
+      idCaptureContainer: document.getElementById('idCaptureContainer'),
+      idVideo: document.getElementById('idVideo'),
+      idCanvas: document.getElementById('idCanvas'),
+      takePhotoButton: document.getElementById('takePhotoButton'),
+      cancelCaptureButton: document.getElementById('cancelCaptureButton'),
+      frontPreview: document.getElementById('frontPreview'),
+      backPreview: document.getElementById('backPreview'),
+      captureInstruction: document.getElementById('captureInstruction'),
+      captureMessage: document.getElementById('captureMessage'),
+      createPatientBtn: document.getElementById('createPatientBtn'),
+      createResult: document.getElementById('createResult'),
+      createQrCodeImage: document.getElementById('createQrCodeImage'),
+      createPrintButton: document.getElementById('createPrintButton'),
+      message: document.getElementById('message'),
+      searchBtn: document.getElementById('searchBtn'),
+      getCin: document.getElementById('getCin'),
+      resultDiv: document.getElementById('getResult'),
+      toast: document.getElementById('toast')
     };
 
-    // Utility
+    // Utility: show toast
     function showToast(msg, type='success') {
       if (!msg) return;
       const icons = {
@@ -267,29 +276,76 @@
       setTimeout(()=>DOM.toast.classList.remove('show'), CONFIG.TOAST_DISPLAY_TIME);
     }
 
+    // Utility: showMessage for arbitrary element
+    function showMessage(id, message, type) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const icons = {
+        info:    'fas fa-info-circle',
+        success: 'fas fa-check-circle',
+        warning: 'fas fa-exclamation-triangle',
+        error:   'fas fa-times-circle',
+        loading: 'fas fa-spinner fa-spin'
+      };
+      const icon = message && type!=='result'
+        ? `<i class="${icons[type]||icons.info} me-2" aria-hidden="true"></i>`
+        : '';
+      el.innerHTML = message ? `${icon}${message}` : '';
+      el.style.display = message ? 'block' : 'none';
+      el.className = type==='result' ? '' : `message message-${type}`;
+    }
+
+    // Sanitize
+    function sanitize(input) {
+      const tmp = document.createElement('div');
+      tmp.textContent = input || '';
+      return tmp.innerHTML;
+    }
+
+    // fetchWithAuth
     function fetchWithAuth(url, opts={}) {
       const token = localStorage.getItem(CONFIG.TOKEN_KEY);
-      if (!token) { alert('Session expirée'); window.location=CONFIG.LOGIN_PAGE_URL; return; }
+      if (!token) {
+        alert('Session expirée');
+        window.location = CONFIG.LOGIN_PAGE_URL;
+        return Promise.reject(new Error('No token'));
+      }
+      resetSessionTimeout();
       opts.headers = {...opts.headers, 'Authorization': `Bearer ${token}`};
-      if (opts.body && !(opts.body instanceof FormData)) opts.headers['Content-Type']='application/json';
+      if (opts.body && !(opts.body instanceof FormData)) {
+        opts.headers['Content-Type'] = 'application/json';
+      }
       return fetch(url, opts).then(r=>{
         if ([401,403].includes(r.status)) {
           localStorage.removeItem(CONFIG.TOKEN_KEY);
-          alert('Session invalide'); window.location=CONFIG.LOGIN_PAGE_URL;
+          alert('Session invalide');
+          window.location = CONFIG.LOGIN_PAGE_URL;
           throw new Error('Auth failed');
         }
-        if (!r.ok) return r.text().then(t=>{throw new Error(t||r.statusText)});
+        if (!r.ok) {
+          return r.text().then(t=>{
+            throw new Error(t||r.statusText);
+          });
+        }
         return r;
       });
     }
 
+    // resetSessionTimeout
+    function resetSessionTimeout() {
+      if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
+      sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT);
+    }
+
+    // Validation
     function validateField(input, test, msg) {
       const v = input.value.trim();
-      const ok = test(v);
       const grp = input.closest('.input-group');
+      const ok = test(v);
       grp.classList.toggle('has-error', !ok);
       input.classList.toggle('input-error', !ok);
-      grp.querySelector('.error-text').textContent = ok ? '' : msg;
+      const err = grp.querySelector('.error-text');
+      if (err) err.textContent = ok ? '' : msg;
       return ok;
     }
 
@@ -297,23 +353,24 @@
       DOM.createForm.querySelectorAll('.input-group').forEach(g=>{
         g.classList.remove('has-error');
         g.querySelectorAll('input,textarea,select').forEach(i=>i.classList.remove('input-error'));
-        g.querySelector('.error-text').textContent='';
+        const err = g.querySelector('.error-text');
+        if (err) err.textContent = '';
       });
     }
 
     function validateForm() {
       clearErrors();
       let ok = true;
-      ok &= validateField(DOM.nom,           v=>v.length,                 "Nom requis");
-      ok &= validateField(DOM.prenom,        v=>v.length,                 "Prénom requis");
-      ok &= validateField(DOM.cin,           v=>/^[A-Za-z]{1,2}\d{5,6}$/.test(v), "Format CIN invalide");
-      ok &= validateField(DOM.telephone,     v=>/^0[5-7]\d{8}$/.test(v),   "Format téléphone invalide");
-      ok &= validateField(DOM.adresse,       v=>v.length,                 "Adresse requise");
-      ok &= validateField(DOM.ville,         v=>v.length,                 "Ville requise");
-      ok &= validateField(DOM.dateNaissance, v=>v,                        "Date requise");
-      ok &= validateField(DOM.sexe,          v=>v,                        "Sexe requis");
+      ok &= validateField(DOM.nom,           v=>v.length,                   'Nom requis');
+      ok &= validateField(DOM.prenom,        v=>v.length,                   'Prénom requis');
+      ok &= validateField(DOM.cin,           v=>/^[A-Za-z]{1,2}\d{5,6}$/.test(v), 'Format CIN invalide');
+      ok &= validateField(DOM.telephone,     v=>/^0[5-7]\d{8}$/.test(v),     'Format téléphone invalide');
+      ok &= validateField(DOM.adresse,       v=>v.length,                   'Adresse requise');
+      ok &= validateField(DOM.ville,         v=>v.length,                   'Ville requise');
+      ok &= validateField(DOM.dateNaissance, v=>v,                          'Date de naissance requise');
+      ok &= validateField(DOM.sexe,          v=>v,                          'Sélection du sexe requise');
       if (DOM.hasInsurance.checked) {
-        ok &= validateField(DOM.mutuelle, v=>mutuellesList.includes(v), "Mutuelle invalide");
+        ok &= validateField(DOM.mutuelle, v=>mutuellesList.includes(v), 'Veuillez sélectionner une mutuelle valide');
       }
       if (!ok) showToast('Veuillez corriger les erreurs','error');
       return !!ok;
@@ -325,10 +382,10 @@
       handleMutuelleChange();
     }
 
-    // Populate doctors datalist
+    // Populate doctors
     async function populateMedecinReferent() {
       try {
-        const res = await fetchWithAuth(DOCTORS_ENDPOINT);
+        const res  = await fetchWithAuth(DOCTORS_ENDPOINT);
         const data = await res.json();
         if (data.success && Array.isArray(data.doctors)) {
           doctorsList = data.doctors;
@@ -343,10 +400,10 @@
       } catch(e){ console.error(e) }
     }
 
-    // Populate mutuelles datalist
+    // Populate mutuelles
     async function populateMutuelles() {
       try {
-        const res = await fetchWithAuth(MUTUELLES_ENDPOINT);
+        const res  = await fetchWithAuth(MUTUELLES_ENDPOINT);
         const data = await res.json();
         if (data.success && Array.isArray(data.mutuelles)) {
           mutuellesList = data.mutuelles;
@@ -361,6 +418,7 @@
       } catch(e){ console.error(e) }
     }
 
+    // Toggle mutuelle field
     function handleMutuelleChange() {
       const en = DOM.hasInsurance.checked;
       DOM.mutuelle.disabled = !en;
@@ -368,12 +426,10 @@
       if (!en) DOM.mutuelle.value = '';
     }
 
-    // QR generation
+    // QR Code helpers
     function generateQrData(ipp) {
       const url = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
-      return {
-        qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`
-      };
+      return { qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}` };
     }
     function printQRCode(imgUrl) {
       const w = window.open('','_blank','width=400,height=450');
@@ -381,85 +437,154 @@
       w.document.close();
     }
 
-    // Create patient handler
-    async function handleCreatePatient(e) {
-      e.preventDefault();
-      if (!validateForm()) return;
-      showToast('Création en cours…','success');
-      DOM.createPatientBtn.disabled = true;
-      // extract referent matricule
-      const mrInput = document.getElementById('medecin_referent').value.trim();
-      let medecin_referent = '';
-      if (mrInput) {
-        const sel = doctorsList.find(d=>`${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase()===mrInput.toLowerCase());
-        if (sel) medecin_referent = sel.matricule;
+    // ID Capture
+    async function startIdCapture() {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        showMessage('captureMessage','Caméra non supportée','error');
+        return;
       }
-      // mutuelle
-      const mut = DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null;
-      const payload = {
-        nom: DOM.nom.value.trim(),
-        prenom: DOM.prenom.value.trim(),
-        cin: DOM.cin.value.trim(),
-        telephone: DOM.telephone.value.trim(),
-        adresse: DOM.adresse.value.trim(),
-        ville: DOM.ville.value.trim(),
-        date_naissance: DOM.dateNaissance.value,
-        sexe: DOM.sexe.value,
-        mutuelle: mut,
-        medecin_referent
-      };
+      showMessage('captureMessage','Demande caméra...','loading');
+      DOM.captureIdButton.disabled = true;
+      DOM.idCaptureContainer.style.display = 'block';
+      DOM.frontPreview.style.display = 'none';
+      DOM.backPreview.style.display = 'none';
+      isCapturingFront = true;
+      DOM.captureInstruction.textContent = 'Positionnez le RECTO et prenez la photo.';
       try {
-        const res = await fetchWithAuth(CONFIG.API_BASE_URL + '/webhook/create-patient',{
-          method:'POST',
-          body: JSON.stringify(payload)
+        idCaptureStream = await navigator.mediaDevices.getUserMedia({
+          video:{ facingMode:'environment', width:{ideal:1280}, height:{ideal:720} }
         });
-        const data = await res.json();
-        if (data?.data?.ipp) {
-          const qr = generateQrData(data.data.ipp);
-          document.getElementById('createQrCodeImage').src = qr.qrImageUrl;
-          document.getElementById('createPrintButton').disabled = false;
-          document.getElementById('createPrintButton').onclick = ()=>printQRCode(qr.qrImageUrl);
-          showToast('Patient créé !','success');
-          resetForm();
-        } else {
-          throw new Error(data.message||'Erreur inconnue');
-        }
+        DOM.idVideo.srcObject = idCaptureStream;
+        await DOM.idVideo.play();
+        showMessage('captureMessage','Caméra prête. Prenez la photo du RECTO.','info');
+        DOM.takePhotoButton.disabled = false;
+        DOM.cancelCaptureButton.disabled = false;
       } catch(err){
-        showToast(`Erreur: ${err.message}`,'error');
-      } finally {
-        DOM.createPatientBtn.disabled = false;
+        showMessage('captureMessage',`Erreur caméra: ${err.message}`,'error');
+        stopIdCapture();
       }
     }
 
-    // Search patient handler (unchanged)
+    function stopIdCapture(clearBlobs=true) {
+      idCaptureStream?.getTracks().forEach(t=>t.stop());
+      DOM.idVideo.srcObject = null;
+      DOM.idCaptureContainer.style.display = 'none';
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      DOM.captureIdButton.disabled = false;
+      showMessage('captureMessage','','info');
+      if (clearBlobs) {
+        frontImageBlob = backImageBlob = null;
+        DOM.frontPreview.src = '';
+        DOM.backPreview.src = '';
+        DOM.frontPreview.style.display = 'none';
+        DOM.backPreview.style.display = 'none';
+      }
+    }
+
+    function takePhotoAndExtract() {
+      if (!idCaptureStream || DOM.idVideo.readyState<2) {
+        showMessage('captureMessage','Caméra non prête','warning');
+        return;
+      }
+      showMessage('captureMessage','Capture et analyse...','loading');
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      const canvas = DOM.idCanvas;
+      canvas.width  = DOM.idVideo.videoWidth;
+      canvas.height = DOM.idVideo.videoHeight;
+      canvas.getContext('2d').drawImage(DOM.idVideo,0,0,canvas.width,canvas.height);
+      canvas.toBlob(async blob=>{
+        if (!blob) {
+          showMessage('captureMessage','Erreur capture image','error');
+          stopIdCapture();
+          return;
+        }
+        if (isCapturingFront) {
+          frontImageBlob = blob;
+          DOM.frontPreview.src = URL.createObjectURL(blob);
+          DOM.frontPreview.style.display = 'inline-block';
+          isCapturingFront = false;
+          showMessage('captureMessage','Recto OK. Prenez le verso.','info');
+          DOM.captureInstruction.textContent = 'Positionnez le VERSO et prenez la photo.';
+          DOM.takePhotoButton.disabled = false;
+          DOM.cancelCaptureButton.disabled = false;
+        } else {
+          backImageBlob = blob;
+          DOM.backPreview.src = URL.createObjectURL(blob);
+          DOM.backPreview.style.display = 'inline-block';
+          stopIdCapture(false);
+          showMessage('captureMessage','Verso OK. Analyse en cours...','loading');
+          if (frontImageBlob && backImageBlob) {
+            const formData = new FormData();
+            formData.append('id_image_front', frontImageBlob, 'front.jpg');
+            formData.append('id_image_back',  backImageBlob,  'back.jpg');
+            try {
+              const res = await fetchWithAuth(CONFIG.API_BASE_URL+'/webhook/extract-id-info',{
+                method:'POST', body: formData
+              });
+              const data = await res.json();
+              if (data?.data) {
+                autofillCreateForm(data.data);
+                showToast('Formulaire pré-rempli!','success');
+              } else {
+                throw new Error(data.message||'Aucune donnée extraite');
+              }
+            } catch(err){
+              showMessage('captureMessage',`Erreur extraction: ${err.message}`,'error');
+            } finally {
+              frontImageBlob = backImageBlob = null;
+            }
+          }
+        }
+      },'image/jpeg',0.9);
+    }
+
+    function autofillCreateForm(extracted) {
+      const d = extracted;
+      if (d.date_of_birth) {
+        const [j,m,a]=d.date_of_birth.split('/');
+        DOM.dateNaissance.value = `${a}-${m.padStart(2,'0')}-${j.padStart(2,'0')}`;
+      }
+      DOM.nom.value  = d.last_name || '';
+      DOM.prenom.value = d.first_name || '';
+      DOM.cin.value = d.id_number || '';
+      DOM.adresse.value = d.address || '';
+      DOM.ville.value   = d.city || '';
+      DOM.sexe.value    = d.gender==='F'?'F':'M';
+      clearErrors();
+      showMessage('message','Formulaire pré-rempli automatiquement.','info');
+    }
+
+    // Search patient
     async function handlePatientSearch() {
       const cin = DOM.getCin.value.trim();
       if (!cin) { showToast('Entrez un CIN','error'); return; }
-      showToast('Recherche…','success');
+      showToast('Recherche en cours...','success');
       try {
-        const res = await fetchWithAuth(CONFIG.API_BASE_URL + '/webhook/get-patient?cin='+encodeURIComponent(cin));
+        const res = await fetchWithAuth(CONFIG.API_BASE_URL+`/webhook/get-patient?cin=${encodeURIComponent(cin)}`);
         const data = await res.json();
         if (data?.data) {
           const p = data.data;
-          let displayDate='N/A';
+          let dn='N/A';
           if (p.date_naissance) {
             const [y,m,d]=p.date_naissance.split('-');
-            displayDate = `${d}/${m}/${y}`;
+            dn = `${d}/${m}/${y}`;
           }
           const qr = generateQrData(p.ipp);
           DOM.resultDiv.innerHTML = `
             <div class="patient-result-container">
               <div class="patient-result-info">
-                <div><strong>Nom:</strong> ${p.nom}</div>
-                <div><strong>Prénom:</strong> ${p.prenom}</div>
-                <div><strong>CIN:</strong> ${p.cin||'N/A'}</div>
-                <div><strong>Téléphone:</strong> ${p.telephone||'N/A'}</div>
-                <div><strong>Adresse:</strong> ${p.adresse||'N/A'}</div>
-                <div><strong>Ville:</strong> ${p.ville||'N/A'}</div>
-                <div><strong>Naissance:</strong> ${displayDate}</div>
+                <div><strong>Nom:</strong> ${sanitize(p.nom)}</div>
+                <div><strong>Prénom:</strong> ${sanitize(p.prenom)}</div>
+                <div><strong>CIN:</strong> ${sanitize(p.cin||'')}</div>
+                <div><strong>Téléphone:</strong> ${sanitize(p.telephone||'')}</div>
+                <div><strong>Adresse:</strong> ${sanitize(p.adresse||'')}</div>
+                <div><strong>Ville:</strong> ${sanitize(p.ville||'')}</div>
+                <div><strong>Naissance:</strong> ${dn}</div>
                 <div><strong>Sexe:</strong> ${p.sexe==='M'?'Homme':'Femme'}</div>
-                <div><strong>Mutuelle:</strong> ${p.mutuelle||'N/A'}</div>
-                <div><strong>IPP:</strong> ${p.ipp}</div>
+                <div><strong>Mutuelle:</strong> ${sanitize(p.mutuelle||'')}</div>
+                <div><strong>IPP:</strong> ${sanitize(p.ipp)}</div>
               </div>
               <div class="patient-result-qr">
                 <img src="${qr.qrImageUrl}" alt="QR Code Patient">
@@ -476,18 +601,83 @@
       }
     }
 
-    // Session & event wiring
-    function logout(){ localStorage.removeItem(CONFIG.TOKEN_KEY); window.location=CONFIG.LOGIN_PAGE_URL; }
+    // Create patient
+    async function handleCreatePatient(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+      showToast('Création patient en cours...','success');
+      DOM.createPatientBtn.disabled = true;
+
+      // extract medecin_referent matricule
+      const mrText = DOM.medecinReferent.value.trim();
+      let medecin_referent = '';
+      if (mrText) {
+        const sel = doctorsList.find(d => 
+          `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === mrText.toLowerCase()
+        );
+        if (sel) medecin_referent = sel.matricule;
+      }
+      const mut = DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null;
+
+      const payload = {
+        nom: DOM.nom.value.trim(),
+        prenom: DOM.prenom.value.trim(),
+        cin: DOM.cin.value.trim(),
+        telephone: DOM.telephone.value.trim(),
+        adresse: DOM.adresse.value.trim(),
+        ville: DOM.ville.value.trim(),
+        date_naissance: DOM.dateNaissance.value,
+        sexe: DOM.sexe.value,
+        mutuelle: mut,
+        medecin_referent
+      };
+
+      try {
+        const res = await fetchWithAuth(CONFIG.API_BASE_URL + '/webhook/create-patient', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data?.data?.ipp) {
+          const qr = generateQrData(data.data.ipp);
+          DOM.createQrCodeImage.src = qr.qrImageUrl;
+          DOM.createPrintButton.disabled = false;
+          DOM.createPrintButton.onclick = () => printQRCode(qr.qrImageUrl);
+          showToast('Patient créé avec succès !','success');
+          resetForm();
+        } else {
+          throw new Error(data.message||'Erreur création');
+        }
+      } catch(err) {
+        showToast(`Erreur: ${err.message}`,'error');
+      } finally {
+        DOM.createPatientBtn.disabled = false;
+      }
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem(CONFIG.TOKEN_KEY);
+      window.location = CONFIG.LOGIN_PAGE_URL;
+    }
+
+    // Init on load
     window.onload = () => {
       if (!localStorage.getItem(CONFIG.TOKEN_KEY)) return logout();
+      resetSessionTimeout();
       populateMedecinReferent();
       populateMutuelles();
       handleMutuelleChange();
       DOM.hasInsurance.addEventListener('change', handleMutuelleChange);
       DOM.createForm.addEventListener('submit', handleCreatePatient);
       DOM.searchBtn.addEventListener('click', handlePatientSearch);
-      DOM.getCin.addEventListener('keypress', e=>{ if(e.key==='Enter') handlePatientSearch(); });
-      // plus your ID capture wiring…
+      DOM.getCin.addEventListener('keypress', e => { if (e.key==='Enter') handlePatientSearch(); });
+      DOM.captureIdButton.addEventListener('click', startIdCapture);
+      DOM.takePhotoButton.addEventListener('click', takePhotoAndExtract);
+      DOM.cancelCaptureButton.addEventListener('click', () => stopIdCapture(true));
+      ['mousemove','keypress','click','scroll'].forEach(evt =>
+        document.addEventListener(evt, resetSessionTimeout, { passive: true })
+      );
     };
   })();
   </script>
