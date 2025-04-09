@@ -85,7 +85,8 @@
               </div>
               <div class="input-group">
                 <label for="adresse">Adresse <span aria-hidden="true">*</span></label>
-                <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required autocomplete="address-line1">
+                <!-- Converted to a textarea for a larger input area -->
+                <textarea id="adresse" name="adresse" placeholder="Adresse complète" required autocomplete="address-line1" rows="3"></textarea>
                 <div class="error-text">Veuillez entrer une adresse</div>
               </div>
               <div class="input-group">
@@ -121,7 +122,7 @@
                 <label for="medecin_referent">Médecin référent</label>
                 <input type="text" list="doctors" id="medecin_referent" name="medecin_referent" placeholder="Rechercher un médecin" autocomplete="off">
                 <datalist id="doctors">
-                  <!-- Options will be populated dynamically -->
+                  <!-- Options will be populated dynamically (format: "Nom Prenom - Spécialité") -->
                 </datalist>
                 <div class="error-text">Veuillez sélectionner un médecin</div>
               </div>
@@ -180,6 +181,9 @@
       };
       // Define the doctors endpoint from n8n
       const DOCTORS_ENDPOINT = 'https://workflows.aphelionxinnovations.com/webhook/get-doctors';
+      
+      // Global array to store doctors data for lookup.
+      let doctorsList = [];
 
       // Cache DOM elements
       const DOM = {
@@ -261,7 +265,7 @@
       const clearFormErrors = () => {
         DOM.createForm.querySelectorAll('.input-group').forEach(group => {
           group.classList.remove('has-error');
-          group.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
+          group.querySelectorAll('input, select, textarea').forEach(el => el.classList.remove('input-error'));
           group.querySelector('.error-text') && (group.querySelector('.error-text').textContent = '');
         });
       };
@@ -342,12 +346,14 @@
           const res = await fetchWithAuth(DOCTORS_ENDPOINT);
           const data = await res.json();
           if (data.success && Array.isArray(data.doctors)) {
+            // Store full doctors data globally for lookup later.
+            doctorsList = data.doctors;
             const datalist = document.getElementById('doctors');
             datalist.innerHTML = ''; // Clear any existing options.
             data.doctors.forEach(doctor => {
               const option = document.createElement('option');
-              // Format: "MATRICULE - Nom Prenom - Spécialité"
-              option.value = `${doctor.matricule} - ${doctor.nom} ${doctor.prenom} - ${doctor.specialite}`;
+              // Only display "Nom Prenom - Spécialité" (without the matricule)
+              option.value = `${doctor.nom} ${doctor.prenom} - ${doctor.specialite}`;
               datalist.appendChild(option);
             });
           } else {
@@ -579,10 +585,19 @@
         showMessage('message', '<span class="loading-spinner"></span> Création patient...', 'loading');
         DOM.createPatientBtn.disabled = true;
         DOM.createResult.style.display = 'none';
-        // Retrieve the input value from the searchable medecin référent field.
+        // Retrieve the value from the searchable médecin référent field.
         let medecinReferentInput = document.getElementById('medecin_referent').value.trim();
-        // If not empty, assume the value is formatted as "MATRICULE - Nom Prenom - Spécialité"
-        let medecin_referent = medecinReferentInput !== "" ? medecinReferentInput.split(" - ")[0] : "";
+        let medecin_referent = "";
+        if(medecinReferentInput !== "") {
+          // Look up the selected doctor in the global doctorsList.
+          const selectedDoctor = doctorsList.find(doc => {
+            const text = `${doc.nom} ${doc.prenom} - ${doc.specialite}`;
+            return text.toLowerCase() === medecinReferentInput.toLowerCase();
+          });
+          if(selectedDoctor) {
+            medecin_referent = selectedDoctor.matricule;
+          }
+        }
         const payload = {
           nom: DOM.createForm.nom.value.trim(),
           prenom: DOM.createForm.prenom.value.trim(),
