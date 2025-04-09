@@ -62,12 +62,8 @@
     .message-warning { background: var(--warning-light); color: var(--warning); border-left: 4px solid var(--warning); }
     .message-error { background: var(--danger-light); color: var(--danger); border-left: 4px solid var(--danger); }
     .message-info { background: var(--primary-light); color: var(--primary-dark); border-left: 4px solid var(--primary);}
-    #getResult { margin-top: 1.25rem; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; } /* Adjusted result container styling */
-    .patient-result-container { background-color: var(--gray-100); padding: 1.25rem; border-radius: var(--border-radius); border-left: 4px solid var(--primary); animation: slideIn 0.3s ease-out; margin-bottom: 1rem; } /* Added margin-bottom */
-    /* Specific styling for messages within result containers */
-    .patient-result-container.message { background-color: transparent; border-left-width: 4px; padding: 1rem; margin-bottom: 1rem; }
-    .patient-result-container.message-warning { border-left-color: var(--warning); background-color: var(--warning-light); color: var(--warning); }
-    .patient-result-container.message-error { border-left-color: var(--danger); background-color: var(--danger-light); color: var(--danger); }
+    #getResult { margin-top: 1.25rem; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; }
+    .patient-result-container { background-color: var(--gray-100); padding: 1.25rem; border-radius: var(--border-radius); border-left: 4px solid var(--primary); animation: slideIn 0.3s ease-out; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .patient-result-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem 1rem; margin-bottom: 1rem; }
     .patient-result-info .info-group { margin-bottom: 0; }
@@ -77,18 +73,12 @@
     .patient-result-qr { text-align: center; margin-top: 1.25rem; }
     .patient-result-qr img { max-width: 180px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; transition: transform 0.3s ease; }
     .patient-result-qr img:hover { transform: scale(1.03); }
-    /* Specific styling for #createResult div */
-    #createResult { display: none; margin-top: 1.25rem; text-align: center; padding: 1rem; border-radius: var(--border-radius); border-left-width: 4px; border-left-style: solid; animation: fadeIn 0.3s ease; }
-    #createResult.message-success { background-color: var(--success-light); border-left-color: var(--success); }
-    #createResult.message-warning { background-color: var(--warning-light); border-left-color: var(--warning); }
-    #createResult p { margin-bottom: 1rem; font-weight: 500; }
-    #createResult.message-success p { color: var(--success-dark); }
-    #createResult.message-warning p { color: var(--warning); }
+    #createResult { display: none; margin-top: 1.25rem; text-align: center; background-color: var(--success-light); padding: 1rem; border-radius: var(--border-radius); border-left: 4px solid var(--success); animation: fadeIn 0.3s ease; }
+    #createResult p { color: var(--success-dark); font-weight: 500; margin-bottom: 1rem;}
     #createResult img { max-width: 160px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); padding: 5px; background: white; }
-    .loading-spinner { display: inline-block; width: 1em; height: 1em; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; margin-left: -2px; margin-right: 8px; vertical-align: middle; } /* Added vertical-align */
+    .loading-spinner { display: inline-block; width: 1em; height: 1em; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; margin-left: -2px; margin-right: 8px; }
     .btn .loading-spinner { border-top-color: white; }
     .btn-outline .loading-spinner { border-top-color: var(--primary); }
-    .message .loading-spinner { border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--gray-600); width: 0.9em; height: 0.9em; } /* Spinner for messages */
     @keyframes spin { to { transform: rotate(360deg); } }
     .toast { position: fixed; bottom: 20px; right: 20px; background: var(--gray-800); color: white; padding: 0.8rem 1.25rem; border-radius: var(--border-radius); box-shadow: var(--shadow-md); display: flex; align-items: center; z-index: 1000; transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1); }
     .toast.show { transform: translateY(0); opacity: 1; }
@@ -103,39 +93,15 @@
     #idVideo { display: block; width: 100%; max-width: 400px; height: auto; margin: 0 auto 1rem auto; border: 1px solid var(--gray-300); background-color: #000; }
     #idCaptureContainer .btn-group { justify-content: center; }
     .capture-preview { max-width: 150px; height: auto; margin: 0 5px; border: 1px solid var(--gray-400); border-radius: 4px; }
-    #captureMessage { margin-top: 1rem; grid-column: span 1; } /* Make capture message span full width */
-    .mb-4 { margin-bottom: 1.5rem !important; } /* Utility class */
-    .me-2 { margin-right: 0.5rem !important; } /* Utility class */
+    .capture-status { margin-top: 1rem; }
     @media (max-width: 768px) { .flex-row { flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .mutuelle-group, .form-submit-button, .message { grid-column: span 1; } .patient-result-info { grid-template-columns: 1fr; } .header { flex-direction: column; align-items: flex-start; gap: 15px; } .header-main-content { width: 100%; } .header-logout { width: 100%; margin-left: 0; } .logout-btn { width: 100%; justify-content: center; } .search-bar { flex-direction: column; } .search-bar .btn { width: 100%; } }
     @media (max-width: 480px) { .app-container { padding: 1rem; } .header-title { font-size: 1.2rem; } .card { padding: 1rem; } .btn { padding: 0.6rem 1rem; font-size: 0.8rem; } .patient-info { grid-template-columns: 1fr; } .btn-group { gap: 0.5rem; } }
-    /* Print specific styles */
-    @media print {
-      body { visibility: visible !important; background: #fff !important; } /* Ensure body is visible for print */
-      .no-print, .header, .search-bar, #createForm, #captureIdButton, #idCaptureContainer, .skip-link, .card-actions, .toast, #message, .logout-btn { display: none !important; }
-      .container { max-width: 100%; padding: 0; margin: 0; }
-      .flex-row { flex-direction: column; gap: 0; }
-      .flex-col { min-width: auto; width: 100%; }
-      .card { box-shadow: none; border: none; padding: 0; margin-bottom: 1cm; page-break-inside: avoid; }
-      .card-header { border-bottom: 1px solid #ccc; padding-bottom: 0.5cm; margin-bottom: 0.5cm; }
-      #getResult, #createResult { display: block !important; margin-top: 0; } /* Ensure results are shown */
-      .patient-result-container { border-left: none; padding: 0; background: transparent; }
-      .patient-result-qr img { max-width: 150px; margin-bottom: 5px; }
-      .patient-result-qr p { display: none; } /* Hide descriptive text in print */
-      .patient-result-qr button { display: none !important; } /* Hide print button in print view */
-      #createResult img { max-width: 150px; }
-      #createResult button { display: none !important; }
-      /* Optional: adjust font size for print */
-      /* body { font-size: 10pt; } */
-      /* .info-label { font-size: 8pt; } */
-      /* .info-value { font-size: 10pt; } */
-    }
-
   </style>
 </head>
 <body >
   <a href="#main-content" class="skip-link">Passer au contenu principal</a>
   <div class="container">
-    <div class="header no-print">
+    <div class="header">
       <div class="header-main-content">
         <div class="logo"> <img src="./clinique-nakhil-logo-horizontal.webp" alt="MediClinic Logo" class="logo-img"> </div>
         <h1 class="header-title">Réception</h1>
@@ -146,7 +112,7 @@
     <main id="main-content" class="flex-row">
       <div class="flex-col">
         <section class="card" aria-labelledby="create-patient-heading">
-          <div class="card-header"> <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient</h2> <div class="card-actions no-print" aria-hidden="true"><i class="fas fa-pen"></i></div> </div>
+          <div class="card-header"> <h2 id="create-patient-heading" class="card-title"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-pen"></i></div> </div>
           <div class="card-body">
 
             <!-- ID Capture Section -->
@@ -164,12 +130,12 @@
                      <button id="takePhotoButton" type="button" class="btn btn-success" disabled> <i class="fas fa-camera-retro"></i> Prendre Photo </button>
                      <button id="cancelCaptureButton" type="button" class="btn btn-secondary" disabled> Annuler </button>
                   </div>
-                  <div id="captureMessage" class="message mt-2"></div>
+                  <div id="captureMessage" class="message message-info mt-2"></div>
               </div>
             </div>
              <!-- END ID Capture Section -->
 
-            <form id="createForm" novalidate class="no-print">
+            <form id="createForm" novalidate>
               <div class="form-grid">
                 <div class="input-group"> <label for="nom">Nom <span aria-hidden="true">*</span></label> <input id="nom" name="nom" type="text" placeholder="Nom de famille" required aria-required="true" autocomplete="family-name"/> <div class="error-text">Veuillez entrer un nom</div> </div>
                 <div class="input-group"> <label for="prenom">Prénom <span aria-hidden="true">*</span></label> <input id="prenom" name="prenom" type="text" placeholder="Prénom" required aria-required="true" autocomplete="given-name"/> <div class="error-text">Veuillez entrer un prénom</div> </div>
@@ -177,431 +143,279 @@
                 <div class="input-group"> <label for="telephone">Téléphone <span aria-hidden="true">*</span></label> <input id="telephone" name="telephone" type="tel" placeholder="Ex: 0612345678" required aria-required="true" autocomplete="tel" pattern="^0[5-7]\d{8}$"/> <div class="error-text">Format téléphone invalide (0xxxxxxxx)</div> </div>
                 <div class="input-group"> <label for="adresse">Adresse <span aria-hidden="true">*</span></label> <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required aria-required="true" autocomplete="address-line1"/> <div class="error-text">Veuillez entrer une adresse</div> </div>
                 <div class="input-group"> <label for="ville">Ville <span aria-hidden="true">*</span></label> <input id="ville" name="ville" type="text" placeholder="Ville" required aria-required="true" autocomplete="address-level2"/> <div class="error-text">Veuillez entrer une ville</div> </div>
-                <div class="input-group"> <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label> <input id="date_naissance" name="date_naissance" type="date" required aria-required="true" autocomplete="bday" max="9999-12-31"/> <div class="error-text">Veuillez entrer une date valide</div> </div>
+                <div class="input-group"> <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label> <input id="date_naissance" name="date_naissance" type="date" required aria-required="true" autocomplete="bday"/> <div class="error-text">Veuillez entrer une date valide</div> </div>
                 <div class="input-group"> <label for="sexe">Sexe <span aria-hidden="true">*</span></label> <select id="sexe" name="sexe" required aria-required="true" autocomplete="sex"> <option value="M">Homme</option> <option value="F">Femme</option> </select> <div class="error-text">Veuillez sélectionner un sexe</div> </div>
                 <div class="input-group mutuelle-group"> <div> <input type="checkbox" id="has_insurance" name="has_insurance" /> <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label> </div> <div id="mutuelle-input-container"> <input name="mutuelle" id="mutuelle" type="text" placeholder="Nom Mutuelle (si cochée)" aria-labelledby="has_insurance" disabled /> <div class="error-text">Veuillez entrer le nom de la mutuelle</div> </div> </div>
                 <div class="form-submit-button"> <button type="submit" class="btn btn-success" id="createPatientBtn"> <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient </button> </div>
                 <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
             </form>
-            <div id="createResult">
-                <p id="createResultMessage"></p>
-                <img id="createQrCodeImage" src="" alt="" loading="lazy" />
-                <button id="createPrintButton" class="btn btn-secondary no-print" disabled> <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code </button>
-            </div>
+            <div id="createResult"> <p id="createResultMessage"></p> <img id="createQrCodeImage" src="" alt="" loading="lazy" /> <button id="createPrintButton" class="btn btn-secondary" disabled> <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code </button> </div>
           </div>
         </section>
       </div>
 
       <div class="flex-col">
         <section class="card" aria-labelledby="search-patient-heading">
-          <div class="card-header"> <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2> <div class="card-actions no-print" aria-hidden="true"><i class="fas fa-users"></i></div> </div>
+          <div class="card-header"> <h2 id="search-patient-heading" class="card-title"><i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient</h2> <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div> </div>
           <div class="card-body">
-            <div class="search-bar no-print"> <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient"/> <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button> </div>
-            <div id="getResult" role="region" aria-live="polite">
-                <!-- Search results will be injected here -->
-            </div>
+            <div class="search-bar"> <input id="getCin" type="text" placeholder="Entrer le CIN du patient" aria-label="Numéro CIN du patient"/> <button id="searchBtn" class="btn btn-primary"> <i class="fas fa-search" aria-hidden="true"></i> Rechercher </button> </div>
+            <div id="getResult" role="region" aria-live="polite"></div>
           </div>
         </section>
       </div>
     </main>
 
-    <div id="toast" class="toast no-print" role="alert" aria-live="assertive"></div>
+    <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
   </div>
 
   <script>
     // --- Configuration & Constants ---
-    const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutes
-     MESSAGE_DISPLAY_TIME: 7000, // 7 seconds for info messages
-     TOAST_DISPLAY_TIME: 4000 // 4 seconds for toasts
-    };
+    const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, MESSAGE_DISPLAY_TIME: 7000, TOAST_DISPLAY_TIME: 4000 };
     const DOM = { body: document.body, resultDiv: document.getElementById("getResult"), messageDiv: document.getElementById("message"), createForm: document.getElementById("createForm"), createResultDiv: document.getElementById("createResult"), searchButton: document.getElementById("searchBtn"), cinInput: document.getElementById("getCin"), hasInsuranceCheckbox: document.getElementById("has_insurance"), mutuelleInput: document.getElementById("mutuelle"), mutuelleInputContainer: document.getElementById("mutuelle-input-container"), createPatientBtn: document.getElementById("createPatientBtn"), createResultMessage: document.getElementById("createResultMessage"), createQrCodeImage: document.getElementById("createQrCodeImage"), createPrintButton: document.getElementById("createPrintButton"), toast: document.getElementById("toast"), captureIdButton: document.getElementById('captureIdButton'), idCaptureContainer: document.getElementById('idCaptureContainer'), idVideo: document.getElementById('idVideo'), takePhotoButton: document.getElementById('takePhotoButton'), cancelCaptureButton: document.getElementById('cancelCaptureButton'), captureMessage: document.getElementById('captureMessage'), idCanvas: document.getElementById('idCanvas'), frontPreview: document.getElementById('frontPreview'), backPreview: document.getElementById('backPreview'), captureInstruction: document.getElementById('captureInstruction') };
     let currentIPP = null; let currentPatientInfo = null; let sessionTimeoutId = null; let idCaptureStream = null; let frontImageBlob = null; let backImageBlob = null; let isCapturingFront = true;
 
     // --- Utility Functions ---
-    function showToast(message, type = 'success') { if (!message || !DOM.toast) return; const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; DOM.toast.innerHTML = `${icon} ${message}`; DOM.toast.className = `toast ${type} no-print`; // Add no-print
-     DOM.toast.classList.add('show'); setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); }
+    function showToast(message, type = 'success') { if (!message || !DOM.toast) return; const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; DOM.toast.innerHTML = `${icon} ${message}`; DOM.toast.className = `toast ${type}`; DOM.toast.classList.add('show'); setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); }
     function sanitizeInput(input) { if (!input) return ''; const temp = document.createElement('div'); temp.textContent = input; return temp.innerHTML; }
-    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Message Element "${elementId}" not found.`); return; } const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const iconClass = statusIcons[type] || statusIcons['info']; const iconHtml = message && type !== 'result' && type !== 'print-result' ? `<i class="${iconClass} me-2" aria-hidden="true"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; // Always set display based on message content
-     // Base classes and specific type classes
-     el.className = ""; // Reset classes
-     if (elementId === 'getResult') { el.className = 'getResult'; // Base class for result area
-     } else if (elementId === 'createResult') { el.className = 'createResult'; // Base class for create result
-     } else if (elementId === 'captureMessage') { el.className = 'message mt-2'; // Base class for capture message
-     } else if (elementId === 'message') { el.className = 'message'; // Base class for general form message
-     }
-     // Apply type-specific styling classes
-     if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info" || type === 'loading') el.classList.add("message-info"); // Use info style for loading too
-     // Special handling for createResult styling and content visibility
-     if(elementId === 'createResult') { const isSuccessResult = type === 'success'; // Specifically check for success result type
-        const isWarningResult = type === 'warning';
-        const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) { msgP.innerHTML = message ? `${iconHtml}${message}` : ""; // Update paragraph content
-         }
-         if(img) img.style.display = isSuccessResult ? 'block' : 'none'; // Show img only on success
-         if(btn) btn.style.display = isSuccessResult ? 'inline-block' : 'none'; // Show button only on success
-         el.style.display = (isSuccessResult || isWarningResult) ? 'block' : 'none'; // Show div only for success/warning results
-     }
-
-     // Auto-hide non-error/warning/loading messages in the main form message area
-     if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { const currentElement = document.getElementById(elementId); if (currentElement && currentElement.style.display !== 'none' && currentElement.innerHTML.includes(message)) { // Check if still visible and has same message
-          currentElement.style.display = 'none'; currentElement.innerHTML = ''; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
+    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const iconClass = statusIcons[type] || statusIcons['info']; const iconHtml = message && type !== 'result' ? `<i class="${iconClass} me-2" aria-hidden="true"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; el.className = ""; if (type === 'result') { /* No special class for result containers */ } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); el.style.backgroundColor = baseBg; el.style.borderLeft = `4px solid ${baseBorder}`; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { const currentElement = document.getElementById(elementId); if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) { currentElement.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
 
     // --- Authentication & Session ---
-    function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No auth token found.');alert('Votre session a expiré. Veuillez vous reconnecter.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} // Let browser set Content-Type for FormData
-     return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Authentication error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide ou expirée. Veuillez vous reconnecter.');redirectToLogin();throw new Error(`Authentication failed:${r.status}`);} if(!r.ok){return r.text().then(text=>{console.error(`API Error ${r.status}: ${text}`);throw new Error(`Erreur ${r.status}: ${text||r.statusText}`);});} return r;}); }
+    function fetchWithAuth(url, options={}) { const token=localStorage.getItem(CONFIG.TOKEN_KEY); if(!token){console.error('No token.');alert('Session expirée.');redirectToLogin();return Promise.reject(new Error('Token non trouvé.'));} resetSessionTimeout(); const headers={...options.headers,'Authorization':`Bearer ${token}`}; if(options.body&&!(options.body instanceof FormData)){headers['Content-Type']='application/json';} else if(options.body instanceof FormData){delete headers['Content-Type'];} return fetch(url,{...options,headers:headers}).then(r=>{if(r.status===401||r.status===403){console.error('Auth error:',r.status);localStorage.removeItem(CONFIG.TOKEN_KEY);alert('Session invalide.');redirectToLogin();throw new Error(`Auth failed:${r.status}`);} if(!r.ok){return r.text().then(t=>{throw new Error(`Erreur ${r.status}: ${t||r.statusText}`);});} return r;}); }
     function redirectToLogin() { window.location.href = CONFIG.LOGIN_PAGE_URL; }
-    function logout() { localStorage.removeItem(CONFIG.TOKEN_KEY); clearTimeout(sessionTimeoutId); showToast('Déconnexion réussie.', 'success'); setTimeout(redirectToLogin, 1000); }
+    function logout() { localStorage.removeItem(CONFIG.TOKEN_KEY); clearTimeout(sessionTimeoutId); showToast('Déconnecté.', 'success'); setTimeout(redirectToLogin, 1000); }
     function resetSessionTimeout() { if (sessionTimeoutId) clearTimeout(sessionTimeoutId); sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT); }
 
     // --- Form Validation ---
-    function validateField(input, validationFn, errorMessage) { const value = input.value.trim(); const group = input.closest('.input-group'); if (!group) return true; // Skip if not in a group
-     const isValid = validationFn(value); group.classList.toggle('has-error', !isValid); input.classList.toggle('input-error', !isValid); const errorDiv = group.querySelector('.error-text'); if (errorDiv) { errorDiv.textContent = isValid ? '' : errorMessage; errorDiv.style.display = isValid ? 'none' : 'block'; // Explicitly show/hide
-     } return isValid; }
-    function validateCreateForm() { let isValid = true; showMessage('message', '', ''); // Clear previous general messages
-     DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); DOM.createForm.querySelectorAll('input.input-error, select.input-error').forEach(el => el.classList.remove('input-error')); DOM.createForm.querySelectorAll('.error-text').forEach(el => { el.textContent = ''; el.style.display = 'none'; }); // Clear and hide all error texts initially
-     isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis"); isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis"); isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)"); isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx requis"); isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise"); isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise"); isValid &= validateField(DOM.createForm.date_naissance, val => val !== '' && new Date(val) < new Date(), "Date naissance valide requise"); // Ensure date is not empty and in the past
-     isValid &= validateField(DOM.createForm.sexe, val => val === 'M' || val === 'F', "Sélection sexe requise"); const mutuelleGroup = DOM.mutuelleInput.closest('.input-group'); if (DOM.hasInsuranceCheckbox.checked) { isValid &= validateField(DOM.mutuelleInput, val => val.length > 0, "Nom mutuelle requis si cochée"); } else { // Clear potential error if unchecked and previously invalid
-       if(mutuelleGroup) mutuelleGroup.classList.remove('has-error'); DOM.mutuelleInput.classList.remove('input-error'); const errorDiv = mutuelleGroup?.querySelector('.error-text'); if(errorDiv) {errorDiv.textContent = ''; errorDiv.style.display='none';} } if (!isValid) { showMessage('message', 'Veuillez corriger les erreurs indiquées dans le formulaire.', 'error'); const firstError = DOM.createForm.querySelector('.input-error, .has-error select'); if(firstError) { firstError.focus(); firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); } } return !!isValid; // Ensure boolean return
-    }
+    function validateField(input, validationFn, errorMessage) { const value = input.value.trim(); const group = input.closest('.input-group'); if (!group) return true; const isValid = validationFn(value); group.classList.toggle('has-error', !isValid); input.classList.toggle('input-error', !isValid); const errorDiv = group.querySelector('.error-text'); if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage; return isValid; }
+    function validateCreateForm() { let isValid = true; showMessage('message', '', ''); DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); DOM.createForm.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error')); isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis"); isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis"); isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)"); isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx"); isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise"); isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise"); isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise"); isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise"); const mutuelleGroup = DOM.mutuelleInput.closest('.input-group'); if (DOM.hasInsuranceCheckbox.checked) { isValid &= validateField(DOM.mutuelleInput, val => val.length > 0, "Nom mutuelle requis si coché"); } else { if(mutuelleGroup) mutuelleGroup.classList.remove('has-error'); DOM.mutuelleInput.classList.remove('input-error'); const errorDiv = mutuelleGroup?.querySelector('.error-text'); if(errorDiv) errorDiv.textContent = ''; } if (!isValid) { showMessage('message', 'Veuillez corriger les erreurs.', 'error'); const firstError = DOM.createForm.querySelector('.input-error'); if(firstError) firstError.focus(); } return !!isValid; }
 
     // --- API Service ---
-    const apiService = { async fetchPatient(cin) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${encodeURIComponent(cin)}`); return await res.json(); // Assuming API returns JSON directly
-      } catch (e) { console.error("Patient fetch error:", e); throw e; // Re-throw to be caught by caller
-      } }, async createPatient(payload) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) }); return await res.json(); } catch (e) { console.error("Patient create error:", e); throw e; } }, async extractIdInfo(formData) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, { method: 'POST', body: formData // FormData is passed directly
-      }); return await res.json(); } catch (e) { console.error("ID Extraction error:", e); throw e; } }};
+    const apiService = { async fetchPatient(cin) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`); return await res.json(); } catch (e) { console.error("Pat fetch err:", e); throw e; } }, async createPatient(payload) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) }); return await res.json(); } catch (e) { console.error("Pat create err:", e); throw e; } }, async extractIdInfo(formData) { try { const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, { method: 'POST', body: formData }); return await res.json(); } catch (e) { console.error("ID Extract err:", e); throw e; } }};
 
     // --- QR Code Functions ---
-    function generateQrData(ipp) { if (!ipp) { console.warn("IPP manquant pour la génération du QR Code."); return null; } const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`; const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&ecc=M`; // Use ECC M for better readability
-     console.log("QR Target URL:", qrTargetUrl); console.log("QR Image URL:", qrImageUrl); return { qrTargetUrl, qrImageUrl }; }
-    function printQRCode(qrImageUrl) { const printWindow = window.open('', '_blank', 'width=400,height=450,scrollbars=yes,resizable=yes'); if (!printWindow) { alert("Impossible d'ouvrir la fenêtre d'impression. Veuillez vérifier les paramètres de blocage des pop-ups de votre navigateur."); return; } printWindow.document.write(`<!DOCTYPE html>
-     <html lang="fr">
-     <head>
-      <meta charset="UTF-8">
-      <title>Imprimer QR Code Patient</title>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/>
-      <style>
-        body { font-family: 'Inter', sans-serif; text-align: center; margin: 0; padding: 20px; }
-        img.logo { display: block; max-width: 80px; height: auto; margin: 0 auto 10px auto; }
-        img.qrcode { display: block; width: 200px; height: 200px; margin: 0 auto 15px auto; border: 1px solid #eee; padding: 5px; background: white; }
-        p.ipp-info { font-size: 9pt; color: #555; margin-top: 0; }
-        @media print {
-          body { margin: 5mm; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          img.logo, img.qrcode { margin-bottom: 8px; }
-        }
-      </style>
-     </head>
-     <body>
-      <img src="./clinique-nakhil-logo-horizontal.webp" alt="Logo MediClinic" class="logo" onerror="this.style.display='none'" />
-      <img src="${qrImageUrl}" alt="QR Code Patient" class="qrcode" id="qrImageToPrint" />
-      ${currentIPP ? `<p class="ipp-info">IPP: ${sanitizeInput(currentIPP)}</p>` : ''}
-
-      <script>
-        let printed = false;
-        const attemptPrint = () => {
-          if (!printed) {
-            try {
-              window.print();
-              printed = true;
-              window.onafterprint = () => window.close();
-              // Fallback close after a delay
-              setTimeout(() => { try { window.close(); } catch(e){} }, 2000);
-            } catch (e) {
-              console.error("Print error:", e);
-              // Optionally alert the user if printing fails immediately
-              // alert("Erreur lors du lancement de l'impression.");
-              try { window.close(); } catch(e){} // Try closing anyway
-            }
-          }
-        };
-
-        const img = document.getElementById('qrImageToPrint');
-        if (img) {
-          if (img.complete && img.naturalWidth > 0) {
-            console.log('QR Image already complete. Printing.');
-            attemptPrint();
-          } else {
-            img.onload = () => { console.log('QR Image loaded. Printing.'); attemptPrint(); };
-            img.onerror = () => { console.error('QR Image failed to load.'); alert("Erreur: L'image QR Code n'a pas pu être chargée pour l'impression."); window.close(); };
-             // Safety timeout if onload/onerror somehow fail
-            setTimeout(() => {
-                console.log('Print fallback timeout reached.');
-                if (!printed) attemptPrint();
-             }, 3000);
-          }
-        } else {
-          console.log('No QR image found, attempting print anyway.');
-          attemptPrint(); // Try printing even without the image if something went wrong
-        }
-      </script>
-     </body>
-     </html>`); printWindow.document.close(); // Close the document stream
-    }
-
+    function generateQrData(ipp) { if (!ipp) { console.error("IPP missing QR."); return null; } const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`; const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`; console.log("QR Target:", qrTargetUrl); console.log("QR Image:", qrImageUrl); return { qrTargetUrl, qrImageUrl }; }
+    function printQRCode(qrImageUrl) { const printWindow = window.open('', '_blank', 'width=400,height=450'); if (!printWindow) { alert('Veuillez autoriser les pop-ups.'); return; } printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Imprimer QR</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/><style>body{font-family:'Inter',sans-serif;text-align:center;margin:0;padding-top:20px} img.logo{display:block;width:60px;margin:0 auto 10px auto} img.qrcode{display:block;width:200px;height:200px;margin:0 auto 15px auto;border:1px solid #eee;padding:5px;background:white} button{display:none;} @media print{body{margin:5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact} img.logo, img.qrcode{margin-bottom:8px}}</style></head><body><img src="./clinique-nakhil-logo-horizontal.webp" alt="Logo" class="logo" onerror="this.style.display='none'" /><img src="${qrImageUrl}" alt="QR Code" class="qrcode" /><script>let p=false;const a=()=>{if(!p){window.print();p=true;window.onafterprint=()=>window.close();setTimeout(()=>window.close(),1500)}};let i=document.querySelectorAll('img'),l=0,e=0,t=i.length;if(t===0)a();else{i.forEach(m=>{const c=()=>{if(l+e===t)a()};if(m.complete)l++,c();else{m.onload=()=>{l++;c()};m.onerror=()=>{e++;c()}}});setTimeout(()=>{if(!p)a()},3000)}<\/script></body></html>`); printWindow.document.close(); }
 
     // --- ID Capture Functions ---
     function updateCaptureMessage(message, type = 'info') { showMessage('captureMessage', message, type); }
-    async function startIdCapture() { if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { updateCaptureMessage('Demande d\'accès à la caméra...', 'loading'); DOM.captureIdButton.disabled = true; DOM.idCaptureContainer.style.display = 'block'; DOM.frontPreview.style.display = 'none'; DOM.backPreview.style.display = 'none'; DOM.frontPreview.src = ''; DOM.backPreview.src = ''; frontImageBlob = null; backImageBlob = null; isCapturingFront = true; DOM.captureInstruction.textContent = "Positionnez le RECTO de la CIN et prenez la photo."; try { const constraints = { video: { facingMode: 'environment', // Prefer back camera
-              width: { ideal: 1920 }, height: { ideal: 1080 }, // Request higher resolution
-              frameRate: { ideal: 15 } // Lower framerate might help stability
-             }, audio: false }; idCaptureStream = await navigator.mediaDevices.getUserMedia(constraints); DOM.idVideo.srcObject = idCaptureStream; await DOM.idVideo.play(); updateCaptureMessage('Caméra prête. Cadrez le RECTO de la CIN.', 'info'); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; } catch (err) { console.error("Camera access error:", err); updateCaptureMessage(`Erreur accès caméra: ${err.message}. Vérifiez les permissions.`, 'error'); stopIdCapture(false); // Don't clear blobs if we didn't capture any
-        } } else { alert("Votre navigateur ne supporte pas l'accès à la caméra."); updateCaptureMessage("Fonctionnalité caméra non supportée par ce navigateur.", 'error'); DOM.captureIdButton.disabled = false; // Re-enable button if feature not supported
-       } }
-    function stopIdCapture(clearBlobs = true) { if (idCaptureStream) { idCaptureStream.getTracks().forEach(track => track.stop()); console.log("Camera stream stopped."); } DOM.idVideo.srcObject = null; DOM.idCaptureContainer.style.display = 'none'; DOM.takePhotoButton.disabled = true; DOM.cancelCaptureButton.disabled = true; DOM.captureIdButton.disabled = false; // Always re-enable the start button
-     idCaptureStream = null; updateCaptureMessage('', ''); // Clear message
-     if (clearBlobs) { frontImageBlob = null; backImageBlob = null; DOM.frontPreview.src = ''; DOM.backPreview.src = ''; DOM.frontPreview.style.display = 'none'; DOM.backPreview.style.display = 'none'; console.log("ID Capture cancelled and blobs cleared."); } else { console.log("ID Capture stopped, blobs preserved."); } }
-    async function takePhotoAndExtract() { if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < DOM.idVideo.HAVE_CURRENT_DATA) { // More robust check
-        console.warn("Camera not ready or stream ended unexpectedly."); updateCaptureMessage('Caméra non prête ou flux interrompu.', 'warning'); DOM.takePhotoButton.disabled = false; // Re-enable button if capture failed early
-        DOM.cancelCaptureButton.disabled = false; return; } updateCaptureMessage('Capture en cours...', 'loading'); DOM.takePhotoButton.disabled = true; DOM.cancelCaptureButton.disabled = true; // Disable during capture/processing
-     const canvas = DOM.idCanvas; canvas.width = DOM.idVideo.videoWidth; canvas.height = DOM.idVideo.videoHeight; const context = canvas.getContext('2d'); if (!context) { console.error("Failed to get 2D context from canvas"); updateCaptureMessage('Erreur interne (canvas).', 'error'); stopIdCapture(); return; } context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height); canvas.toBlob(async (blob) => { if (!blob) { console.error("Canvas toBlob failed to create blob."); updateCaptureMessage('Erreur lors de la création de l\'image.', 'error'); stopIdCapture(); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; return; } if (isCapturingFront) { frontImageBlob = blob; console.log("Recto captured (size:", blob.size, "type:", blob.type, ")"); DOM.frontPreview.src = URL.createObjectURL(frontImageBlob); DOM.frontPreview.style.display = 'inline-block'; isCapturingFront = false; DOM.captureInstruction.textContent = "Positionnez le VERSO de la CIN et prenez la photo."; updateCaptureMessage('Recto capturé. Préparez le VERSO.', 'info'); DOM.takePhotoButton.disabled = false; // Re-enable for next shot
-           DOM.cancelCaptureButton.disabled = false; } else { backImageBlob = blob; console.log("Verso captured (size:", blob.size, "type:", blob.type, ")"); DOM.backPreview.src = URL.createObjectURL(backImageBlob); DOM.backPreview.style.display = 'inline-block'; stopIdCapture(false); // Stop video stream but keep blobs
-           updateCaptureMessage('Verso capturé. Analyse des données en cours...', 'loading'); if (frontImageBlob && backImageBlob) { const formData = new FormData(); formData.append('id_image_front', frontImageBlob, 'id_card_front.jpeg'); // Use jpeg extension
-               formData.append('id_image_back', backImageBlob, 'id_card_back.jpeg'); try { console.log("Sending ID images for extraction..."); const extractedData = await apiService.extractIdInfo(formData); console.log("Extracted ID Data Response:", extractedData); if (extractedData && extractedData.data && Object.keys(extractedData.data).length > 0) { autofillCreateForm(extractedData); showToast('Formulaire pré-rempli avec succès !', 'success'); updateCaptureMessage('Données extraites et formulaire rempli.', 'success'); } else { const errorMessage = extractedData?.message || "Aucune donnée pertinente n'a pu être extraite automatiquement."; console.warn("ID Extraction Warning:", errorMessage, extractedData); updateCaptureMessage(`Extraction échouée: ${errorMessage}`, 'warning'); // Show warning in capture area
-                 } } catch (error) { console.error("Error during ID extraction API call:", error); updateCaptureMessage(`Erreur lors de l'analyse : ${error.message}`, 'error'); } finally { // Clean up blobs regardless of success/error after API call
-                 console.log("Cleaning up image blobs."); frontImageBlob = null; backImageBlob = null; // Don't clear previews here, keep them visible
-                 // URL.revokeObjectURL(DOM.frontPreview.src); // Optional: revoke URLs later if needed
-                 // URL.revokeObjectURL(DOM.backPreview.src);
-               } } else { console.error("Missing front or back image blob before sending API request."); updateCaptureMessage('Erreur: Image recto ou verso manquante.', 'error'); } // Re-enable main capture button after process finishes or fails
-            DOM.captureIdButton.disabled = false; } }, 'image/jpeg', 0.9); // Use JPEG format, quality 0.9
+    async function startIdCapture() { if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { updateCaptureMessage('Demande caméra...', 'loading'); DOM.captureIdButton.disabled = true; DOM.idCaptureContainer.style.display = 'block'; DOM.frontPreview.style.display = 'none'; DOM.backPreview.style.display = 'none'; isCapturingFront = true; DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo."; try { idCaptureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } }); DOM.idVideo.srcObject = idCaptureStream; await DOM.idVideo.play(); updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info'); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; } catch (err) { updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error'); stopIdCapture(false); } } else { alert("Accès caméra non supporté."); updateCaptureMessage("Caméra non supportée.", 'error'); DOM.captureIdButton.disabled = false;} }
+    function stopIdCapture(clearBlobs = true) {
+      if (idCaptureStream) {
+        idCaptureStream.getTracks().forEach(track => track.stop());
+      }
+      DOM.idVideo.srcObject = null;
+      DOM.idCaptureContainer.style.display = 'none';
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      DOM.captureIdButton.disabled = false;
+      idCaptureStream = null;
+      updateCaptureMessage('', '');
+      if (clearBlobs) {
+        frontImageBlob = null;
+        backImageBlob = null;
+        DOM.frontPreview.src = '';
+        DOM.backPreview.src = '';
+        DOM.frontPreview.style.display = 'none';
+        DOM.backPreview.style.display = 'none'; // Corrected: Use = instead of :
+        console.log("ID Capture cancelled and blobs cleared.");
+      }
     }
+    async function takePhotoAndExtract() { if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) { updateCaptureMessage('Caméra non prête.', 'warning'); return; } updateCaptureMessage('Capture et analyse...', 'loading'); DOM.takePhotoButton.disabled = true; DOM.cancelCaptureButton.disabled = true; const canvas = DOM.idCanvas; canvas.width = DOM.idVideo.videoWidth; canvas.height = DOM.idVideo.videoHeight; const context = canvas.getContext('2d'); context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height); canvas.toBlob(async (blob) => { if (!blob) { updateCaptureMessage('Erreur capture image.', 'error'); stopIdCapture(); return; } if (isCapturingFront) { frontImageBlob = blob; console.log("Recto captured"); DOM.frontPreview.src = URL.createObjectURL(frontImageBlob); DOM.frontPreview.style.display = 'inline-block'; isCapturingFront = false; DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo."; updateCaptureMessage('Recto OK. Préparez le verso.', 'info'); DOM.takePhotoButton.disabled = false; DOM.cancelCaptureButton.disabled = false; } else { backImageBlob = blob; console.log("Verso captured"); DOM.backPreview.src = URL.createObjectURL(backImageBlob); DOM.backPreview.style.display = 'inline-block'; stopIdCapture(false); updateCaptureMessage('Verso OK. Analyse en cours...', 'loading'); if (frontImageBlob && backImageBlob) { const formData = new FormData(); formData.append('id_image_front', frontImageBlob, 'id_card_front.jpg'); formData.append('id_image_back', backImageBlob, 'id_card_back.jpg'); try { const extractedData = await apiService.extractIdInfo(formData); console.log("Extracted ID Data:", extractedData); if (extractedData && extractedData.data) { // Added check for data.data
+                      autofillCreateForm(extractedData);
+                      showToast('Formulaire pré-rempli!', 'success');
+                      updateCaptureMessage('Données extraites!', 'success');
+                    } else {
+                      // Check if there's an error message from the API
+                      const errorMessage = extractedData && extractedData.message ? extractedData.message : "Aucune donnée extraite.";
+                      throw new Error(errorMessage);
+                    } } catch (error) { console.error("Error extraction API call:", error); updateCaptureMessage(`Erreur extraction: ${error.message}`, 'error'); } finally { frontImageBlob = null; backImageBlob = null; } } else { console.error("Missing blobs."); updateCaptureMessage('Erreur: Images manquantes.', 'error'); } } }, 'image/jpeg', 0.9); }
     function autofillCreateForm(data) {
-        const form = DOM.createForm;
-        if (!form || !data || typeof data.data !== 'object' || data.data === null) {
-            console.error("Autofill failed: Invalid or missing data object provided.", data);
-            updateCaptureMessage('Erreur interne lors du pré-remplissage du formulaire.', 'error');
-            return;
-        }
+      const form = DOM.createForm;
+      if (!form || !data || !data.data) {
+        console.warn("Autofill failed: Form or data object missing.");
+        return; // Exit if essential data is missing
+      }
 
-        const extracted = data.data;
-        console.log("Data received for Autofill:", extracted);
+      const extracted = data.data;
 
-        // --- Date of Birth Formatting ---
-        let formattedDateOfBirth = "";
-        if (extracted.date_of_birth && typeof extracted.date_of_birth === 'string') {
-            const originalDateString = extracted.date_of_birth.trim();
-            // More flexible regex: DD/MM/YYYY, DD-MM-YYYY, YYYY/MM/DD, YYYY-MM-DD
-             const datePartsDMY = originalDateString.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
-             const datePartsYMD = originalDateString.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+      console.log("Extracted from API for Autofill:", extracted); // Log the data being used
 
-             let day, month, year;
+      // --- Date of Birth Formatting ---
+      let formattedDateOfBirth = ""; // Initialize with an empty string
 
-            if (datePartsDMY && datePartsDMY.length === 4) {
-                day = datePartsDMY[1];
-                month = datePartsDMY[2];
-                year = datePartsDMY[3];
-                console.log("Parsed date as DD/MM/YYYY format");
-            } else if (datePartsYMD && datePartsYMD.length === 4) {
-                year = datePartsYMD[1];
-                month = datePartsYMD[2];
-                day = datePartsYMD[3];
-                console.log("Parsed date as YYYY/MM/DD format");
-            }
+      if (extracted.date_of_birth) {
+        const originalDateString = extracted.date_of_birth; // Date string in DD/MM/YYYY format (e.g., "05/12/1983")
+        const dateParts = originalDateString.split('/'); // Split into [day, month, year]
+        if (dateParts.length === 3) {
+          const day = dateParts[0];
+          const month = dateParts[1];
+          const year = dateParts[2];
 
-            if (day && month && year) {
-                 // Basic validation
-                const monthInt = parseInt(month, 10);
-                const dayInt = parseInt(day, 10);
-                const yearInt = parseInt(year, 10);
-                if (monthInt >= 1 && monthInt <= 12 && dayInt >= 1 && dayInt <= 31 && yearInt > 1900 && yearInt <= new Date().getFullYear()) {
-                    formattedDateOfBirth = `${year}-${String(monthInt).padStart(2, '0')}-${String(dayInt).padStart(2, '0')}`;
-                    console.log("Formatted date_of_birth for input:", formattedDateOfBirth);
-                } else {
-                    console.warn("Invalid date components parsed from:", originalDateString);
-                }
-            } else {
-                console.warn("Date of birth format not recognized:", originalDateString);
-            }
+          // Reformat to YYYY-MM-DD (required by input type="date")
+          formattedDateOfBirth = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          console.log("Formatted date_of_birth:", formattedDateOfBirth); // Log the formatted date
         } else {
-            console.warn("Date of birth missing, null, or not a string in extracted data.");
+          console.warn("Date of birth format not as expected (DD/MM/YYYY):", originalDateString);
+          formattedDateOfBirth = ""; // If parsing fails, leave it empty
         }
+      } else {
+          console.warn("Date of birth missing from extracted data.");
+      }
 
-        // Fill form fields safely using nullish coalescing
-        form.nom.value = extracted.last_name ?? '';
-        form.prenom.value = extracted.first_name ?? '';
-        form.cin.value = extracted.id_number ?? '';
-        form.date_naissance.value = formattedDateOfBirth; // Use formatted or empty string
-        form.adresse.value = extracted.address ?? '';
-        form.ville.value = extracted.city ?? ''; // Assuming API provides 'city', adjust if key is different
 
-        // Handle Gender - Check for different possible values if API is inconsistent
-        const gender = (typeof extracted.gender === 'string') ? extracted.gender.toUpperCase().charAt(0) : ''; // Take first char, uppercase
-        form.sexe.value = (gender === 'F') ? 'F' : 'M'; // Default to 'M' if not 'F'
+      // Fill form fields using optional chaining and nullish coalescing for safety
+      form.nom.value = extracted.last_name ?? '';
+      form.prenom.value = extracted.first_name ?? '';
+      form.cin.value = extracted.id_number ?? '';
+      form.date_naissance.value = formattedDateOfBirth; // Use the formatted date here
+      form.adresse.value = extracted.address ?? '';
+      form.ville.value = extracted.city ?? '';
+      form.sexe.value = extracted.gender === 'F' ? 'F' : 'M'; // Default to 'M' if gender is not 'F'
 
-        // ---- Clear potential previous validation errors on filled fields ----
-        form.querySelectorAll('.input-group').forEach(group => {
-            const input = group.querySelector('input:not([type=checkbox]), select');
-            if (input && input.value !== '') { // Clear error only if field got a value
-                group.classList.remove('has-error');
-                input.classList.remove('input-error');
-                const errorDiv = group.querySelector('.error-text');
-                if (errorDiv) {
-                    errorDiv.textContent = '';
-                    errorDiv.style.display = 'none';
-                }
-            }
-        });
-        // ----
+      // Clear previous errors
+      form.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
+      form.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
+      form.querySelectorAll('.error-text').forEach(el => el.textContent = '');
 
-        // Provide user feedback via the main message area of the form
-        showMessage('message', 'Formulaire pré-rempli. Veuillez vérifier et compléter les informations manquantes.', 'info');
-
-        // Focus the first empty required field for better UX, or the first field if all filled
-        const firstEmptyRequired = form.querySelector('input[required]:not([disabled]):placeholder-shown, input[required]:not([disabled])[value=""], select[required]:not([disabled])[value=""]');
-        if(firstEmptyRequired) {
-            firstEmptyRequired.focus();
-            firstEmptyRequired.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else if (form.nom) {
-            form.nom.focus(); // Fallback to the first field
-        }
+      // Show a feedback message
+      showMessage('message', 'Formulaire pré-rempli automatiquement. Veuillez vérifier les informations.', 'info');
     }
-
 
     // --- Event Handlers ---
     async function handlePatientSearch() {
-      showMessage('getResult', '', ''); // Clear previous search results immediately
+      showMessage('getResult', '', ''); // Clear previous search results
       const cinInput = DOM.cinInput;
-      if (!cinInput) { console.error("Search CIN input element not found"); return; }
-      const cin = cinInput.value.trim().toUpperCase(); // Standardize CIN input
-      if (!cin) { // Show message directly in getResult
-         DOM.resultDiv.innerHTML = `<div class="patient-result-container message message-warning"><i class="fas fa-exclamation-triangle me-2"></i> Veuillez entrer un CIN pour la recherche.</div>`;
-         DOM.resultDiv.style.display = 'block';
-         cinInput.focus(); return; }
-      if (!/^[A-Za-z]{1,2}\d{5,6}$/.test(cin)) { // Basic CIN format check before API call
-         DOM.resultDiv.innerHTML = `<div class="patient-result-container message message-warning"><i class="fas fa-exclamation-triangle me-2"></i> Format CIN invalide pour la recherche (ex: AB123456).</div>`;
-         DOM.resultDiv.style.display = 'block';
-         cinInput.focus(); return; }
-
-      // Show loading message within the result container
-      DOM.resultDiv.innerHTML = `<div class="patient-result-container message message-info"><span class="loading-spinner"></span> Recherche du patient avec CIN : ${sanitizeInput(cin)}...</div>`;
-      DOM.resultDiv.style.display = 'block'; // Ensure container is visible
-      DOM.searchButton.disabled = true; // Disable button during search
+      if (!cinInput) {
+        console.error("Search CIN input not found");
+        return;
+      }
+      const cin = cinInput.value.trim();
+      if (!cin) {
+        showMessage('getResult', 'Veuillez entrer un CIN pour la recherche.', 'warning');
+        return;
+      }
+      showMessage('getResult', '<span class="loading-spinner"></span> Recherche patient...', 'info');
+      DOM.getResult.style.display = 'block'; // Show the result area while loading
 
       try {
-          const patientData = await apiService.fetchPatient(cin);
-          console.log("Search Patient API Response:", patientData);
-
-          if (patientData && patientData.data && patientData.data.ipp) {
-              currentPatientInfo = patientData.data;
-              currentIPP = currentPatientInfo.ipp; // Store IPP for potential printing
-
-              const qrCodeData = generateQrData(currentIPP);
-
-              let displayDate = "N/A";
-              if (currentPatientInfo.date_naissance) {
-                  // Assuming DB format is YYYY-MM-DD
-                  const date = new Date(currentPatientInfo.date_naissance + 'T00:00:00Z'); // Treat as UTC midnight
-                  if (!isNaN(date.getTime())) {
-                      displayDate = date.toLocaleDateString('fr-MA', { day: '2-digit', month: '2-digit', year: 'numeric' }); // Format DD/MM/YYYY for Morocco locale
-                  } else {
-                      displayDate = sanitizeInput(currentPatientInfo.date_naissance); // Fallback
-                  }
-              }
-
-
-              const patientHtml = `
-                  <div class="patient-result-info">
-                      <div class="info-group"><div class="info-label">Nom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.nom)}</div></div>
-                      <div class="info-group"><div class="info-label">Prénom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.prenom)}</div></div>
-                      <div class="info-group"><div class="info-label">CIN:</div><div class="info-value">${sanitizeInput(currentPatientInfo.cin)}</div></div>
-                      <div class="info-group"><div class="info-label">Téléphone:</div><div class="info-value">${sanitizeInput(currentPatientInfo.telephone) || 'N/A'}</div></div>
-                      <div class="info-group"><div class="info-label">Adresse:</div><div class="info-value">${sanitizeInput(currentPatientInfo.adresse) || 'N/A'}</div></div>
-                      <div class="info-group"><div class="info-label">Ville:</div><div class="info-value">${sanitizeInput(currentPatientInfo.ville) || 'N/A'}</div></div>
-                      <div class="info-group"><div class="info-label">Date Naissance:</div><div class="info-value">${displayDate}</div></div>
-                      <div class="info-group"><div class="info-label">Sexe:</div><div class="info-value">${sanitizeInput(currentPatientInfo.sexe === 'M' ? 'Homme' : 'Femme')}</div></div>
-                      <div class="info-group"><div class="info-label">Mutuelle:</div><div class="info-value">${sanitizeInput(currentPatientInfo.mutuelle || 'Non renseignée')}</div></div>
-                      <div class="info-group"><div class="info-label">IPP:</div><div class="info-value">${sanitizeInput(currentIPP)}</div></div>
-                  </div>
-                  ${qrCodeData ? `
-                  <div class="patient-result-qr">
-                      <img src="${qrCodeData.qrImageUrl}" alt="QR Code pour IPP ${sanitizeInput(currentIPP)}" loading="lazy" />
-                      <p style="font-size: 0.8rem; color: var(--gray-600);">Scannez pour accéder au dossier via l'appli mobile.</p>
-                      <button onclick="printQRCode('${qrCodeData.qrImageUrl}')" class="btn btn-secondary btn-sm no-print"><i class="fas fa-print"></i> Imprimer QR</button>
-                  </div>` : '<p class="text-center text-muted mt-3" style="font-size: 0.8rem;">QR Code indisponible (IPP manquant)</p>'}`;
-
-              // Wrap the result in the standard container for consistent styling
-              DOM.resultDiv.innerHTML = `<div class="patient-result-container">${patientHtml}</div>`;
-
-          } else {
-              // Patient not found or data structure invalid from API
-              const message = patientData?.message || `Aucun patient trouvé avec le CIN ${sanitizeInput(cin)}.`;
-              console.warn("Patient search:", message, patientData);
-              DOM.resultDiv.innerHTML = `<div class="patient-result-container message message-warning"><i class="fas fa-exclamation-triangle me-2"></i> ${sanitizeInput(message)}</div>`;
+        const patientData = await apiService.fetchPatient(cin);
+        if (patientData && patientData.data) {
+          currentPatientInfo = patientData.data;
+          currentIPP = currentPatientInfo.ipp; // Assuming ipp is directly in data
+          if (!currentIPP) {
+              console.warn("IPP not found in patient data for CIN:", cin);
+              // Optionally, display a specific message if IPP is crucial
           }
+
+          const qrCodeData = generateQrData(currentIPP); // Generate QR even if IPP is null/undefined, generateQrData handles it
+
+          // Format date for display (DD/MM/YYYY)
+          let displayDate = "N/A";
+          if (currentPatientInfo.date_naissance) {
+              const dateParts = currentPatientInfo.date_naissance.split('-'); // Assume YYYY-MM-DD from DB
+              if (dateParts.length === 3) {
+                  displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+              } else {
+                  displayDate = sanitizeInput(currentPatientInfo.date_naissance); // Display as is if format unexpected
+              }
+          }
+
+
+          const qrCodeHTML = `<div class="patient-result-container">
+                                  <div class="patient-result-info">
+                                      <div class="info-group"><div class="info-label">Nom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.nom)}</div></div>
+                                      <div class="info-group"><div class="info-label">Prénom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.prenom)}</div></div>
+                                      <div class="info-group"><div class="info-label">CIN:</div><div class="info-value">${sanitizeInput(currentPatientInfo.cin)}</div></div>
+                                      <div class="info-group"><div class="info-label">Téléphone:</div><div class="info-value">${sanitizeInput(currentPatientInfo.telephone)}</div></div>
+                                      <div class="info-group"><div class="info-label">Adresse:</div><div class="info-value">${sanitizeInput(currentPatientInfo.adresse)}</div></div>
+                                      <div class="info-group"><div class="info-label">Ville:</div><div class="info-value">${sanitizeInput(currentPatientInfo.ville)}</div></div>
+                                      <div class="info-group"><div class="info-label">Date Naissance:</div><div class="info-value">${displayDate}</div></div>
+                                      <div class="info-group"><div class="info-label">Sexe:</div><div class="info-value">${sanitizeInput(currentPatientInfo.sexe === 'M' ? 'Homme' : 'Femme')}</div></div>
+                                      <div class="info-group"><div class="info-label">Mutuelle:</div><div class="info-value">${sanitizeInput(currentPatientInfo.mutuelle || 'N/A')}</div></div>
+                                      <div class="info-group"><div class="info-label">IPP:</div><div class="info-value">${sanitizeInput(currentIPP || 'N/A')}</div></div>
+                                  </div>
+                                  ${qrCodeData ? `
+                                  <div class="patient-result-qr">
+                                      <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient" loading="lazy" />
+                                      <p>Scannez ce QR Code avec l'appli patient pour accéder à votre dossier médical.</p>
+                                      <button onclick="printQRCode('${qrCodeData.qrImageUrl}')" class="btn btn-secondary btn-sm"><i class="fas fa-print"></i> Imprimer QR</button>
+                                  </div>` : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>'}
+                               </div>`;
+          DOM.getResult.innerHTML = qrCodeHTML;
+
+        } else {
+          showMessage('getResult', 'Patient non trouvé.', 'warning');
+          DOM.getResult.innerHTML = '<div class="patient-result-container"><p>Patient non trouvé.</p></div>'; // Show message inside container
+        }
       } catch (error) {
-          console.error("Search Patient Error:", error);
-          // Display error within the result container
-          DOM.resultDiv.innerHTML = `<div class="patient-result-container message message-error"><i class="fas fa-times-circle me-2"></i> Erreur lors de la recherche: ${sanitizeInput(error.message)}</div>`;
+        showMessage('getResult', `Erreur recherche patient: ${error.message}`, 'error');
+        DOM.getResult.innerHTML = `<div class="patient-result-container"><p class="message message-error">Erreur: ${error.message}</p></div>`; // Show error inside container
       } finally {
-          DOM.searchButton.disabled = false; // Re-enable button after search completes or fails
-          // Consider NOT clearing the input: cinInput.value = '';
+        // Consider if you really want to clear the input after every search
+        // cinInput.value = '';
       }
     }
 
 
     async function handleCreatePatient(event) {
       event.preventDefault();
-      if (!validateCreateForm()) return; // Stop if validation fails
+      if (!validateCreateForm()) return;
 
-      showMessage('message', '<span class="loading-spinner"></span> Création du patient en cours...', 'loading');
+      showMessage('message', '<span class="loading-spinner"></span> Création patient...', 'loading');
       DOM.createPatientBtn.disabled = true;
       DOM.createResultDiv.style.display = 'none'; // Hide previous create result
       DOM.createPrintButton.disabled = true;
 
       // Ensure date is in YYYY-MM-DD format before sending
-      let birthDateToSend = DOM.createForm.date_naissance.value; // Already in YYYY-MM-DD
+      let birthDateToSend = DOM.createForm.date_naissance.value;
 
       const payload = {
         nom: DOM.createForm.nom.value.trim(),
         prenom: DOM.createForm.prenom.value.trim(),
-        cin: DOM.createForm.cin.value.trim().toUpperCase(), // Standardize CIN
+        cin: DOM.createForm.cin.value.trim(),
         telephone: DOM.createForm.telephone.value.trim(),
         adresse: DOM.createForm.adresse.value.trim(),
         ville: DOM.createForm.ville.value.trim(),
-        date_naissance: birthDateToSend,
+        date_naissance: birthDateToSend, // Send in YYYY-MM-DD
         sexe: DOM.createForm.sexe.value,
         mutuelle: DOM.hasInsuranceCheckbox.checked ? DOM.mutuelleInput.value.trim() : null,
       };
 
-      console.log("Payload for Create Patient:", payload);
+      console.log("Payload for Create Patient:", payload); // Log payload before sending
 
       try {
         const response = await apiService.createPatient(payload);
-        console.log("Create Patient API Response:", response);
+        console.log("Create Patient API Response:", response); // Log API response
 
         if (response && response.data && response.data.ipp) {
           currentIPP = response.data.ipp; // Store the new IPP
           const qrCodeData = generateQrData(currentIPP);
-
           if (qrCodeData) {
-             // Show success message and QR in the dedicated createResult div
-            showMessage('createResult', `Patient créé avec succès ! IPP: ${sanitizeInput(currentIPP)}`, 'success');
+             // Update the display div specifically for creation result
+            showMessage('createResult', 'Patient créé avec succès !', 'result'); // Use 'result' type
             DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
-            DOM.createQrCodeImage.alt = `QR Code pour IPP ${currentIPP}`; // Add alt text
+            DOM.createPrintButton.disabled = false;
             DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl); // Assign print action
 
-             // Clear the main form message area
-            showMessage('message', '', '');
-            DOM.createForm.reset(); // Reset form fields
-            handleMutuelleChange(); // Reset mutuelle field state after form reset
-            showToast('Patient créé avec succès !', 'success'); // Also show a toast
+            DOM.createForm.reset(); // Reset the form after successful creation
+            handleMutuelleChange(); // Reset mutuelle field state
 
           } else {
-            // Patient created but QR generation failed (should be rare if IPP exists)
-            console.error("Patient created but QR generation failed for IPP:", currentIPP);
-             showMessage('createResult', `Patient créé (IPP: ${sanitizeInput(currentIPP)}), mais une erreur est survenue lors de la génération du QR Code.`, 'warning');
-             showMessage('message', '', ''); // Clear main message
-             DOM.createForm.reset();
-             handleMutuelleChange();
+            // Patient created but QR failed
+            showMessage('createResult', `Patient créé (IPP: ${currentIPP}), mais erreur QR Code.`, 'warning');
+            DOM.createForm.reset();
+            handleMutuelleChange();
           }
         } else {
-           // Handle cases where API indicated failure or returned unexpected structure
-           const errorMessage = response?.message || "Réponse invalide ou erreur lors de la création par le serveur.";
-           console.error("Create Patient Failed Logically:", errorMessage, response);
-           throw new Error(errorMessage); // Throw error to be caught by the catch block
+           // Handle specific error messages from the API if available
+           const errorMessage = response?.message || "Erreur inconnue lors de la création du patient.";
+           throw new Error(errorMessage);
         }
       } catch (apiError) {
-        console.error("Create Patient API Error Catch:", apiError);
-        // Show error in the main message area below the form
-        showMessage('message', `Erreur lors de la création du patient: ${apiError.message}`, 'error');
+        console.error("Create Patient API Error:", apiError);
+        // Show error in the main message area, not the createResult div
+        showMessage('message', `Erreur création patient: ${apiError.message}`, 'error');
         DOM.createResultDiv.style.display = 'none'; // Ensure create result area is hidden on error
       } finally {
         DOM.createPatientBtn.disabled = false; // Re-enable button
@@ -610,50 +424,39 @@
 
 
     function handleMutuelleChange() {
-      if (!DOM.hasInsuranceCheckbox || !DOM.mutuelleInput || !DOM.mutuelleInputContainer) {
-          console.warn("Mutuelle elements not found in DOM."); return;
-      }
+      if (!DOM.hasInsuranceCheckbox || !DOM.mutuelleInput || !DOM.mutuelleInputContainer) return; // Add checks
       const isChecked = DOM.hasInsuranceCheckbox.checked;
       DOM.mutuelleInput.disabled = !isChecked;
-      DOM.mutuelleInput.required = isChecked; // Make required only if checked
-      DOM.mutuelleInputContainer.style.opacity = isChecked ? '1' : '0.6'; // Visual cue
-
+      DOM.mutuelleInput.required = isChecked;
+      // DOM.mutuelleInputContainer.classList.toggle('input-group', isChecked); // This might not be needed if it's always an input-group
       if (!isChecked) {
           DOM.mutuelleInput.value = ''; // Clear value if disabled/unchecked
           const mutuelleGroup = DOM.mutuelleInput.closest('.input-group'); // Find parent group
           if(mutuelleGroup) {
               mutuelleGroup.classList.remove('has-error'); // Remove error state if any
-              DOM.mutuelleInput.classList.remove('input-error');
               const errorDiv = mutuelleGroup.querySelector('.error-text');
-              if(errorDiv) {
-                  errorDiv.textContent = '';
-                  errorDiv.style.display = 'none';
-              }
+              if(errorDiv) errorDiv.textContent = '';
           }
+          DOM.mutuelleInput.classList.remove('input-error');
       }
     }
 
     // --- Event Listeners ---
     DOM.searchButton?.addEventListener('click', handlePatientSearch);
-    DOM.cinInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); handlePatientSearch(); } }); // Prevent form submission if inside one
+    DOM.cinInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handlePatientSearch(); });
     DOM.createForm?.addEventListener('submit', handleCreatePatient);
     DOM.hasInsuranceCheckbox?.addEventListener('change', handleMutuelleChange);
-    // ID Capture Listeners
+    // ** ADDED Listeners for ID Capture **
     DOM.captureIdButton?.addEventListener('click', startIdCapture);
-    DOM.takePhotoButton?.addEventListener('click', takePhotoAndExtract);
-    DOM.cancelCaptureButton?.addEventListener('click', () => stopIdCapture(true)); // true clears blobs
+    DOM.takePhotoButton?.addEventListener('click', takePhotoAndExtract); // Correctly assigned
+    DOM.cancelCaptureButton?.addEventListener('click', () => stopIdCapture(true)); // Clear blobs on cancel
+    // Add listener for the dynamically created print button in search result (if needed, though onclick is set)
+    // DOM.resultDiv?.addEventListener('click', (e) => { if (e.target && e.target.matches('.print-search-qr-btn')) { /* Get URL from data attribute */ } });
 
 
     // --- Initial Setup ---
     window.onload = () => {
         console.log("Window loaded. Checking authentication...");
-        // Set max date for birth date input to today
-        const today = new Date().toISOString().split('T')[0];
-        const dateInput = document.getElementById('date_naissance');
-        if(dateInput) {
-           dateInput.max = today;
-        }
-
         if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
             console.log("Reception: No token found. Redirecting to login.");
             redirectToLogin();
@@ -663,11 +466,11 @@
         console.log("Reception: Authenticated. Setting up page.");
         resetSessionTimeout(); // Start session timeout
         handleMutuelleChange(); // Set initial state of mutuelle field
-        // Add activity listeners to reset timeout for user activity
-        ['mousemove', 'keypress', 'click', 'scroll', 'touchstart'].forEach(event =>
+        // Add activity listeners to reset timeout
+        ['mousemove', 'keypress', 'click', 'scroll'].forEach(event =>
             document.addEventListener(event, resetSessionTimeout, { passive: true })
         );
-        console.log("Initial setup complete. Session timeout active.");
+        console.log("Initial setup complete.");
     };
 
   </script>
