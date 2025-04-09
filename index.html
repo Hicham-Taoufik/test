@@ -166,8 +166,7 @@
   <script>
   (function() {
     'use strict';
-
-    // Configuration and endpoints
+    // --- Configuration ---
     const CONFIG = {
       API_BASE_URL: 'https://workflows.aphelionxinnovations.com',
       LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/',
@@ -176,16 +175,23 @@
       SESSION_TIMEOUT: 30 * 60 * 1000,
       TOAST_DISPLAY_TIME: 4000
     };
-    const DOCTORS_ENDPOINT   = CONFIG.API_BASE_URL + '/webhook/get-doctors';
-    const MUTUELLES_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/get-mutuelles';
-    const EXTRACT_ID_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/extract-id-info';
-    const CREATE_PATIENT_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/create-patient';
-    const GET_PATIENT_ENDPOINT = CONFIG.API_BASE_URL + '/webhook/get-patient';
+    // --- Endpoints (from your Postman config) ---
+    const DOCTORS_ENDPOINT       = CONFIG.API_BASE_URL + '/webhook/get-doctors';
+    // The original collection doesn’t include a get-mutuelles endpoint.
+    const CREATE_PATIENT_ENDPOINT  = CONFIG.API_BASE_URL + '/webhook/create-patient';
+    const GET_PATIENT_ENDPOINT     = CONFIG.API_BASE_URL + '/webhook/get-patient';
+    // We keep EXTRACT_ID_ENDPOINT if needed; if not available you may disable the ID capture feature.
+    const EXTRACT_ID_ENDPOINT      = CONFIG.API_BASE_URL + '/webhook/extract-id-info';
 
-    let doctorsList = [], mutuellesList = [];
-    let sessionTimeoutId = null, idCaptureStream = null;
-    let frontImageBlob = null, backImageBlob = null, isCapturingFront = true;
+    // --- State variables ---
+    let doctorsList = [];
+    let mutuellesList = [];  // May remain empty if no endpoint available.
+    let sessionTimeoutId = null;
+    let idCaptureStream = null;
+    let frontImageBlob = null, backImageBlob = null;
+    let isCapturingFront = true;
 
+    // --- DOM References ---
     const DOM = {
       createForm: document.getElementById('createForm'),
       nom: document.getElementById('nom'),
@@ -223,12 +229,13 @@
       toast: document.getElementById('toast')
     };
 
-    // For testing: if no token is set, add a dummy token so we don't redirect.
+    // --- For Testing: Dummy Token ---
     if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
       console.warn('Aucun token trouvé, utilisation d’un token de test.');
       localStorage.setItem(CONFIG.TOKEN_KEY, 'dummy-token');
     }
 
+    // --- Utility Functions ---
     function sanitize(input) {
       const temp = document.createElement('div');
       temp.textContent = input || '';
@@ -303,6 +310,7 @@
       sessionTimeoutId = setTimeout(window.logout, CONFIG.SESSION_TIMEOUT);
     }
 
+    // --- Form Field Validation ---
     function validateField(input, testFn, errorMessage) {
       if (!input) return true;
       const value = input.value.trim();
@@ -332,24 +340,25 @@
       showMessage('message', '', 'info');
     }
 
+    // --- Validate the entire form ---
     function validateForm() {
       clearErrors();
       let valid = true;
-      valid &= validateField(DOM.nom, v => v.length > 0, 'Nom requis');
-      valid &= validateField(DOM.prenom, v => v.length > 0, 'Prénom requis');
-      valid &= validateField(DOM.cin, v => /^[A-Za-z]{1,2}\d{5,6}$/.test(v), 'Format CIN invalide (ex: AB123456)');
-      valid &= validateField(DOM.telephone, v => /^0[5-7]\d{8}$/.test(v), 'Format téléphone invalide (ex: 0612345678)');
-      valid &= validateField(DOM.adresse, v => v.length > 0, 'Adresse requise');
-      valid &= validateField(DOM.ville, v => v.length > 0, 'Ville requise');
-      valid &= validateField(DOM.dateNaissance, v => v !== '', 'Date de naissance requise');
-      valid &= validateField(DOM.sexe, v => v !== '', 'Sélection du sexe requise');
+      valid = validateField(DOM.nom, v => v.length > 0, 'Nom requis') && valid;
+      valid = validateField(DOM.prenom, v => v.length > 0, 'Prénom requis') && valid;
+      valid = validateField(DOM.cin, v => /^[A-Za-z]{1,2}\d{5,6}$/.test(v), 'Format CIN invalide (ex: AB123456)') && valid;
+      valid = validateField(DOM.telephone, v => /^0[5-7]\d{8}$/.test(v), 'Format téléphone invalide (ex: 0612345678)') && valid;
+      valid = validateField(DOM.adresse, v => v.length > 0, 'Adresse requise') && valid;
+      valid = validateField(DOM.ville, v => v.length > 0, 'Ville requise') && valid;
+      valid = validateField(DOM.dateNaissance, v => v !== '', 'Date de naissance requise') && valid;
+      valid = validateField(DOM.sexe, v => v !== '', 'Sélection du sexe requise') && valid;
       if (DOM.hasInsurance.checked) {
-        valid &= validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée');
-        valid &= validateField(DOM.mutuelle, v => v && mutuellesList.some(m => m.toLowerCase() === v.toLowerCase()), 'Sélectionnez une mutuelle valide');
+        valid = validateField(DOM.mutuelle, v => v !== '', 'Mutuelle requise si cochée') && valid;
+        // Si vous avez un endpoint pour mutuelles, vous pouvez vérifier ici.
       }
       if (DOM.medecinReferent.value.trim() !== '') {
          const doctorChk = v => doctorsList.some(d => `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === v.toLowerCase());
-         valid &= validateField(DOM.medecinReferent, doctorChk, 'Médecin référent invalide');
+         valid = validateField(DOM.medecinReferent, doctorChk, 'Médecin référent invalide') && valid;
       }
       if (!valid) {
         showToast('Veuillez corriger les erreurs dans le formulaire.', 'error');
@@ -384,6 +393,7 @@
       }
     }
 
+    // --- Data Fetching ---
     async function fetchAndPopulate(endpoint, key) {
       try {
         const res = await fetchWithAuth(endpoint);
@@ -398,6 +408,7 @@
     }
 
     async function populateDataLists() {
+      // Fetch doctors list.
       doctorsList = await fetchAndPopulate(DOCTORS_ENDPOINT, 'doctors');
       if (doctorsList.length) {
         DOM.doctorsDatalist.innerHTML = '';
@@ -407,17 +418,10 @@
           DOM.doctorsDatalist.appendChild(opt);
         });
       }
-      mutuellesList = await fetchAndPopulate(MUTUELLES_ENDPOINT, 'mutuelles');
-      if (mutuellesList.length) {
-        DOM.mutuellesDatalist.innerHTML = '';
-        mutuellesList.forEach(m => {
-          const opt = document.createElement('option');
-          opt.value = m;
-          DOM.mutuellesDatalist.appendChild(opt);
-        });
-      }
+      // If you have a mutuelles endpoint, you can fetch it here.
     }
 
+    // --- QR Code Utility ---
     function generateQrData(ipp) {
       const encoded = encodeURIComponent(ipp);
       const target = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encoded}`;
@@ -454,6 +458,7 @@
       pw.document.close();
     };
 
+    // --- ID Capture Functions ---
     async function startIdCapture() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         showMessage('captureMessage', 'La fonctionnalité caméra n’est pas supportée.', 'error');
@@ -485,8 +490,7 @@
         };
       } catch (err) {
         const msg = err.name === "NotAllowedError" ? "Permission caméra refusée." :
-                    err.name === "NotFoundError" ? "Aucune caméra trouvée." :
-                    "Erreur caméra.";
+                    err.name === "NotFoundError" ? "Aucune caméra trouvée." : "Erreur caméra.";
         showMessage('captureMessage', msg, 'error');
         stopIdCapture(true);
       }
@@ -595,17 +599,17 @@
       if (data.date_of_birth) {
         let isoDate = '';
         let parts = String(data.date_of_birth).match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
-        if (parts) { isoDate = `${parts[3]}-${parts[2].padStart(2,'0')}-${parts[1].padStart(2,'0')}`; }
+        if (parts) { isoDate = `${parts[3]}-${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}`; }
         else {
           parts = String(data.date_of_birth).match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
-          if (parts) { isoDate = `${parts[1]}-${parts[2].padStart(2,'0')}-${parts[3].padStart(2,'0')}`; }
+          if (parts) { isoDate = `${parts[1]}-${parts[2].padStart(2, '0')}-${parts[3].padStart(2, '0')}`; }
         }
         DOM.dateNaissance.value = isoDate && !isNaN(new Date(isoDate + 'T00:00:00')) ? isoDate : '';
       } else {
         DOM.dateNaissance.value = '';
       }
       DOM.telephone.value = data.phone_number || '';
-      showMessage('message', 'Formulaire pré-rempli depuis la CIN. Veuillez vérifier les informations.', 'success');
+      showMessage('message', 'Formulaire pré-rempli depuis la CIN. Vérifiez les informations.', 'success');
     }
 
     async function handlePatientSearch() {
@@ -681,10 +685,13 @@
       const medRef = DOM.medecinReferent.value.trim();
       let doctorId = '';
       if (medRef) {
-        const doc = doctorsList.find(d => `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === medRef.toLowerCase());
+        const doc = doctorsList.find(d =>
+          `${d.nom} ${d.prenom} - ${d.specialite}`.toLowerCase() === medRef.toLowerCase()
+        );
         if (doc) doctorId = doc.matricule;
       }
       const mutuelleVal = DOM.hasInsurance.checked ? DOM.mutuelle.value.trim() : null;
+      // Include "has_insurance" in payload
       const payload = {
         nom: DOM.nom.value.trim(),
         prenom: DOM.prenom.value.trim(),
@@ -694,6 +701,7 @@
         ville: DOM.ville.value.trim(),
         date_naissance: DOM.dateNaissance.value,
         sexe: DOM.sexe.value,
+        has_insurance: DOM.hasInsurance.checked,
         mutuelle: mutuelleVal,
         medecin_referent: doctorId
       };
@@ -733,8 +741,7 @@
     };
 
     function initializeApp() {
-      // Instead of redirecting immediately if no token is present,
-      // we now use our dummy token (see above) for testing.
+      console.log('Initializing app...');
       resetSessionTimeout();
       populateDataLists();
       handleMutuelleChange();
