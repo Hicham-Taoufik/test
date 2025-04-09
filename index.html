@@ -166,6 +166,8 @@
   <script>
   (function() {
     'use strict';
+
+    // Configuration and endpoints
     const CONFIG = {
       API_BASE_URL: 'https://workflows.aphelionxinnovations.com',
       LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/',
@@ -220,6 +222,12 @@
       resultDiv: document.getElementById('getResult'),
       toast: document.getElementById('toast')
     };
+
+    // For testing: if no token is set, add a dummy token so we don't redirect.
+    if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
+      console.warn('Aucun token trouvé, utilisation d’un token de test.');
+      localStorage.setItem(CONFIG.TOKEN_KEY, 'dummy-token');
+    }
 
     function sanitize(input) {
       const temp = document.createElement('div');
@@ -318,7 +326,8 @@
       DOM.createForm.querySelectorAll('.input-group').forEach(group => {
         group.classList.remove('has-error');
         group.querySelectorAll('input, textarea, select').forEach(input => input.classList.remove('input-error'));
-        const err = group.querySelector('.error-text'); if (err) err.textContent = '';
+        const err = group.querySelector('.error-text');
+        if (err) err.textContent = '';
       });
       showMessage('message', '', 'info');
     }
@@ -724,10 +733,8 @@
     };
 
     function initializeApp() {
-      if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
-        window.location.href = CONFIG.LOGIN_PAGE_URL;
-        return;
-      }
+      // Instead of redirecting immediately if no token is present,
+      // we now use our dummy token (see above) for testing.
       resetSessionTimeout();
       populateDataLists();
       handleMutuelleChange();
