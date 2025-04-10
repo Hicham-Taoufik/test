@@ -44,6 +44,7 @@
     .input-group.has-error .error-text { display: block; }
     input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
     .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-700); margin-bottom: 0; cursor: pointer; }
+    .checkbox-label input[type="checkbox"] { width: 1.1em; height: 1.1em; margin-right: 0.4rem; cursor: pointer; accent-color: var(--primary); }
     .mutuelle-group { grid-column: span 2; display: flex; flex-direction: column; gap: 0.75rem; }
     .mutuelle-group > div:first-child { display: flex; align-items: center; }
     input[name="mutuelle"]:disabled { background-color: var(--gray-100); cursor: not-allowed; opacity: 0.7; border: 1px solid var(--gray-300); }
@@ -62,7 +63,7 @@
     .message-success { background: var(--success-light); color: var(--success-dark); border-left: 4px solid var(--success); }
     .message-warning { background: var(--warning-light); color: var(--warning); border-left: 4px solid var(--warning); }
     .message-error { background: var(--danger-light); color: var(--danger); border-left: 4px solid var(--danger); }
-    .message-info { background: var(--primary-light); color: var(--primary-dark); border-left: 4px solid var(--primary); }
+    .message-info { background: var(--primary-light); color: var(--primary-dark); border-left: 4px solid var(--primary);}
     #getResult { margin-top: 1.25rem; padding: 0; background-color: transparent; border-radius: 0; border-left: none; display: none; }
     .patient-result-container { background-color: var(--gray-100); padding: 1.25rem; border-radius: var(--border-radius); border-left: 4px solid var(--primary); animation: slideIn 0.3s ease-out; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -153,6 +154,7 @@
                   </select>
                   <div class="error-text">Veuillez entrer le nom de la mutuelle</div>
                 </div>
+                <!-- Removed the "A une mutuelle ?" checkbox block -->
                 <div class="form-submit-button"> <button type="submit" class="btn btn-success" id="createPatientBtn"> <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient </button> </div>
                 <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
@@ -191,6 +193,7 @@
       createResultDiv: document.getElementById("createResult"),
       searchButton: document.getElementById("searchBtn"),
       cinInput: document.getElementById("getCin"),
+      // Removed hasInsuranceCheckbox reference
       mutuelleInput: document.getElementById("mutuelle"),
       mutuelleInputContainer: document.getElementById("mutuelle-input-container"),
       createPatientBtn: document.getElementById("createPatientBtn"),
@@ -212,64 +215,9 @@
     let currentIPP = null; let currentPatientInfo = null; let sessionTimeoutId = null; let idCaptureStream = null; let frontImageBlob = null; let backImageBlob = null; let isCapturingFront = true;
 
     // --- Utility Functions ---
-    function showToast(message, type = 'success') { 
-      if (!message || !DOM.toast) return; 
-      const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; 
-      DOM.toast.innerHTML = `${icon} ${message}`; 
-      DOM.toast.className = `toast ${type}`; 
-      DOM.toast.classList.add('show'); 
-      setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); 
-    }
-    function sanitizeInput(input) { 
-      if (!input) return ''; 
-      const temp = document.createElement('div'); 
-      temp.textContent = input; 
-      return temp.innerHTML; 
-    }
-    function showMessage(elementId, message, type) { 
-      const el = document.getElementById(elementId); 
-      if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } 
-      const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; 
-      const iconClass = statusIcons[type] || statusIcons['info']; 
-      const iconHtml = message && type !== 'result' ? `<i class="${iconClass} me-2" aria-hidden="true"></i>` : ''; 
-      el.innerHTML = message ? `${iconHtml}${message}` : ""; 
-      el.style.display = message ? "block" : "none"; 
-      el.className = ""; 
-      if (type === 'result') {
-      } else { 
-        el.className = "message"; 
-        if (type === "success") el.classList.add("message-success"); 
-        else if (type === "warning") el.classList.add("message-warning"); 
-        else if (type === "error") el.classList.add("message-error"); 
-        else if (type === "info") el.classList.add("message-info"); 
-      } 
-      if(elementId === 'createResult') { 
-        const isResult = type === 'result'; 
-        const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); 
-        const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); 
-        const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); 
-        el.style.backgroundColor = baseBg; 
-        el.style.borderLeft = `4px solid ${baseBorder}`; 
-        el.style.textAlign = 'center'; 
-        el.style.marginTop = '20px'; 
-        el.style.padding = '1rem'; 
-        el.style.borderRadius = 'var(--border-radius)'; 
-        const msgP = el.querySelector('#createResultMessage'); 
-        const img = el.querySelector('#createQrCodeImage'); 
-        const btn = el.querySelector('#createPrintButton'); 
-        if(msgP) msgP.style.color = textColor; 
-        if(img) img.style.display = isResult ? 'block' : 'none'; 
-        if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; 
-      } 
-      if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { 
-        setTimeout(() => { 
-          const currentElement = document.getElementById(elementId); 
-          if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) { 
-            currentElement.style.display = 'none'; 
-          } 
-        }, CONFIG.MESSAGE_DISPLAY_TIME); 
-      } 
-    }
+    function showToast(message, type = 'success') { if (!message || !DOM.toast) return; const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>'; DOM.toast.innerHTML = `${icon} ${message}`; DOM.toast.className = `toast ${type}`; DOM.toast.classList.add('show'); setTimeout(() => { DOM.toast.classList.remove('show'); }, CONFIG.TOAST_DISPLAY_TIME); }
+    function sanitizeInput(input) { if (!input) return ''; const temp = document.createElement('div'); temp.textContent = input; return temp.innerHTML; }
+    function showMessage(elementId, message, type) { const el = document.getElementById(elementId); if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; } const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'}; const iconClass = statusIcons[type] || statusIcons['info']; const iconHtml = message && type !== 'result' ? `<i class="${iconClass} me-2" aria-hidden="true"></i>` : ''; el.innerHTML = message ? `${iconHtml}${message}` : ""; el.style.display = message ? "block" : "none"; el.className = ""; if (type === 'result') { /* No special class for result containers */ } else { el.className = "message"; if (type === "success") el.classList.add("message-success"); else if (type === "warning") el.classList.add("message-warning"); else if (type === "error") el.classList.add("message-error"); else if (type === "info") el.classList.add("message-info"); } if(elementId === 'createResult') { const isResult = type === 'result'; const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent')); const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent')); const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit')); el.style.backgroundColor = baseBg; el.style.borderLeft = `4px solid ${baseBorder}`; el.style.textAlign = 'center'; el.style.marginTop = '20px'; el.style.padding = '1rem'; el.style.borderRadius = 'var(--border-radius)'; const msgP = el.querySelector('#createResultMessage'); const img = el.querySelector('#createQrCodeImage'); const btn = el.querySelector('#createPrintButton'); if(msgP) msgP.style.color = textColor; if(img) img.style.display = isResult ? 'block' : 'none'; if(btn) btn.style.display = isResult ? 'inline-block' : 'none'; } if (type !== 'error' && type !== 'warning' && type !== 'loading' && message && elementId === 'message') { setTimeout(() => { const currentElement = document.getElementById(elementId); if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) { currentElement.style.display = 'none'; } }, CONFIG.MESSAGE_DISPLAY_TIME); } }
 
     // --- Authentication & Session ---
     function fetchWithAuth(url, options = {}) {
@@ -280,14 +228,18 @@
         redirectToLogin();
         return Promise.reject(new Error('Token non trouvé.'));
       }
+
       resetSessionTimeout();
+
       const headers = {
         ...options.headers,
         'Authorization': `Bearer ${token}`,
       };
+
       if (options.body && !(options.body instanceof FormData)) {
         headers['Content-Type'] = 'application/json';
       }
+
       return fetch(url, { ...options, headers })
         .then(response => {
           if (!response.ok) {
@@ -308,143 +260,112 @@
           throw error;
         });
     }
+
     function redirectToLogin() { window.location.href = CONFIG.LOGIN_PAGE_URL; }
     function logout() { localStorage.removeItem(CONFIG.TOKEN_KEY); clearTimeout(sessionTimeoutId); showToast('Déconnecté.', 'success'); setTimeout(redirectToLogin, 1000); }
     function resetSessionTimeout() { if (sessionTimeoutId) clearTimeout(sessionTimeoutId); sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT); }
 
     // --- Form Validation ---
-    function validateField(input, validationFn, errorMessage) { 
-      const value = input.value.trim(); 
-      const group = input.closest('.input-group'); 
-      if (!group) return true; 
-      const isValid = validationFn(value); 
-      group.classList.toggle('has-error', !isValid); 
-      input.classList.toggle('input-error', !isValid); 
-      const errorDiv = group.querySelector('.error-text'); 
-      if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage; 
-      return isValid; 
-    }
-    function validateCreateForm() { 
-      let isValid = true; 
+    function validateField(input, validationFn, errorMessage) { const value = input.value.trim(); const group = input.closest('.input-group'); if (!group) return true; const isValid = validationFn(value); group.classList.toggle('has-error', !isValid); input.classList.toggle('input-error', !isValid); const errorDiv = group.querySelector('.error-text'); if (errorDiv) errorDiv.textContent = isValid ? '' : errorMessage; return isValid; }
+    function validateCreateForm() {
+      let isValid = true;
       showMessage('message', '', ''); 
-      DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error')); 
-      DOM.createForm.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error')); 
-      isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis"); 
-      isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis"); 
-      isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)"); 
-      isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx"); 
-      isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise"); 
-      isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise"); 
-      isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise"); 
-      isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise"); 
-      isValid &= validateField(DOM.mutuelle, val => val.length > 0, "Nom mutuelle requis");
+      DOM.createForm.querySelectorAll('.input-group.has-error').forEach(el => el.classList.remove('has-error'));
+      DOM.createForm.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
+      isValid &= validateField(DOM.createForm.nom, val => val.length > 0, "Nom requis");
+      isValid &= validateField(DOM.createForm.prenom, val => val.length > 0, "Prénom requis");
+      isValid &= validateField(DOM.createForm.cin, val => /^[A-Za-z]{1,2}\d{5,6}$/.test(val), "Format CIN invalide (ex: AB123456)");
+      isValid &= validateField(DOM.createForm.telephone, val => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx");
+      isValid &= validateField(DOM.createForm.adresse, val => val.length > 0, "Adresse requise");
+      isValid &= validateField(DOM.createForm.ville, val => val.length > 0, "Ville requise");
+      isValid &= validateField(DOM.createForm.date_naissance, val => val !== '', "Date naissance requise");
+      isValid &= validateField(DOM.createForm.sexe, val => val !== '', "Sélection sexe requise");
+      // Always validate mutuelle (checkbox logic removed)
+      isValid &= validateField(DOM.mutuelleInput, val => val.length > 0, "Nom mutuelle requis");
       if (!isValid) { 
-        showMessage('message', 'Veuillez corriger les erreurs.', 'error'); 
-        const firstError = DOM.createForm.querySelector('.input-error'); 
-        if(firstError) firstError.focus(); 
-      } 
-      return !!isValid; 
+        showMessage('message', 'Veuillez corriger les erreurs.', 'error');
+        const firstError = DOM.createForm.querySelector('.input-error');
+        if (firstError) firstError.focus();
+      }
+      return !!isValid;
     }
 
     // --- API Service ---
-    const apiService = { 
+    const apiService = {
       async fetchPatient(cin) { 
         try { 
-          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`); 
-          return await res.json(); 
-        } catch (e) { 
-          console.error("Pat fetch err:", e); 
-          throw e; 
-        } 
-      }, 
+          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-patient?cin=${cin}`);
+          return await res.json();
+        } catch (e) { console.error("Pat fetch err:", e); throw e; }
+      },
       async createPatient(payload) { 
         try { 
-          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) }); 
-          return await res.json(); 
-        } catch (e) { 
-          console.error("Pat create err:", e); 
-          throw e; 
-        } 
-      }, 
+          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) });
+          return await res.json();
+        } catch (e) { console.error("Pat create err:", e); throw e; }
+      },
       async extractIdInfo(formData) { 
         try { 
-          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, { method: 'POST', body: formData }); 
-          return await res.json(); 
-        } catch (e) { 
-          console.error("ID Extract err:", e); 
-          throw e; 
-        } 
-      }, 
+          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, { method: 'POST', body: formData });
+          return await res.json();
+        } catch (e) { console.error("ID Extract err:", e); throw e; }
+      },
       async fetchMutuelles() { 
         try { 
-          const data = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-mutuelles`); 
+          const data = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-mutuelles`);
           if (data.success && Array.isArray(data.mutuelles)) { 
-            populateMutuelleDropdown(data.mutuelles); 
-          } else { 
-            console.error('Failed to fetch mutuelles:', data); 
-          } 
-        } catch (error) { 
-          console.error('Error fetching mutuelles:', error); 
-        } 
+            populateMutuelleDropdown(data.mutuelles);
+          } else { console.error('Failed to fetch mutuelles:', data); }
+        } catch (error) { console.error('Error fetching mutuelles:', error); }
       }
     };
 
     // --- QR Code Functions ---
     function generateQrData(ipp) { 
-      if (!ipp) { 
-        console.error("IPP missing QR."); 
-        return null; 
-      } 
-      const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`; 
-      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`; 
-      console.log("QR Target:", qrTargetUrl); 
-      console.log("QR Image:", qrImageUrl); 
-      return { qrTargetUrl, qrImageUrl }; 
+      if (!ipp) { console.error("IPP missing QR."); return null; }
+      const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`;
+      console.log("QR Target:", qrTargetUrl);
+      console.log("QR Image:", qrImageUrl);
+      return { qrTargetUrl, qrImageUrl };
     }
     function printQRCode(qrImageUrl) { 
-      const printWindow = window.open('', '_blank', 'width=400,height=450'); 
-      if (!printWindow) { 
-        alert('Veuillez autoriser les pop-ups.'); 
-        return; 
-      } 
+      const printWindow = window.open('', '_blank', 'width=400,height=450');
+      if (!printWindow) { alert('Veuillez autoriser les pop-ups.'); return; }
       printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Imprimer QR</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet"/><style>body{font-family:'Inter',sans-serif;text-align:center;margin:0;padding-top:20px} img.logo{display:block;width:60px;margin:0 auto 10px auto} img.qrcode{display:block;width:200px;height:200px;margin:0 auto 15px auto;border:1px solid #eee;padding:5px;background:white} button{display:none;} @media print{body{margin:5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact} img.logo, img.qrcode{margin-bottom:8px}}</style></head><body><img src="./clinique-nakhil-logo-horizontal.webp" alt="Logo" class="logo" onerror="this.style.display='none'" /><img src="${qrImageUrl}" alt="QR Code" class="qrcode" /><script>let p=false;const a=()=>{if(!p){window.print();p=true;window.onafterprint=()=>window.close();setTimeout(()=>window.close(),1500)}};let i=document.querySelectorAll('img'),l=0,e=0,t=i.length;if(t===0)a();else{i.forEach(m=>{const c=()=>{if(l+e===t)a()};if(m.complete)l++,c();else{m.onload=()=>{l++;c();m.onerror=()=>{e++;c()}}});setTimeout(()=>{if(!p)a()},3000)}<\/script></body></html>`);
-      printWindow.document.close(); 
+      printWindow.document.close();
     }
 
     // --- ID Capture Functions ---
-    function updateCaptureMessage(message, type = 'info') { 
-      showMessage('captureMessage', message, type); 
-    }
-    async function startIdCapture() { 
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { 
-        updateCaptureMessage('Demande caméra...', 'loading'); 
-        DOM.captureIdButton.disabled = true; 
-        DOM.idCaptureContainer.style.display = 'block'; 
-        DOM.frontPreview.style.display = 'none'; 
-        DOM.backPreview.style.display = 'none'; 
-        isCapturingFront = true; 
-        DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo."; 
-        try { 
-          idCaptureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } }); 
-          DOM.idVideo.srcObject = idCaptureStream; 
-          await DOM.idVideo.play(); 
-          updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info'); 
-          DOM.takePhotoButton.disabled = false; 
-          DOM.cancelCaptureButton.disabled = false; 
-        } catch (err) { 
-          updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error'); 
-          stopIdCapture(false); 
-        } 
-      } else { 
-        alert("Accès caméra non supporté."); 
-        updateCaptureMessage("Caméra non supportée.", 'error'); 
+    function updateCaptureMessage(message, type = 'info') { showMessage('captureMessage', message, type); }
+    async function startIdCapture() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        updateCaptureMessage('Demande caméra...', 'loading');
+        DOM.captureIdButton.disabled = true;
+        DOM.idCaptureContainer.style.display = 'block';
+        DOM.frontPreview.style.display = 'none';
+        DOM.backPreview.style.display = 'none';
+        isCapturingFront = true;
+        DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo.";
+        try {
+          idCaptureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } });
+          DOM.idVideo.srcObject = idCaptureStream;
+          await DOM.idVideo.play();
+          updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info');
+          DOM.takePhotoButton.disabled = false;
+          DOM.cancelCaptureButton.disabled = false;
+        } catch (err) {
+          updateCaptureMessage(`Erreur caméra: ${err.message}`, 'error');
+          stopIdCapture(false);
+        }
+      } else {
+        alert("Accès caméra non supporté.");
+        updateCaptureMessage("Caméra non supportée.", 'error');
         DOM.captureIdButton.disabled = false;
       }
     }
     function stopIdCapture(clearBlobs = true) {
-      if (idCaptureStream) {
-        idCaptureStream.getTracks().forEach(track => track.stop());
-      }
+      if (idCaptureStream) { idCaptureStream.getTracks().forEach(track => track.stop()); }
       DOM.idVideo.srcObject = null;
       DOM.idCaptureContainer.style.display = 'none';
       DOM.takePhotoButton.disabled = true;
@@ -462,70 +383,70 @@
         console.log("ID Capture cancelled and blobs cleared.");
       }
     }
-    async function takePhotoAndExtract() { 
-      if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) { 
-        updateCaptureMessage('Caméra non prête.', 'warning'); 
-        return; 
-      } 
-      updateCaptureMessage('Capture et analyse...', 'loading'); 
-      DOM.takePhotoButton.disabled = true; 
-      DOM.cancelCaptureButton.disabled = true; 
-      const canvas = DOM.idCanvas; 
-      canvas.width = DOM.idVideo.videoWidth; 
-      canvas.height = DOM.idVideo.videoHeight; 
-      const context = canvas.getContext('2d'); 
-      context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height); 
-      canvas.toBlob(async (blob) => { 
-        if (!blob) { 
-          updateCaptureMessage('Erreur capture image.', 'error'); 
-          stopIdCapture(); 
-          return; 
-        } 
-        if (isCapturingFront) { 
-          frontImageBlob = blob; 
-          console.log("Recto captured"); 
-          DOM.frontPreview.src = URL.createObjectURL(frontImageBlob); 
-          DOM.frontPreview.style.display = 'inline-block'; 
-          isCapturingFront = false; 
-          DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo."; 
-          updateCaptureMessage('Recto OK. Préparez le verso.', 'info'); 
-          DOM.takePhotoButton.disabled = false; 
-          DOM.cancelCaptureButton.disabled = false; 
-        } else { 
-          backImageBlob = blob; 
-          console.log("Verso captured"); 
-          DOM.backPreview.src = URL.createObjectURL(backImageBlob); 
-          DOM.backPreview.style.display = 'inline-block'; 
-          stopIdCapture(false); 
-          updateCaptureMessage('Verso OK. Analyse en cours...', 'loading'); 
-          if (frontImageBlob && backImageBlob) { 
-            const formData = new FormData(); 
-            formData.append('id_image_front', frontImageBlob, 'id_card_front.jpg'); 
-            formData.append('id_image_back', backImageBlob, 'id_card_back.jpg'); 
-            try { 
-              const extractedData = await apiService.extractIdInfo(formData); 
-              console.log("Extracted ID Data:", extractedData); 
-              if (extractedData && extractedData.data) { 
-                autofillCreateForm(extractedData); 
-                showToast('Formulaire pré-rempli!', 'success'); 
-                updateCaptureMessage('Données extraites!', 'success'); 
-              } else { 
-                const errorMessage = extractedData && extractedData.message ? extractedData.message : "Aucune donnée extraite."; 
-                throw new Error(errorMessage); 
-              } 
-            } catch (error) { 
-              console.error("Error extraction API call:", error); 
-              updateCaptureMessage(`Erreur extraction: ${error.message}`, 'error'); 
-            } finally { 
-              frontImageBlob = null; 
-              backImageBlob = null; 
-            } 
-          } else { 
-            console.error("Missing blobs."); 
-            updateCaptureMessage('Erreur: Images manquantes.', 'error'); 
-          } 
-        } 
-      }, 'image/jpeg', 0.9); 
+    async function takePhotoAndExtract() {
+      if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) {
+        updateCaptureMessage('Caméra non prête.', 'warning');
+        return;
+      }
+      updateCaptureMessage('Capture et analyse...', 'loading');
+      DOM.takePhotoButton.disabled = true;
+      DOM.cancelCaptureButton.disabled = true;
+      const canvas = DOM.idCanvas;
+      canvas.width = DOM.idVideo.videoWidth;
+      canvas.height = DOM.idVideo.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(DOM.idVideo, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          updateCaptureMessage('Erreur capture image.', 'error');
+          stopIdCapture();
+          return;
+        }
+        if (isCapturingFront) {
+          frontImageBlob = blob;
+          console.log("Recto captured");
+          DOM.frontPreview.src = URL.createObjectURL(frontImageBlob);
+          DOM.frontPreview.style.display = 'inline-block';
+          isCapturingFront = false;
+          DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo.";
+          updateCaptureMessage('Recto OK. Préparez le verso.', 'info');
+          DOM.takePhotoButton.disabled = false;
+          DOM.cancelCaptureButton.disabled = false;
+        } else {
+          backImageBlob = blob;
+          console.log("Verso captured");
+          DOM.backPreview.src = URL.createObjectURL(backImageBlob);
+          DOM.backPreview.style.display = 'inline-block';
+          stopIdCapture(false);
+          updateCaptureMessage('Verso OK. Analyse en cours...', 'loading');
+          if (frontImageBlob && backImageBlob) {
+            const formData = new FormData();
+            formData.append('id_image_front', frontImageBlob, 'id_card_front.jpg');
+            formData.append('id_image_back', backImageBlob, 'id_card_back.jpg');
+            try {
+              const extractedData = await apiService.extractIdInfo(formData);
+              console.log("Extracted ID Data:", extractedData);
+              if (extractedData && extractedData.data) {
+                autofillCreateForm(extractedData);
+                showToast('Formulaire pré-rempli!', 'success');
+                updateCaptureMessage('Données extraites!', 'success');
+              } else {
+                const errorMessage = extractedData && extractedData.message ? extractedData.message : "Aucune donnée extraite.";
+                throw new Error(errorMessage);
+              }
+            } catch (error) {
+              console.error("Error extraction API call:", error);
+              updateCaptureMessage(`Erreur extraction: ${error.message}`, 'error');
+            } finally {
+              frontImageBlob = null;
+              backImageBlob = null;
+            }
+          } else {
+            console.error("Missing blobs.");
+            updateCaptureMessage('Erreur: Images manquantes.', 'error');
+          }
+        }
+      }, 'image/jpeg', 0.9);
     }
     function autofillCreateForm(data) {
       const form = DOM.createForm;
@@ -549,9 +470,7 @@
           console.warn("Date of birth format not as expected (DD/MM/YYYY):", originalDateString);
           formattedDateOfBirth = "";
         }
-      } else {
-          console.warn("Date of birth missing from extracted data.");
-      }
+      } else { console.warn("Date of birth missing from extracted data."); }
       form.nom.value = extracted.last_name ?? '';
       form.prenom.value = extracted.first_name ?? '';
       form.cin.value = extracted.id_number ?? '';
@@ -569,10 +488,7 @@
     async function handlePatientSearch() {
       showMessage('getResult', '', ''); 
       const cinInput = DOM.cinInput;
-      if (!cinInput) {
-        console.error("Search CIN input not found");
-        return;
-      }
+      if (!cinInput) { console.error("Search CIN input not found"); return; }
       const cin = cinInput.value.trim();
       if (!cin) {
         showMessage('getResult', 'Veuillez entrer un CIN pour la recherche.', 'warning');
@@ -646,7 +562,8 @@
         ville: DOM.createForm.ville.value.trim(),
         date_naissance: birthDateToSend,
         sexe: DOM.createForm.sexe.value,
-        mutuelle: DOM.mutuelle.value.trim()
+        // Always send the mutuelle value (checkbox removed)
+        mutuelle: DOM.mutuelleInput.value.trim()
       };
       console.log("Payload for Create Patient:", payload);
       try {
@@ -678,10 +595,13 @@
       }
     }
 
+    // --- Removed handleMutuelleChange (no checkbox logic) ---
+
     // --- Event Listeners ---
     DOM.searchButton?.addEventListener('click', handlePatientSearch);
     DOM.cinInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handlePatientSearch(); });
     DOM.createForm?.addEventListener('submit', handleCreatePatient);
+    // Removed event listener for hasInsuranceCheckbox change
     DOM.captureIdButton?.addEventListener('click', startIdCapture);
     DOM.takePhotoButton?.addEventListener('click', takePhotoAndExtract);
     DOM.cancelCaptureButton?.addEventListener('click', () => stopIdCapture(true));
@@ -697,6 +617,7 @@
         DOM.body.classList.add('loaded');
         console.log("Reception: Authenticated. Setting up page.");
         resetSessionTimeout();
+        // Removed handleMutuelleChange() call
         ['mousemove', 'keypress', 'click', 'scroll'].forEach(event =>
             document.addEventListener(event, resetSessionTimeout, { passive: true })
         );
