@@ -7,6 +7,8 @@
   <title>Réception - MediClinic</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Select2 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
   <style>
     /* --- CSS (Includes styles for ID Capture) --- */
     :root { --primary: #5d74f2; --primary-light: #ebeffe; --primary-dark: #4a62d8; --success: #31c971; --success-light: #e0fbea; --success-dark: #28a960; --warning: #ffb648; --warning-light: #fff8ec; --danger: #ff5a5a; --danger-light: #ffeded; --gray-100: #f9fafb; --gray-200: #f1f3f9; --gray-300: #e5e7eb; --gray-400: #d1d5db; --gray-500: #9ca3af; --gray-600: #6b7280; --gray-700: #4b5563; --gray-800: #374151; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.04); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05); --shadow-focus: 0 0 0 3px rgba(93, 116, 242, 0.2); --border-radius: 0.5rem; --transition-speed: 0.2s; font-size: 15px; }
@@ -145,7 +147,7 @@
                 <div class="input-group"> <label for="ville">Ville <span aria-hidden="true">*</span></label> <input id="ville" name="ville" type="text" placeholder="Ville" required aria-required="true" autocomplete="address-level2"/> <div class="error-text">Veuillez entrer une ville</div> </div>
                 <div class="input-group"> <label for="date_naissance">Date de Naissance <span aria-hidden="true">*</span></label> <input id="date_naissance" name="date_naissance" type="date" required aria-required="true" autocomplete="bday"/> <div class="error-text">Veuillez entrer une date valide</div> </div>
                 <div class="input-group"> <label for="sexe">Sexe <span aria-hidden="true">*</span></label> <select id="sexe" name="sexe" required aria-required="true" autocomplete="sex"> <option value="M">Homme</option> <option value="F">Femme</option> </select> <div class="error-text">Veuillez sélectionner un sexe</div> </div>
-                <div class="input-group mutuelle-group"> <div> <input type="checkbox" id="has_insurance" name="has_insurance" /> <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label> </div> <div id="mutuelle-input-container"> <input name="mutuelle" id="mutuelle" type="text" placeholder="Nom Mutuelle (si cochée)" aria-labelledby="has_insurance" disabled /> <div class="error-text">Veuillez entrer le nom de la mutuelle</div> </div> </div>
+                <div class="input-group mutuelle-group"> <div> <input type="checkbox" id="has_insurance" name="has_insurance" /> <label for="has_insurance" class="checkbox-label">A une mutuelle ?</label> </div> <div id="mutuelle-input-container"> <select name="mutuelle" id="mutuelle" class="searchable-dropdown" aria-labelledby="has_insurance" disabled> <option value="" disabled selected>Choisir une mutuelle</option> </select> <div class="error-text">Veuillez entrer le nom de la mutuelle</div> </div> </div>
                 <div class="form-submit-button"> <button type="submit" class="btn btn-success" id="createPatientBtn"> <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient </button> </div>
                 <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
@@ -169,6 +171,8 @@
     <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
   </div>
 
+  <!-- Select2 JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
   <script>
     // --- Configuration & Constants ---
     const CONFIG = { API_BASE_URL: 'https://workflows.aphelionxinnovations.com', QR_TARGET_BASE_URL: 'app://medilink/patient', LOGIN_PAGE_URL: 'https://hicham-taoufik.github.io/login/', TOKEN_KEY: 'authToken', SESSION_TIMEOUT: 30 * 60 * 1000, MESSAGE_DISPLAY_TIME: 7000, TOAST_DISPLAY_TIME: 4000 };
@@ -424,20 +428,10 @@
 
 
     function handleMutuelleChange() {
-      if (!DOM.hasInsuranceCheckbox || !DOM.mutuelleInput || !DOM.mutuelleInputContainer) return; // Add checks
       const isChecked = DOM.hasInsuranceCheckbox.checked;
-      DOM.mutuelleInput.disabled = !isChecked;
-      DOM.mutuelleInput.required = isChecked;
-      // DOM.mutuelleInputContainer.classList.toggle('input-group', isChecked); // This might not be needed if it's always an input-group
+      $(DOM.mutuelle).prop('disabled', !isChecked);
       if (!isChecked) {
-          DOM.mutuelleInput.value = ''; // Clear value if disabled/unchecked
-          const mutuelleGroup = DOM.mutuelleInput.closest('.input-group'); // Find parent group
-          if(mutuelleGroup) {
-              mutuelleGroup.classList.remove('has-error'); // Remove error state if any
-              const errorDiv = mutuelleGroup.querySelector('.error-text');
-              if(errorDiv) errorDiv.textContent = '';
-          }
-          DOM.mutuelleInput.classList.remove('input-error');
+        $(DOM.mutuelle).val(null).trigger('change'); // Clear selection if unchecked
       }
     }
 
@@ -473,6 +467,45 @@
         console.log("Initial setup complete.");
     };
 
+    document.addEventListener('DOMContentLoaded', async () => {
+      const mutuelleDropdown = document.getElementById('mutuelle');
+
+      // Fetch the list of mutuelles
+      async function fetchMutuelles() {
+        try {
+          const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/get-mutuelles`);
+          const data = await response.json();
+          if (data.success && Array.isArray(data.mutuelles)) {
+            populateMutuelleDropdown(data.mutuelles);
+          } else {
+            console.error('Failed to fetch mutuelles:', data);
+          }
+        } catch (error) {
+          console.error('Error fetching mutuelles:', error);
+        }
+      }
+
+      // Populate the dropdown with mutuelles
+      function populateMutuelleDropdown(mutuelles) {
+        mutuelleDropdown.innerHTML = '<option value="" disabled selected>Choisir une mutuelle</option>';
+        mutuelles.forEach(mutuelle => {
+          const option = document.createElement('option');
+          option.value = mutuelle;
+          option.textContent = mutuelle;
+          mutuelleDropdown.appendChild(option);
+        });
+
+        // Initialize Select2
+        $(mutuelleDropdown).select2({
+          placeholder: 'Choisir une mutuelle',
+          allowClear: true,
+          width: '100%'
+        });
+      }
+
+      // Fetch and populate mutuelles on page load
+      fetchMutuelles();
+    });
   </script>
 </body>
 </html>
