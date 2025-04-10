@@ -43,6 +43,7 @@
     input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
     .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-700); margin-bottom: 0; cursor: pointer; }
     .checkbox-label input[type="checkbox"] { width: 1.1em; height: 1.1em; margin-right: 0.4rem; cursor: pointer; accent-color: var(--primary); }
+    /* Updated mutuelle group with datalist */
     .mutuelle-group { grid-column: span 2; display: flex; flex-direction: column; gap: 0.75rem; }
     .mutuelle-group > div:first-child { display: flex; align-items: center; }
     input[name="mutuelle"]:disabled { background-color: var(--gray-100); cursor: not-allowed; opacity: 0.7; border: 1px solid var(--gray-300); }
@@ -206,6 +207,7 @@
                   </div>
                   <div id="mutuelle-input-container">
                     <input name="mutuelle" id="mutuelle" type="text" placeholder="Nom Mutuelle (si cochée)" aria-labelledby="has_insurance" disabled list="mutuelleOptions" />
+                    <!-- The datalist where options are populated dynamically -->
                     <datalist id="mutuelleOptions"></datalist>
                     <div class="error-text">Veuillez entrer le nom de la mutuelle</div>
                   </div>
@@ -235,7 +237,9 @@
             <h2 id="search-patient-heading" class="card-title">
               <i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient
             </h2>
-            <div class="card-actions" aria-hidden="true"><i class="fas fa-users"></i></div>
+            <div class="card-actions" aria-hidden="true">
+              <i class="fas fa-users"></i>
+            </div>
           </div>
           <div class="card-body">
             <div class="search-bar">
@@ -304,7 +308,9 @@
     // --- Utility Functions ---
     function showToast(message, type = 'success') {
       if (!message || !DOM.toast) return;
-      const icon = type === 'success' ? '<i class="fas fa-check-circle" aria-hidden="true"></i>' : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>';
+      const icon = type === 'success'
+                   ? '<i class="fas fa-check-circle" aria-hidden="true"></i>'
+                   : '<i class="fas fa-exclamation-circle" aria-hidden="true"></i>';
       DOM.toast.innerHTML = `${icon} ${message}`;
       DOM.toast.className = `toast ${type}`;
       DOM.toast.classList.add('show');
@@ -320,15 +326,27 @@
 
     function showMessage(elementId, message, type) {
       const el = document.getElementById(elementId);
-      if (!el) { console.error(`Msg Elem "${elementId}" not found.`); return; }
-      const statusIcons = {'info':'fas fa-info-circle','success':'fas fa-check-circle','warning':'fas fa-exclamation-triangle','error':'fas fa-times-circle','loading':'fas fa-spinner fa-spin'};
+      if (!el) {
+        console.error(`Msg Elem "${elementId}" not found.`);
+        return;
+      }
+      const statusIcons = {
+        'info': 'fas fa-info-circle',
+        'success': 'fas fa-check-circle',
+        'warning': 'fas fa-exclamation-triangle',
+        'error': 'fas fa-times-circle',
+        'loading': 'fas fa-spinner fa-spin'
+      };
       const iconClass = statusIcons[type] || statusIcons['info'];
-      const iconHtml = message && type !== 'result' ? `<i class="${iconClass} me-2" aria-hidden="true"></i>` : '';
+      const iconHtml = message && type !== 'result'
+                       ? `<i class="${iconClass} me-2" aria-hidden="true"></i>`
+                       : '';
       el.innerHTML = message ? `${iconHtml}${message}` : "";
       el.style.display = message ? "block" : "none";
       el.className = "";
-      if (type === 'result') { }
-      else {
+      if (type === 'result') {
+        // No additional class handling for result type
+      } else {
         el.className = "message";
         if (type === "success") el.classList.add("message-success");
         else if (type === "warning") el.classList.add("message-warning");
@@ -337,8 +355,12 @@
       }
       if (elementId === 'createResult') {
         const isResult = type === 'result';
-        const baseBg = isResult ? 'var(--success-light)' : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent'));
-        const baseBorder = isResult ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent'));
+        const baseBg = isResult
+                       ? 'var(--success-light)'
+                       : (type === 'warning' ? 'var(--warning-light)' : (type === 'error' ? 'var(--danger-light)' : 'transparent'));
+        const baseBorder = isResult
+                           ? 'var(--success)'
+                           : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'transparent'));
         const textColor = isResult ? 'var(--success-dark)' : (type === 'warning' ? 'var(--warning)' : (type === 'error' ? 'var(--danger)' : 'inherit'));
         el.style.backgroundColor = baseBg;
         el.style.borderLeft = `4px solid ${baseBorder}`;
@@ -364,23 +386,31 @@
     }
 
     // --- Authentication & Session ---
-    function fetchWithAuth(url, options={}) {
+    function fetchWithAuth(url, options = {}) {
       const token = localStorage.getItem(CONFIG.TOKEN_KEY);
-      if (!token) { console.error('No token.'); alert('Session expirée.'); redirectToLogin(); return Promise.reject(new Error('Token non trouvé.')); }
+      if (!token) {
+        console.error('No token.');
+        alert('Session expirée.');
+        redirectToLogin();
+        return Promise.reject(new Error('Token non trouvé.'));
+      }
       resetSessionTimeout();
-      const headers = {...options.headers, 'Authorization': `Bearer ${token}`};
-      if (options.body && !(options.body instanceof FormData)) { headers['Content-Type']='application/json'; }
-      else if (options.body instanceof FormData) { delete headers['Content-Type']; }
+      const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+      if (options.body && !(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+      } else if (options.body instanceof FormData) {
+        delete headers['Content-Type'];
+      }
       return fetch(url, { ...options, headers: headers }).then(r => {
-        if(r.status===401||r.status===403){
+        if (r.status === 401 || r.status === 403) {
           console.error('Auth error:', r.status);
           localStorage.removeItem(CONFIG.TOKEN_KEY);
           alert('Session invalide.');
           redirectToLogin();
           throw new Error(`Auth failed:${r.status}`);
         }
-        if(!r.ok){
-          return r.text().then(t => { throw new Error(`Erreur ${r.status}: ${t||r.statusText}`); });
+        if (!r.ok) {
+          return r.text().then(t => { throw new Error(`Erreur ${r.status}: ${t || r.statusText}`); });
         }
         return r;
       });
@@ -460,7 +490,10 @@
       },
       async createPatient(payload) {
         try {
-          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, { method: 'POST', body: JSON.stringify(payload) });
+          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/create-patient`, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
           return await res.json();
         } catch (e) {
           console.error("Pat create err:", e);
@@ -469,7 +502,10 @@
       },
       async extractIdInfo(formData) {
         try {
-          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, { method: 'POST', body: formData });
+          const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/webhook/extract-id-info`, {
+            method: 'POST',
+            body: formData
+          });
           return await res.json();
         } catch (e) {
           console.error("ID Extract err:", e);
@@ -516,7 +552,9 @@
         isCapturingFront = true;
         DOM.captureInstruction.textContent = "Positionnez le RECTO et prenez la photo.";
         try {
-          idCaptureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } });
+          idCaptureStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+          });
           DOM.idVideo.srcObject = idCaptureStream;
           await DOM.idVideo.play();
           updateCaptureMessage('Caméra prête. Prenez la photo du RECTO.', 'info');
@@ -659,15 +697,15 @@
       showMessage('message', 'Formulaire pré-rempli automatiquement. Veuillez vérifier les informations.', 'info');
     }
 
-    // --- Fetch Mutuelles for the Searchable Field ---
+    // --- FETCH MUTUELLES FUNCTION ---
     function fetchMutuelles() {
-      fetch('{{base_url}}/webhook/get-mutuelles')
+      fetch(`${CONFIG.API_BASE_URL}/webhook/get-mutuelles`)
         .then(response => response.json())
         .then(data => {
           if (data.success && Array.isArray(data.mutuelles)) {
             const datalist = document.getElementById('mutuelleOptions');
             if (datalist) {
-              datalist.innerHTML = '';
+              datalist.innerHTML = ''; // Clear previous options
               data.mutuelles.forEach(mutuelle => {
                 const optionElem = document.createElement('option');
                 optionElem.value = mutuelle;
@@ -685,7 +723,10 @@
     async function handlePatientSearch() {
       showMessage('getResult', '', ''); 
       const cinInput = DOM.cinInput;
-      if (!cinInput) { console.error("Search CIN input not found"); return; }
+      if (!cinInput) {
+        console.error("Search CIN input not found");
+        return;
+      }
       const cin = cinInput.value.trim();
       if (!cin) {
         showMessage('getResult', 'Veuillez entrer un CIN pour la recherche.', 'warning');
@@ -698,13 +739,18 @@
         if (patientData && patientData.data) {
           currentPatientInfo = patientData.data;
           currentIPP = currentPatientInfo.ipp;
-          if (!currentIPP) { console.warn("IPP not found in patient data for CIN:", cin); }
+          if (!currentIPP) {
+            console.warn("IPP not found in patient data for CIN:", cin);
+          }
           const qrCodeData = generateQrData(currentIPP);
           let displayDate = "N/A";
           if (currentPatientInfo.date_naissance) {
             const dateParts = currentPatientInfo.date_naissance.split('-');
-            if (dateParts.length === 3) { displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; }
-            else { displayDate = sanitizeInput(currentPatientInfo.date_naissance); }
+            if (dateParts.length === 3) {
+              displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            } else {
+              displayDate = sanitizeInput(currentPatientInfo.date_naissance);
+            }
           }
           const qrCodeHTML = `<div class="patient-result-container">
                                   <div class="patient-result-info">
@@ -794,7 +840,7 @@
       DOM.mutuelleInput.disabled = !isChecked;
       DOM.mutuelleInput.required = isChecked;
       if (isChecked) {
-        // Fetch and populate the mutuelle options when enabled.
+        // Fetch and populate the mutuelle options when enabling the field.
         fetchMutuelles();
       } else {
         DOM.mutuelleInput.value = '';
@@ -829,10 +875,10 @@
       console.log("Reception: Authenticated. Setting up page.");
       resetSessionTimeout();
       handleMutuelleChange();
-      // Load mutuelle options in case they are needed on page load.
+      // Optionally, load mutuelle options immediately
       fetchMutuelles();
       ['mousemove', 'keypress', 'click', 'scroll'].forEach(event =>
-          document.addEventListener(event, resetSessionTimeout, { passive: true })
+        document.addEventListener(event, resetSessionTimeout, { passive: true })
       );
       console.log("Initial setup complete.");
     };
