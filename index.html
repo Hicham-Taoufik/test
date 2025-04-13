@@ -232,8 +232,7 @@
                   </div>
                   <div class="input-group">
                     <label for="date_naissance">
-                      Date de Naissance
-                      <span class="required" aria-hidden="true">*</span>
+                      Date de Naissance <span class="required" aria-hidden="true">*</span>
                       <span class="sr-only">(obligatoire)</span>
                     </label>
                     <input
@@ -264,7 +263,7 @@
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
-                  <!-- Updated Mutuelle Dropdown -->
+                  <!-- Mutuelle Dropdown -->
                   <div class="input-group mutuelle-group">
                     <label for="mutuelle">Mutuelle</label>
                     <select name="mutuelle" id="mutuelle" class="form-select">
@@ -282,15 +281,13 @@
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
-
                   <div class="form-submit-button">
                     <button
                       type="submit"
                       class="btn btn-success"
                       id="createPatientBtn"
                     >
-                      <i class="fas fa-plus-circle" aria-hidden="true"></i>
-                      Créer Patient
+                      <i class="fas fa-plus-circle" aria-hidden="true"></i> Créer Patient
                     </button>
                   </div>
                   <div
@@ -301,7 +298,7 @@
                   ></div>
                 </div>
               </form>
-              <!-- Patient creation result (QR only) -->
+              <!-- Create Patient Result: Only show QR code and a single print QR button -->
               <div id="createResult" class="hidden">
                 <p id="createResultMessage"></p>
                 <div class="qr-code-container">
@@ -312,7 +309,6 @@
                     loading="lazy"
                   />
                 </div>
-                <!-- Single button to print QR only -->
                 <button
                   id="createPrintButton"
                   class="btn btn-secondary"
@@ -324,7 +320,6 @@
             </div>
           </section>
         </div>
-
         <div class="flex-col">
           <!-- Search Patient Section -->
           <section class="card" aria-labelledby="search-patient-heading">
@@ -356,11 +351,12 @@
                 role="region"
                 aria-live="polite"
                 class="search-results"
-              ></div>
+              >
+                <!-- Search result will be populated here -->
+              </div>
             </div>
           </section>
-
-          <!-- Recent Patients Section -->
+          <!-- Recent Patients Section (optional) -->
           <section class="card" aria-labelledby="recent-patients-heading">
             <div class="card-header">
               <h2 id="recent-patients-heading" class="card-title">
@@ -372,18 +368,15 @@
             </div>
             <div class="card-body">
               <div id="recentPatientsList" class="recent-patients-list">
-                <!-- Content populated by JS -->
                 <p class="no-data-message">Aucun patient récent à afficher</p>
               </div>
             </div>
           </section>
         </div>
       </main>
-
       <footer class="footer no-print">
         <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
       </footer>
-
       <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
     </div>
 
