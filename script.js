@@ -293,6 +293,14 @@
       console.warn("Pop-up blocked for QR Code print. Please allow pop-ups for this site.");
       return;
     }
+
+    // --- ADDED LOGGING OF QR IMAGE URL ---
+    console.log("printQRCode: QR Image URL:", qrImageUrl);
+
+    // --- TEMPORARY STATIC IMAGE URL FOR TESTING ---
+    const testImageUrl = "https://www.easygifanimator.net/images/samples/video-to-gif-sample.gif";
+
+
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -311,7 +319,7 @@
         </style>
       </head>
       <body>
-        <img src="${qrImageUrl}" alt="QR Code Patient" />
+        <img src="${testImageUrl}" alt="Test Image for Print" /> {/* Changed src to testImageUrl */}
         <script>
           window.onload = function() {
             setTimeout(function() {
@@ -843,14 +851,14 @@
     DOM.createPrintInfoButton.disabled = true;
 
     const payload = {
-      nom: DOM.createForm.nom.value.trim(),
-      prenom: DOM.createForm.prenom.value.trim(),
-      cin: DOM.createForm.cin.value.trim().toUpperCase(), // CIN is required by validation now
-      telephone: DOM.createForm.telephone.value.trim(),
-      adresse: DOM.createForm.adresse.value.trim(),
-      ville: DOM.createForm.ville.value.trim(),
-      date_naissance: DOM.createForm.date_naissance.value, // Should be YYYY-MM-DD
-      sexe: DOM.createForm.sexe.value,
+      nom: DOM.createForm.value.nom.trim(),
+      prenom: DOM.createForm.value.prenom.trim(),
+      cin: DOM.createForm.value.cin.trim().toUpperCase(), // CIN is required by validation now
+      telephone: DOM.createForm.value.telephone.trim(),
+      adresse: DOM.createForm.value.adresse.trim(),
+      ville: DOM.createForm.value.ville.trim(),
+      date_naissance: DOM.createForm.value.date_naissance.value, // Should be YYYY-MM-DD
+      sexe: DOM.createForm.value.sexe.value,
       has_insurance: !!DOM.mutuelleInput.value,
       mutuelle: DOM.mutuelleInput.value?.trim() || null,
       doctor: DOM.doctorInput.value || null,
