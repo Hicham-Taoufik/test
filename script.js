@@ -289,8 +289,8 @@
     }
     const printWindow = window.open("", "_blank", "width=400,height=450,noopener,noreferrer");
     if (!printWindow) {
-      // Alert is handled here if window.open fails (pop-up blocked)
-      alert("Veuillez autoriser les pop-ups pour imprimer le QR code.");
+      // Replaced alert with console.warn
+      console.warn("Pop-up blocked for QR Code print. Please allow pop-ups for this site.");
       return;
     }
     printWindow.document.write(`
@@ -357,8 +357,8 @@
 
     const printWindow = window.open("", "_blank", "width=700,height=500,noopener,noreferrer");
     if (!printWindow) {
-      // Alert is handled here if window.open fails (pop-up blocked)
-      alert("Veuillez autoriser les pop-ups pour imprimer les informations.");
+      // Replaced alert with console.warn
+      console.warn("Pop-up blocked for Patient Info print. Please allow pop-ups for this site.");
       return;
     }
 
