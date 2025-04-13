@@ -53,6 +53,9 @@
   let frontImageBlob = null;
   let backImageBlob = null;
   let isCapturingFront = true;
+  DOM.logoutBtn = document.getElementById("logoutBtn");
+  DOM.logoutBtn?.addEventListener("click", logout);
+
 
   // --- Utility Functions ---
   const showToast = (message, type = "success") => {
