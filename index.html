@@ -62,7 +62,7 @@
           </button>
         </div>
       </header>
-  
+
       <main id="main-content" class="flex-row">
         <div class="flex-col">
           <!-- Create Patient Section -->
@@ -128,7 +128,7 @@
                 </div>
               </div>
               <!-- END ID Capture Section -->
-  
+
               <form id="createForm" novalidate>
                 <div class="form-grid">
                   <div class="input-group">
@@ -282,7 +282,7 @@
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
-  
+
                   <div class="form-submit-button">
                     <button
                       type="submit"
@@ -290,7 +290,7 @@
                       id="createPatientBtn"
                     >
                       <i class="fas fa-plus-circle" aria-hidden="true"></i>
-                      Créer Patient & Démarrer Visite
+                      Créer Patient
                     </button>
                   </div>
                   <div
@@ -301,6 +301,7 @@
                   ></div>
                 </div>
               </form>
+              <!-- Patient creation result (QR only) -->
               <div id="createResult" class="hidden">
                 <p id="createResultMessage"></p>
                 <div class="qr-code-container">
@@ -311,7 +312,7 @@
                     loading="lazy"
                   />
                 </div>
-                <!-- Existing print QR button -->
+                <!-- Single button to print QR only -->
                 <button
                   id="createPrintButton"
                   class="btn btn-secondary"
@@ -319,17 +320,11 @@
                 >
                   <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code
                 </button>
-                <!-- New print infos button for created patient -->
-                <button id="createPrintInfoButton" class="btn btn-secondary" disabled>
-                  <i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos
-                </button>
-                <!-- Container for complete created patient info -->
-                <div id="createdPatientData"></div>
               </div>
             </div>
           </section>
         </div>
-  
+
         <div class="flex-col">
           <!-- Search Patient Section -->
           <section class="card" aria-labelledby="search-patient-heading">
@@ -352,7 +347,7 @@
                     pattern="^[A-Za-z]{1,2}\d{5,6}$"
                   />
                   <button type="submit" id="searchBtn" class="btn btn-primary">
-                    <i class="fas fa-search" aria-hidden="true"></i> Rechercher & Démarrer Visite
+                    <i class="fas fa-search" aria-hidden="true"></i> Rechercher
                   </button>
                 </div>
               </form>
@@ -364,7 +359,7 @@
               ></div>
             </div>
           </section>
-  
+
           <!-- Recent Patients Section -->
           <section class="card" aria-labelledby="recent-patients-heading">
             <div class="card-header">
@@ -384,16 +379,22 @@
           </section>
         </div>
       </main>
-  
+
       <footer class="footer no-print">
         <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
       </footer>
-  
+
       <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
     </div>
-  
-    <!-- Modal for advanced patient information -->
-    <div id="patientModal" class="modal" aria-labelledby="modal-title" aria-modal="true" role="dialog">
+
+    <!-- Modal for advanced patient information (optional) -->
+    <div
+      id="patientModal"
+      class="modal"
+      aria-labelledby="modal-title"
+      aria-modal="true"
+      role="dialog"
+    >
       <div class="modal-content">
         <div class="modal-header">
           <h3 id="modal-title">Détails du Patient</h3>
@@ -414,7 +415,7 @@
         </div>
       </div>
     </div>
-  
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Select2 JS -->
