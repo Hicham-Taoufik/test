@@ -851,14 +851,14 @@
     DOM.createPrintInfoButton.disabled = true;
 
     const payload = {
-      nom: DOM.createForm.value.nom.trim(),
-      prenom: DOM.createForm.value.prenom.trim(),
-      cin: DOM.createForm.value.cin.trim().toUpperCase(), // CIN is required by validation now
-      telephone: DOM.createForm.value.telephone.trim(),
-      adresse: DOM.createForm.value.adresse.trim(),
-      ville: DOM.createForm.value.ville.trim(),
-      date_naissance: DOM.createForm.value.date_naissance.value, // Should be YYYY-MM-DD
-      sexe: DOM.createForm.value.sexe.value,
+      nom: DOM.createForm.nom.value.trim(),          // Corrected: Access value using DOM.createForm.nom.value
+      prenom: DOM.createForm.prenom.value.trim(),    // Corrected: Access value using DOM.createForm.prenom.value
+      cin: DOM.createForm.cin.value.trim().toUpperCase(), // Corrected: Access value using DOM.createForm.cin.value
+      telephone: DOM.createForm.telephone.value.trim(),// Corrected: Access value using DOM.createForm.telephone.value
+      adresse: DOM.createForm.adresse.value.trim(),  // Corrected: Access value using DOM.createForm.adresse.value
+      ville: DOM.createForm.ville.value.trim(),      // Corrected: Access value using DOM.createForm.ville.value
+      date_naissance: DOM.createForm.date_naissance.value, // Corrected: Access value using DOM.createForm.date_naissance.value
+      sexe: DOM.createForm.sexe.value,            // Corrected: Access value using DOM.createForm.sexe.value
       has_insurance: !!DOM.mutuelleInput.value,
       mutuelle: DOM.mutuelleInput.value?.trim() || null,
       doctor: DOM.doctorInput.value || null,
