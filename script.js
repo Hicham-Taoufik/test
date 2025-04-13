@@ -98,6 +98,7 @@
     el.style.display = message ? "block" : "none";
     el.className = "";
 
+    // Custom styling for createResult area.
     if (elementId === "createResult") {
       const isResult = type === "result";
       const baseBg = isResult
@@ -313,15 +314,16 @@
   };
 
   // --- ID Capture Functions ---
-  const updateCaptureMessage = (message, type = "info") =>
-    showMessage("captureMessage", message, type);
+  const updateCaptureMessage = (message, type = "info") => showMessage("captureMessage", message, type);
 
   const startIdCapture = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       updateCaptureMessage("Demande caméra...", "loading");
       DOM.captureIdButton.disabled = true;
+      // Remove "hidden" class so the container becomes visible
       DOM.idCaptureContainer.classList.remove("hidden");
       DOM.idCaptureContainer.style.display = "block";
+      // Reset previews: add back the "hidden" class for now
       DOM.frontPreview.classList.add("hidden");
       DOM.frontPreview.src = "";
       DOM.backPreview.classList.add("hidden");
@@ -354,6 +356,7 @@
       idCaptureStream.getTracks().forEach((track) => track.stop());
     }
     DOM.idVideo.srcObject = null;
+    // Hide the capture container again
     DOM.idCaptureContainer.classList.add("hidden");
     DOM.idCaptureContainer.style.display = "none";
     DOM.takePhotoButton.disabled = true;
@@ -523,7 +526,8 @@
   };
 
   // --- Event Handlers ---
-  // Modified patient search handler
+
+  // Patient Search Handler – builds a full result card
   const handlePatientSearch = async () => {
     showMessage("getResult", "", "");
     const cin = DOM.cinInput?.value.trim() || "";
@@ -584,8 +588,7 @@
         }
       }
 
-      // Build a compact card HTML with patient data and QR code.
-      // The search result shows patient information along with the QR code and a print button.
+      // Build result card (similar to search)
       const searchResultHTML = `
         <div class="patient-result-card">
           <h3>Informations du Patient</h3>
@@ -598,13 +601,7 @@
             <li><strong>Adresse:</strong> ${sanitizeInput(patientData.adresse)}</li>
             <li><strong>Ville:</strong> ${sanitizeInput(patientData.ville)}</li>
             <li><strong>Date de Naissance:</strong> ${displayDate}</li>
-            <li><strong>Sexe:</strong> ${
-              patientData.sexe === 'M'
-                ? 'Homme'
-                : patientData.sexe === 'F'
-                ? 'Femme'
-                : 'N/A'
-            }</li>
+            <li><strong>Sexe:</strong> ${patientData.sexe === 'M' ? 'Homme' : patientData.sexe === 'F' ? 'Femme' : 'N/A'}</li>
             <li><strong>Mutuelle:</strong> ${sanitizeInput(patientData.mutuelle || 'N/A')}</li>
           </ul>
           ${
@@ -633,7 +630,7 @@
     }
   };
 
-  // Function to print patient info from the search result
+  // Function to print the result card (used by both search and creation)
   window.printPatientSearchInfo = function printPatientSearchInfo() {
     const contentToPrint = DOM.resultDiv.innerHTML;
     const printWindow = window.open("", "_blank", "width=800,height=900");
@@ -670,7 +667,7 @@
     printWindow.document.close();
   };
 
-  // Create Patient Handler – now displays only the QR code and uses a single print button.
+  // Create Patient Handler – now using the same result card layout as patient search.
   const handleCreatePatient = async (event) => {
     event.preventDefault();
     if (!validateCreateForm()) return;
@@ -703,25 +700,61 @@
         console.log(`Patient created (IPP: ${currentIPP}), Visit Started (ID: ${createResponse.visit_id})`);
         showToast(createResponse.message || "Patient créé et visite démarrée.", "success");
 
+        // Build a created patient object combining input with response data.
+        const createdPatient = {
+          nom: payload.nom,
+          prenom: payload.prenom,
+          cin: payload.cin,
+          telephone: payload.telephone,
+          adresse: payload.adresse,
+          ville: payload.ville,
+          date_naissance: payload.date_naissance,
+          sexe: payload.sexe,
+          mutuelle: payload.mutuelle,
+          ipp: currentIPP,
+          visit_id: createResponse.visit_id,
+        };
+
+        // For display, you can format the date as desired.
+        let displayDate = createdPatient.date_naissance;
+        // (Assuming date is already in YYYY-MM-DD format; you can reformat if needed)
+
         const qrCodeData = generateQrData(currentIPP);
-        if (qrCodeData) {
-          // Display only the QR code; detailed patient information is omitted.
-          showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)})`, "result");
-          if (DOM.createResultMessage) {
-            DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
-          }
-          DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
-          DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
-          DOM.createPrintButton.disabled = false;
-          DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
-          DOM.createResultDiv.style.display = "block";
-        } else {
-          showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`, "warning");
-          DOM.createResultDiv.style.display = "block";
-          if (DOM.createResultMessage) {
-            DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`;
-          }
-        }
+
+        // Build the result card similar to the search result.
+        const createResultHTML = `
+          <div class="patient-result-card">
+            <h3>Informations du Patient Créé</h3>
+            <ul class="patient-info-list">
+              <li><strong>Nom:</strong> ${sanitizeInput(createdPatient.nom)}</li>
+              <li><strong>Prénom:</strong> ${sanitizeInput(createdPatient.prenom)}</li>
+              <li><strong>CIN:</strong> ${sanitizeInput(createdPatient.cin)}</li>
+              <li><strong>IPP:</strong> ${sanitizeInput(createdPatient.ipp)}</li>
+              <li><strong>Téléphone:</strong> ${sanitizeInput(createdPatient.telephone)}</li>
+              <li><strong>Adresse:</strong> ${sanitizeInput(createdPatient.adresse)}</li>
+              <li><strong>Ville:</strong> ${sanitizeInput(createdPatient.ville)}</li>
+              <li><strong>Date de Naissance:</strong> ${displayDate}</li>
+              <li><strong>Sexe:</strong> ${createdPatient.sexe === 'M' ? 'Homme' : createdPatient.sexe === 'F' ? 'Femme' : 'N/A'}</li>
+              <li><strong>Mutuelle:</strong> ${sanitizeInput(createdPatient.mutuelle || 'N/A')}</li>
+            </ul>
+            ${
+              qrCodeData
+                ? `
+              <div class="qr-section">
+                <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient IPP ${sanitizeInput(currentIPP)}" loading="lazy" />
+                <div class="qr-buttons">
+                  <button class="btn btn-secondary btn-sm" onclick="printPatientSearchInfo()">
+                    <i class="fas fa-print"></i> Imprimer Infos
+                  </button>
+                </div>
+              </div>`
+                : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>'
+            }
+          </div>
+        `;
+        DOM.createResultDiv.innerHTML = createResultHTML;
+        DOM.createResultDiv.style.display = "block";
+
         DOM.createForm.reset();
         $(DOM.mutuelleInput).val(null).trigger("change");
         $(DOM.doctorInput).val(null).trigger("change");
