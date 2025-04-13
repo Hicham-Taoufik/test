@@ -14,10 +14,9 @@
     EXTRACT_ID_ENDPOINT: "/webhook/extract-id-info",
     GET_MUTUELLES_ENDPOINT: "/webhook/get-mutuelles",
     GET_DOCTORS_ENDPOINT: "/webhook/get-doctors",
-    // Note: START_VISIT_ENDPOINT is available but is not called automatically in search.
   };
 
-  // --- DOM Elements ---
+  // --- DOM Elements (initial references) ---
   const DOM = {
     body: document.body,
     resultDiv: document.getElementById("getResult"),
@@ -26,13 +25,13 @@
     createResultDiv: document.getElementById("createResult"),
     createResultMessage: document.getElementById("createResultMessage"),
     createQrCodeImage: document.getElementById("createQrCodeImage"),
-    // Notice: We do NOT cache the createPrintButton here.
     searchForm: document.getElementById("searchForm"),
     searchButton: document.getElementById("searchBtn"),
     cinInput: document.getElementById("getCin"),
     mutuelleInput: document.getElementById("mutuelle"),
     doctorInput: document.getElementById("doctor"),
-    // ID Capture elements:
+
+    // ID capture elements
     captureIdButton: document.getElementById("captureIdButton"),
     idCaptureContainer: document.getElementById("idCaptureContainer"),
     idVideo: document.getElementById("idVideo"),
@@ -43,11 +42,12 @@
     frontPreview: document.getElementById("frontPreview"),
     backPreview: document.getElementById("backPreview"),
     captureInstruction: document.getElementById("captureInstruction"),
-    toast: document.getElementById("toast")
+
+    toast: document.getElementById("toast"),
   };
 
-  // We'll declare a variable to hold the create-print-button element.
-  let createPrintButtonEl = null;
+  // Will be set on DOMContentLoaded, once the button is guaranteed to be in the DOM
+  let createPrintButtonRef = null;
 
   // --- State Variables ---
   let currentIPP = null;
@@ -58,7 +58,7 @@
   let isCapturingFront = true;
 
   // --- Utility Functions ---
-  const showToast = (message, type = "success") => {
+  function showToast(message, type = "success") {
     if (!message || !DOM.toast) return;
     const icon =
       type === "success"
@@ -70,16 +70,16 @@
     setTimeout(() => {
       DOM.toast.classList.remove("show");
     }, CONFIG.TOAST_DISPLAY_TIME);
-  };
+  }
 
-  const sanitizeInput = (input) => {
-    if (input == null) return "";
+  function sanitizeInput(input) {
+    if (input === null || input === undefined) return "";
     const temp = document.createElement("div");
     temp.textContent = String(input);
     return temp.innerHTML;
-  };
+  }
 
-  const showMessage = (elementId, message, type = "info") => {
+  function showMessage(elementId, message, type = "info") {
     const el = document.getElementById(elementId);
     if (!el) {
       console.error(`showMessage Error: Element ID "${elementId}" not found.`);
@@ -102,6 +102,7 @@
     el.className = "";
 
     if (elementId === "createResult") {
+      // Additional styling for createResult area
       const isResult = type === "result";
       const baseBg = isResult
         ? "var(--success-light)"
@@ -149,31 +150,35 @@
     ) {
       setTimeout(() => {
         const currentElement = document.getElementById(elementId);
-        if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) {
+        if (
+          currentElement &&
+          currentElement.innerHTML &&
+          currentElement.innerHTML.includes(message)
+        ) {
           currentElement.style.display = "none";
         }
       }, CONFIG.MESSAGE_DISPLAY_TIME);
     }
-  };
+  }
 
-  const resetSessionTimeout = () => {
+  function resetSessionTimeout() {
     if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
     sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT);
-  };
+  }
 
-  const logout = () => {
+  function logout() {
     localStorage.removeItem(CONFIG.TOKEN_KEY);
     clearTimeout(sessionTimeoutId);
     showToast("Déconnecté.", "success");
     setTimeout(redirectToLogin, 1000);
-  };
+  }
 
-  const redirectToLogin = () => {
+  function redirectToLogin() {
     window.location.href = CONFIG.LOGIN_PAGE_URL;
-  };
+  }
 
   // --- API Call Helper ---
-  const fetchWithAuth = async (url, options = {}) => {
+  async function fetchWithAuth(url, options = {}) {
     const token = localStorage.getItem(CONFIG.TOKEN_KEY);
     if (!token) {
       console.error("No token found. Redirecting to login.");
@@ -202,8 +207,12 @@
           throw new Error(`Authentication Failed: ${response.status}`);
         }
         const errorText = await response.text();
-        console.error(`API Error ${response.status}: ${errorText || response.statusText}`);
-        throw new Error(`Erreur ${response.status}: ${errorText || response.statusText}`);
+        console.error(
+          `API Error ${response.status}: ${errorText || response.statusText}`
+        );
+        throw new Error(
+          `Erreur ${response.status}: ${errorText || response.statusText}`
+        );
       }
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -217,12 +226,16 @@
       }
       throw error;
     }
-  };
+  }
 
   // --- API Service ---
   const apiService = {
     fetchPatient: async (cin) =>
-      await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(cin)}`),
+      await fetchWithAuth(
+        `${CONFIG.API_BASE_URL}${CONFIG.GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(
+          cin
+        )}`
+      ),
     createPatient: async (payload) =>
       await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.CREATE_PATIENT_ENDPOINT}`, {
         method: "POST",
@@ -237,23 +250,24 @@
       await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_MUTUELLES_ENDPOINT}`),
     fetchDoctors: async () =>
       await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_DOCTORS_ENDPOINT}`),
-    // Note: START_VISIT_ENDPOINT is available but we are not using it in search.
   };
 
   // --- QR Code Functions ---
-  const generateQrData = (ipp) => {
+  function generateQrData(ipp) {
     if (!ipp) {
       console.error("IPP missing for QR generation.");
       return null;
     }
     const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`;
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+      qrTargetUrl
+    )}&q=M`;
     console.log("Generated QR Target URL:", qrTargetUrl);
     console.log("Generated QR Image URL:", qrImageUrl);
     return { qrTargetUrl, qrImageUrl };
-  };
+  }
 
-  // --- Expose printQRCode Globally ---
+  // Expose printQRCode Globally
   window.printQRCode = function (qrImageUrl) {
     if (!qrImageUrl) {
       console.error("No QR Image URL to print.");
@@ -272,7 +286,10 @@
         <style>
           body { text-align: center; margin: 20px; font-family: sans-serif; }
           img { max-width: 250px; max-height: 250px; border: 1px solid #ccc; padding: 5px; }
-          @media print { body { margin: 5mm; } button { display: none; } }
+          @media print {
+            body { margin: 5mm; }
+            button { display: none; }
+          }
         </style>
       </head>
       <body>
@@ -291,10 +308,12 @@
     printWindow.document.close();
   };
 
-  // --- ID Capture Functions (unchanged) ---
-  const updateCaptureMessage = (message, type = "info") => showMessage("captureMessage", message, type);
+  // --- ID Capture Functions ---
+  function updateCaptureMessage(message, type = "info") {
+    showMessage("captureMessage", message, type);
+  }
 
-  const startIdCapture = async () => {
+  async function startIdCapture() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       updateCaptureMessage("Demande caméra...", "loading");
       DOM.captureIdButton.disabled = true;
@@ -305,10 +324,15 @@
       DOM.backPreview.classList.add("hidden");
       DOM.backPreview.src = "";
       isCapturingFront = true;
-      DOM.captureInstruction.textContent = "Positionnez le RECTO de la CIN et prenez la photo.";
+      DOM.captureInstruction.textContent =
+        "Positionnez le RECTO de la CIN et prenez la photo.";
       try {
         idCaptureStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+          video: {
+            facingMode: "environment",
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
         });
         DOM.idVideo.srcObject = idCaptureStream;
         await DOM.idVideo.play();
@@ -325,9 +349,9 @@
       updateCaptureMessage("Caméra non supportée.", "error");
       DOM.captureIdButton.disabled = false;
     }
-  };
+  }
 
-  const stopIdCapture = (clearBlobs = true) => {
+  function stopIdCapture(clearBlobs = true) {
     if (idCaptureStream) {
       idCaptureStream.getTracks().forEach((track) => track.stop());
     }
@@ -348,9 +372,9 @@
       DOM.backPreview.classList.add("hidden");
       console.log("ID Capture cancelled and blobs cleared.");
     }
-  };
+  }
 
-  const takePhotoAndExtract = async () => {
+  async function takePhotoAndExtract() {
     if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.videoWidth <= 0) {
       updateCaptureMessage("Caméra non prête.", "warning");
       console.warn("ID capture: Video element not ready", DOM.idVideo);
@@ -400,7 +424,8 @@
                 showToast("Formulaire pré-rempli!", "success");
                 updateCaptureMessage("Données extraites!", "success");
               } else {
-                const errorMessage = extractedData?.message || "Aucune donnée extraite.";
+                const errorMessage =
+                  extractedData?.message || "Aucune donnée extraite.";
                 throw new Error(errorMessage);
               }
             } catch (error) {
@@ -419,9 +444,9 @@
       "image/jpeg",
       0.9
     );
-  };
+  }
 
-  const autofillCreateForm = (data) => {
+  function autofillCreateForm(data) {
     if (!DOM.createForm || !data || !data.data) {
       console.warn("Autofill failed: Form or data object missing.");
       return;
@@ -461,10 +486,10 @@
     form.querySelectorAll(".error-text").forEach((el) => (el.textContent = ""));
     showMessage("message", "Formulaire pré-rempli. Vérifiez les informations.", "info");
     $(form.sexe).trigger("change");
-  };
+  }
 
   // --- Form Validation ---
-  const validateField = (input, validationFn, errorMessage) => {
+  function validateField(input, validationFn, errorMessage) {
     if (!input) return true;
     const value = input.value.trim();
     const group = input.closest(".input-group");
@@ -475,9 +500,9 @@
     const errorDiv = group.querySelector(".error-text");
     if (errorDiv) errorDiv.textContent = isValid ? "" : errorMessage;
     return isValid;
-  };
+  }
 
-  const validateCreateForm = () => {
+  function validateCreateForm() {
     let isValid = true;
     showMessage("message", "", "");
     DOM.createForm?.querySelectorAll(".input-group.has-error").forEach((el) =>
@@ -506,20 +531,17 @@
       firstError?.focus();
     }
     return Boolean(isValid);
-  };
+  }
 
   // --- Event Handlers ---
-  /**
-   * Handle Patient Search:
-   * - Displays patient info in a card with a "Print QR Code" button.
-   * - Does not start a visit automatically.
-   */
-  const handlePatientSearch = async () => {
+
+  async function handlePatientSearch() {
     showMessage("getResult", "", "");
-    const cin = DOM.cinInput?.value.trim() || "";
-    if (!cin) {
+    const cinVal = DOM.cinInput?.value.trim() || "";
+    if (!cinVal) {
       showMessage("getResult", "Veuillez entrer un CIN.", "warning");
-      DOM.resultDiv.innerHTML = `<div class="patient-result-container">
+      DOM.resultDiv.innerHTML = `
+        <div class="patient-result-container">
           <p class="message message-warning">Veuillez entrer un CIN.</p>
         </div>`;
       return;
@@ -528,7 +550,7 @@
     DOM.resultDiv.style.display = "block";
 
     try {
-      const response = await apiService.fetchPatient(cin);
+      const response = await apiService.fetchPatient(cinVal);
       console.log("Patient Search API Response:", response);
 
       let patientData = null;
@@ -540,13 +562,13 @@
 
       if (!patientData) {
         showMessage("getResult", "", "");
-        DOM.resultDiv.innerHTML = `<div class="patient-result-container">
+        DOM.resultDiv.innerHTML = `
+          <div class="patient-result-container">
             <p class="message message-warning">Patient non trouvé pour ce CIN.</p>
           </div>`;
         return;
       }
 
-      // For search, display patient info without starting a visit.
       currentIPP = patientData.ipp;
       console.log("Patient found:", patientData);
 
@@ -597,6 +619,7 @@
         </div>
       `;
       DOM.resultDiv.innerHTML = searchResultHTML;
+
       const searchPrintBtn = document.getElementById("searchPrintQR");
       if (searchPrintBtn && qrCodeData) {
         searchPrintBtn.addEventListener("click", () => {
@@ -606,18 +629,14 @@
     } catch (error) {
       console.error("Search Patient Process Error:", error);
       showMessage("getResult", "", "");
-      DOM.resultDiv.innerHTML = `<div class="patient-result-container">
+      DOM.resultDiv.innerHTML = `
+        <div class="patient-result-container">
           <p class="message message-error">Erreur lors de la recherche: ${error.message}</p>
         </div>`;
     }
-  };
+  }
 
-  /**
-   * Handle Patient Creation:
-   * - On success, displays only the QR code and one "Imprimer QR Code" button.
-   * - Does not automatically start a visit.
-   */
-  const handleCreatePatient = async (event) => {
+  async function handleCreatePatient(event) {
     event.preventDefault();
     if (!validateCreateForm()) return;
 
@@ -625,12 +644,12 @@
     DOM.createPatientBtn.disabled = true;
     DOM.createResultDiv.style.display = "none";
 
-    // Query the print button fresh
-    const cpButton = document.getElementById("createPrintButton");
-    if (cpButton) {
-      cpButton.disabled = true;
+    // Query createPrintButton after DOM is loaded
+    const createPrintButton = document.getElementById("createPrintButton");
+    if (createPrintButton) {
+      createPrintButton.disabled = true;
     } else {
-      console.warn("createPrintButton element not found at beginning of handleCreatePatient");
+      console.warn("createPrintButton was not found before creating patient!");
     }
 
     const payload = {
@@ -662,13 +681,17 @@
           DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)})`;
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
           DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
-          if (cpButton) {
-            cpButton.disabled = false;
-            cpButton.onclick = () => window.printQRCode(qrCodeData.qrImageUrl);
+          if (createPrintButton) {
+            createPrintButton.disabled = false;
+            createPrintButton.onclick = () => window.printQRCode(qrCodeData.qrImageUrl);
           }
           DOM.createResultDiv.style.display = "block";
         } else {
-          showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}). Erreur QR Code.`, "warning");
+          showMessage(
+            "createResult",
+            `Patient créé (IPP: ${sanitizeInput(currentIPP)}). Erreur QR Code.`,
+            "warning"
+          );
           DOM.createResultDiv.style.display = "block";
           DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}). Erreur QR Code.`;
         }
@@ -686,10 +709,10 @@
     } finally {
       DOM.createPatientBtn.disabled = false;
     }
-  };
+  }
 
   // --- Dropdown Initialization Functions ---
-  const populateMutuelleDropdown = (mutuelles) => {
+  function populateMutuelleDropdown(mutuelles) {
     const dropdown = DOM.mutuelleInput;
     if (!dropdown) return;
     dropdown.innerHTML = `<option value="" selected>Aucune / Non spécifié</option>`;
@@ -704,9 +727,9 @@
       allowClear: true,
       width: "100%",
     });
-  };
+  }
 
-  const populateDoctorsDropdown = (doctors) => {
+  function populateDoctorsDropdown(doctors) {
     const dropdown = DOM.doctorInput;
     if (!dropdown) return;
     dropdown.innerHTML = `<option value="" selected>Choisir un médecin...</option>`;
@@ -721,9 +744,9 @@
       allowClear: true,
       width: "100%",
     });
-  };
+  }
 
-  const fetchMutuelles = async () => {
+  async function fetchMutuelles() {
     try {
       const data = await apiService.fetchMutuelles();
       if (data.success && Array.isArray(data.mutuelles)) {
@@ -734,9 +757,9 @@
     } catch (error) {
       console.error("Error fetching mutuelles:", error);
     }
-  };
+  }
 
-  const fetchDoctors = async () => {
+  async function fetchDoctors() {
     try {
       const data = await apiService.fetchDoctors();
       if (data.success && Array.isArray(data.doctors)) {
@@ -747,33 +770,35 @@
     } catch (error) {
       console.error("Error fetching doctors:", error);
     }
-  };
+  }
 
   // --- Initial Setup ---
-  const initializePage = () => {
+  function initializePage() {
     console.log("Initializing page...");
+
     if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
       console.log("No token found. Redirecting to login.");
       redirectToLogin();
       return;
     }
-    // Re-query the print button on DOMContentLoaded to ensure it is available.
-    const cpBtn = document.getElementById("createPrintButton");
-    if (cpBtn) {
-      createPrintButtonEl = cpBtn;
-    } else {
-      console.warn("createPrintButton element not found on DOMContentLoaded");
-    }
     DOM.body.classList.add("loaded");
     console.log("Authenticated. Setting up page.");
     resetSessionTimeout();
+
     ["mousemove", "keypress", "click", "scroll"].forEach((event) =>
       document.addEventListener(event, resetSessionTimeout, { passive: true })
     );
+
+    // Right after DOM loads, we can safely get the createPrintButton
+    createPrintButtonRef = document.getElementById("createPrintButton");
+    if (!createPrintButtonRef) {
+      console.warn("createPrintButton not found in DOM on page init.");
+    }
+
     fetchMutuelles();
     fetchDoctors();
     console.log("Initial setup complete.");
-  };
+  }
 
   // --- Event Listeners ---
   DOM.searchForm?.addEventListener("submit", (e) => {
