@@ -54,7 +54,6 @@
   let backImageBlob = null;
   let isCapturingFront = true;
   DOM.logoutBtn = document.getElementById("logoutBtn");
-  DOM.logoutBtn?.addEventListener("click", logout);
 
 
   // --- Utility Functions ---
@@ -163,11 +162,14 @@
   };
 
   const logout = () => {
-    localStorage.removeItem(CONFIG.TOKEN_KEY);
-    clearTimeout(sessionTimeoutId);
-    showToast("Déconnecté.", "success");
-    setTimeout(redirectToLogin, 1000);
-  };
+  localStorage.removeItem(CONFIG.TOKEN_KEY);
+  clearTimeout(sessionTimeoutId);
+  showToast("Déconnecté.", "success");
+  setTimeout(redirectToLogin, 1000);
+};
+
+// ✅ Then attach it:
+DOM.logoutBtn?.addEventListener("click", logout);
 
   const redirectToLogin = () => {
     window.location.href = CONFIG.LOGIN_PAGE_URL;
