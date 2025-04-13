@@ -24,6 +24,7 @@
     messageDiv: document.getElementById("message"),
     createForm: document.getElementById("createForm"),
     createResultDiv: document.getElementById("createResult"),
+    searchForm: document.getElementById("searchForm"),
     searchButton: document.getElementById("searchBtn"),
     cinInput: document.getElementById("getCin"),
     mutuelleInput: document.getElementById("mutuelle"),
@@ -54,12 +55,6 @@
   let isCapturingFront = true;
 
   // --- Utility Functions ---
-
-  /**
-   * Displays a temporary toast message.
-   * @param {string} message - The message to display.
-   * @param {string} [type="success"] - The type: "success" or "error".
-   */
   const showToast = (message, type = "success") => {
     if (!message || !DOM.toast) return;
     const icon =
@@ -74,11 +69,6 @@
     }, CONFIG.TOAST_DISPLAY_TIME);
   };
 
-  /**
-   * Sanitizes the input to prevent HTML injection.
-   * @param {*} input - The input to sanitize.
-   * @returns {string} - The sanitized string.
-   */
   const sanitizeInput = (input) => {
     if (input === null || input === undefined) return "";
     const temp = document.createElement("div");
@@ -86,19 +76,12 @@
     return temp.innerHTML;
   };
 
-  /**
-   * Displays a message in a specified element by its ID.
-   * @param {string} elementId - The ID of the element.
-   * @param {string} message - The message content.
-   * @param {string} [type="info"] - Message type: info, success, warning, error, loading, or result.
-   */
   const showMessage = (elementId, message, type = "info") => {
     const el = document.getElementById(elementId);
     if (!el) {
       console.error(`showMessage Error: Element ID "${elementId}" not found.`);
       return;
     }
-
     const statusIcons = {
       info: "fas fa-info-circle",
       success: "fas fa-check-circle",
@@ -106,14 +89,10 @@
       error: "fas fa-times-circle",
       loading: "fas fa-spinner fa-spin",
     };
-
     const iconClass = statusIcons[type] || statusIcons.info;
-    const iconHtml =
-      message && type !== "result"
-        ? `<i class="${iconClass}" style="margin-right: 6px;" aria-hidden="true"></i>`
-        : "";
-
+    const iconHtml = message && type !== "result" ? `<i class="${iconClass}" style="margin-right: 6px;" aria-hidden="true"></i>` : "";
     el.innerHTML = message ? `${iconHtml}${message}` : "";
+    // Override "hidden" if set by CSS
     el.style.display = message ? "block" : "none";
     el.className = "";
 
@@ -142,7 +121,6 @@
         : type === "error"
         ? "var(--danger)"
         : "inherit";
-
       el.style.backgroundColor = baseBg;
       el.style.borderLeft = `4px solid ${baseBorder}`;
       el.style.textAlign = "center";
@@ -160,43 +138,24 @@
       if (btn) btn.style.display = isResult ? "inline-block" : "none";
     } else {
       el.className = "message";
-      if (type) {
-        el.classList.add(`message-${type}`);
-      }
+      if (type) el.classList.add(`message-${type}`);
     }
 
-    // Auto-hide for general messages
-    if (
-      type !== "error" &&
-      type !== "result" &&
-      type !== "loading" &&
-      message &&
-      elementId === "message"
-    ) {
+    if (type !== "error" && type !== "result" && type !== "loading" && message && elementId === "message") {
       setTimeout(() => {
         const currentElement = document.getElementById(elementId);
-        if (
-          currentElement &&
-          currentElement.innerHTML &&
-          currentElement.innerHTML.includes(message)
-        ) {
+        if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) {
           currentElement.style.display = "none";
         }
       }, CONFIG.MESSAGE_DISPLAY_TIME);
     }
   };
 
-  /**
-   * Resets the session timeout timer.
-   */
   const resetSessionTimeout = () => {
     if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
     sessionTimeoutId = setTimeout(logout, CONFIG.SESSION_TIMEOUT);
   };
 
-  /**
-   * Logs out the user by clearing the token and redirecting to the login page.
-   */
   const logout = () => {
     localStorage.removeItem(CONFIG.TOKEN_KEY);
     clearTimeout(sessionTimeoutId);
@@ -204,20 +163,11 @@
     setTimeout(redirectToLogin, 1000);
   };
 
-  /**
-   * Redirects the user to the login page.
-   */
   const redirectToLogin = () => {
     window.location.href = CONFIG.LOGIN_PAGE_URL;
   };
 
   // --- API Call Helper ---
-  /**
-   * Helper function to perform fetch requests with Authorization.
-   * @param {string} url - The request URL.
-   * @param {Object} [options={}] - Fetch options.
-   * @returns {Promise<any>} - Returns a promise with the parsed response.
-   */
   const fetchWithAuth = async (url, options = {}) => {
     const token = localStorage.getItem(CONFIG.TOKEN_KEY);
     if (!token) {
@@ -249,12 +199,8 @@
           throw new Error(`Authentication Failed: ${response.status}`);
         }
         const errorText = await response.text();
-        console.error(
-          `API Error ${response.status}: ${errorText || response.statusText}`
-        );
-        throw new Error(
-          `Erreur ${response.status}: ${errorText || response.statusText}`
-        );
+        console.error(`API Error ${response.status}: ${errorText || response.statusText}`);
+        throw new Error(`Erreur ${response.status}: ${errorText || response.statusText}`);
       }
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -272,69 +218,22 @@
 
   // --- API Service ---
   const apiService = {
-    /**
-     * Fetches a patient by CIN.
-     * @param {string} cin - The patient's CIN.
-     * @returns {Promise<any>} - The API response.
-     */
     fetchPatient: async (cin) =>
-      await fetchWithAuth(
-        `${CONFIG.API_BASE_URL}${
-          CONFIG.GET_PATIENT_ENDPOINT
-        }?cin=${encodeURIComponent(cin)}`
-      ),
-
-    /**
-     * Creates a new patient and starts the visit.
-     * @param {Object} payload - The patient data payload.
-     * @returns {Promise<any>} - The API response.
-     */
+      await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(cin)}`),
     createPatient: async (payload) =>
-      await fetchWithAuth(
-        `${CONFIG.API_BASE_URL}${CONFIG.CREATE_PATIENT_ENDPOINT}`,
-        {
-          method: "POST",
-          body: JSON.stringify(payload),
-        }
-      ),
-
-    /**
-     * Extracts ID information via image blobs.
-     * @param {FormData} formData - The form data with image blobs.
-     * @returns {Promise<any>} - The API response.
-     */
+      await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.CREATE_PATIENT_ENDPOINT}`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     extractIdInfo: async (formData) =>
-      await fetchWithAuth(
-        `${CONFIG.API_BASE_URL}${CONFIG.EXTRACT_ID_ENDPOINT}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      ),
-
-    /**
-     * Fetches available mutuelles.
-     * @returns {Promise<any>} - The API response.
-     */
+      await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.EXTRACT_ID_ENDPOINT}`, {
+        method: "POST",
+        body: formData,
+      }),
     fetchMutuelles: async () =>
-      await fetchWithAuth(
-        `${CONFIG.API_BASE_URL}${CONFIG.GET_MUTUELLES_ENDPOINT}`
-      ),
-
-    /**
-     * Fetches available doctors.
-     * @returns {Promise<any>} - The API response.
-     */
+      await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_MUTUELLES_ENDPOINT}`),
     fetchDoctors: async () =>
-      await fetchWithAuth(
-        `${CONFIG.API_BASE_URL}${CONFIG.GET_DOCTORS_ENDPOINT}`
-      ),
-
-    /**
-     * Starts a visit for the provided patient IPP.
-     * @param {string} ipp - The patient IPP.
-     * @returns {Promise<any>} - The API response.
-     */
+      await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_DOCTORS_ENDPOINT}`),
     startVisit: async (ipp) => {
       if (!ipp) {
         console.error("startVisit called without IPP.");
@@ -343,18 +242,13 @@
       console.log(`Attempting to start visit for IPP: ${ipp}`);
       try {
         const payload = { ipp };
-        const response = await fetchWithAuth(
-          `${CONFIG.API_BASE_URL}${CONFIG.START_VISIT_ENDPOINT}`,
-          {
-            method: "POST",
-            body: JSON.stringify(payload),
-          }
-        );
+        const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.START_VISIT_ENDPOINT}`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
         console.log("Start Visit API Response:", response);
         if (!response || response.success === false) {
-          throw new Error(
-            response.message || "Échec du démarrage de la visite via API."
-          );
+          throw new Error(response.message || "Échec du démarrage de la visite via API.");
         }
         return response;
       } catch (e) {
@@ -365,19 +259,12 @@
   };
 
   // --- QR Code Functions ---
-  /**
-   * Generates QR data for the patient using their IPP.
-   * @param {string} ipp - The patient IPP.
-   * @returns {Object|null} - Contains the target URL and QR image URL.
-   */
   const generateQrData = (ipp) => {
     if (!ipp) {
       console.error("IPP missing for QR generation.");
       return null;
     }
-    const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(
-      ipp
-    )}`;
+    const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
     const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
       qrTargetUrl
     )}&q=M`;
@@ -386,10 +273,6 @@
     return { qrTargetUrl, qrImageUrl };
   };
 
-  /**
-   * Opens a new window to print the provided QR Code image.
-   * @param {string} qrImageUrl - The URL of the QR Code image.
-   */
   const printQRCode = (qrImageUrl) => {
     if (!qrImageUrl) {
       console.error("No QR Image URL to print.");
@@ -401,63 +284,53 @@
       return;
     }
     printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Imprimer QR Code</title>
-          <style>
-            body { text-align: center; margin: 20px; font-family: sans-serif; }
-            img { max-width: 250px; max-height: 250px; border: 1px solid #ccc; padding: 5px; }
-            @media print { body { margin: 5mm; } button { display: none; } }
-          </style>
-        </head>
-        <body>
-          <img src="${qrImageUrl}" alt="QR Code Patient" />
-          <script>
-            window.onload = function() {
-              setTimeout(function() {
-                window.print();
-                setTimeout(function() { window.close(); }, 500);
-              }, 500);
-            }
-          <\/script>
-        </body>
-        </html>
-      `);
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Imprimer QR Code</title>
+        <style>
+          body { text-align: center; margin: 20px; font-family: sans-serif; }
+          img { max-width: 250px; max-height: 250px; border: 1px solid #ccc; padding: 5px; }
+          @media print { body { margin: 5mm; } button { display: none; } }
+        </style>
+      </head>
+      <body>
+        <img src="${qrImageUrl}" alt="QR Code Patient" />
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }, 500);
+          }
+        <\/script>
+      </body>
+      </html>
+    `);
     printWindow.document.close();
   };
 
   // --- ID Capture Functions ---
-  /**
-   * Updates the ID capture message.
-   * @param {string} message - The message to display.
-   * @param {string} [type="info"] - The type of message.
-   */
   const updateCaptureMessage = (message, type = "info") =>
     showMessage("captureMessage", message, type);
 
-  /**
-   * Starts the ID capture process by requesting camera access.
-   */
   const startIdCapture = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       updateCaptureMessage("Demande caméra...", "loading");
       DOM.captureIdButton.disabled = true;
+      // Remove "hidden" class so the container is visible
+      DOM.idCaptureContainer.classList.remove("hidden");
       DOM.idCaptureContainer.style.display = "block";
-      DOM.frontPreview.style.display = "none";
+      // Remove hidden classes from previews so they can be updated
+      DOM.frontPreview.classList.add("hidden");
       DOM.frontPreview.src = "";
-      DOM.backPreview.style.display = "none";
+      DOM.backPreview.classList.add("hidden");
       DOM.backPreview.src = "";
       isCapturingFront = true;
-      DOM.captureInstruction.textContent =
-        "Positionnez le RECTO de la CIN et prenez la photo.";
+      DOM.captureInstruction.textContent = "Positionnez le RECTO de la CIN et prenez la photo.";
       try {
         idCaptureStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-          },
+          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
         });
         DOM.idVideo.srcObject = idCaptureStream;
         await DOM.idVideo.play();
@@ -465,6 +338,7 @@
         DOM.takePhotoButton.disabled = false;
         DOM.cancelCaptureButton.disabled = false;
       } catch (err) {
+        console.error("Camera access error:", err);
         updateCaptureMessage(`Erreur caméra: ${err.message}`, "error");
         stopIdCapture(false);
       }
@@ -475,15 +349,13 @@
     }
   };
 
-  /**
-   * Stops the ID capture process and optionally clears the blobs.
-   * @param {boolean} [clearBlobs=true] - Whether to clear the captured blobs.
-   */
   const stopIdCapture = (clearBlobs = true) => {
     if (idCaptureStream) {
       idCaptureStream.getTracks().forEach((track) => track.stop());
     }
     DOM.idVideo.srcObject = null;
+    // Hide the capture container by adding "hidden" class and updating display
+    DOM.idCaptureContainer.classList.add("hidden");
     DOM.idCaptureContainer.style.display = "none";
     DOM.takePhotoButton.disabled = true;
     DOM.cancelCaptureButton.disabled = true;
@@ -495,18 +367,17 @@
       backImageBlob = null;
       DOM.frontPreview.src = "";
       DOM.backPreview.src = "";
-      DOM.frontPreview.style.display = "none";
-      DOM.backPreview.style.display = "none";
+      DOM.frontPreview.classList.add("hidden");
+      DOM.backPreview.classList.add("hidden");
       console.log("ID Capture cancelled and blobs cleared.");
     }
   };
 
-  /**
-   * Captures a photo from the video stream and performs extraction.
-   */
   const takePhotoAndExtract = async () => {
-    if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.readyState < 2) {
+    // Ensure the video stream is ready: check videoWidth > 0
+    if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.videoWidth <= 0) {
       updateCaptureMessage("Caméra non prête.", "warning");
+      console.warn("ID capture: Video element not ready", DOM.idVideo);
       return;
     }
     updateCaptureMessage("Capture et analyse...", "loading");
@@ -528,10 +399,10 @@
           frontImageBlob = blob;
           console.log("Recto captured");
           DOM.frontPreview.src = URL.createObjectURL(frontImageBlob);
-          DOM.frontPreview.style.display = "inline-block";
+          // Remove "hidden" so preview is shown
+          DOM.frontPreview.classList.remove("hidden");
           isCapturingFront = false;
-          DOM.captureInstruction.textContent =
-            "Positionnez le VERSO et prenez la photo.";
+          DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo.";
           updateCaptureMessage("Recto OK. Préparez le verso.", "info");
           DOM.takePhotoButton.disabled = false;
           DOM.cancelCaptureButton.disabled = false;
@@ -539,8 +410,8 @@
           backImageBlob = blob;
           console.log("Verso captured");
           DOM.backPreview.src = URL.createObjectURL(backImageBlob);
-          DOM.backPreview.style.display = "inline-block";
-          stopIdCapture(false); // Keep blobs for upload
+          DOM.backPreview.classList.remove("hidden");
+          stopIdCapture(false); // Keep blobs for further processing
           updateCaptureMessage("Verso OK. Analyse en cours...", "loading");
           if (frontImageBlob && backImageBlob) {
             const formData = new FormData();
@@ -554,16 +425,12 @@
                 showToast("Formulaire pré-rempli!", "success");
                 updateCaptureMessage("Données extraites!", "success");
               } else {
-                const errorMessage =
-                  extractedData?.message || "Aucune donnée extraite.";
+                const errorMessage = extractedData?.message || "Aucune donnée extraite.";
                 throw new Error(errorMessage);
               }
             } catch (error) {
               console.error("Error extraction API call:", error);
-              updateCaptureMessage(
-                `Erreur extraction: ${error.message}`,
-                "error"
-              );
+              updateCaptureMessage(`Erreur extraction: ${error.message}`, "error");
             } finally {
               frontImageBlob = null;
               backImageBlob = null;
@@ -579,10 +446,6 @@
     );
   };
 
-  /**
-   * Autofills the create patient form using the extracted data.
-   * @param {Object} data - The API response containing extracted data.
-   */
   const autofillCreateForm = (data) => {
     if (!DOM.createForm || !data || !data.data) {
       console.warn("Autofill failed: Form or data object missing.");
@@ -598,10 +461,7 @@
         const day = dateParts[0];
         const month = dateParts[1];
         const year = dateParts[2];
-        formattedDateOfBirth = `${year}-${month.padStart(
-          2,
-          "0"
-        )}-${day.padStart(2, "0")}`;
+        formattedDateOfBirth = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
         console.log("Formatted date_of_birth:", formattedDateOfBirth);
       } else {
         console.warn("DOB format unexpected:", originalDateString);
@@ -616,33 +476,15 @@
     form.date_naissance.value = formattedDateOfBirth;
     form.adresse.value = extracted.address ?? "";
     form.ville.value = extracted.city ?? "";
-    form.sexe.value =
-      extracted.gender === "F" ? "F" : extracted.gender === "M" ? "M" : "";
-    // Remove previous error indications
-    form
-      .querySelectorAll(".input-group.has-error")
-      .forEach((el) => el.classList.remove("has-error"));
-    form
-      .querySelectorAll("input, select")
-      .forEach((el) => el.classList.remove("input-error"));
+    form.sexe.value = extracted.gender === "F" ? "F" : extracted.gender === "M" ? "M" : "";
+    form.querySelectorAll(".input-group.has-error").forEach((el) => el.classList.remove("has-error"));
+    form.querySelectorAll("input, select").forEach((el) => el.classList.remove("input-error"));
     form.querySelectorAll(".error-text").forEach((el) => (el.textContent = ""));
-    showMessage(
-      "message",
-      "Formulaire pré-rempli. Vérifiez les informations.",
-      "info"
-    );
-    // For Select2 fields if needed
+    showMessage("message", "Formulaire pré-rempli. Vérifiez les informations.", "info");
     $(form.sexe).trigger("change");
   };
 
   // --- Form Validation ---
-  /**
-   * Validates a single input field.
-   * @param {HTMLElement} input - The input element.
-   * @param {Function} validationFn - The validation function (should return true/false).
-   * @param {string} errorMessage - The error message to display.
-   * @returns {boolean} - Whether the field is valid.
-   */
   const validateField = (input, validationFn, errorMessage) => {
     if (!input) return true;
     const value = input.value.trim();
@@ -656,62 +498,24 @@
     return isValid;
   };
 
-  /**
-   * Validates the create patient form.
-   * @returns {boolean} - Returns true if the form is valid.
-   */
   const validateCreateForm = () => {
     let isValid = true;
     showMessage("message", "", "");
-    // Clear previous errors
-    DOM.createForm
-      ?.querySelectorAll(".input-group.has-error")
-      .forEach((el) => el.classList.remove("has-error"));
-    DOM.createForm
-      ?.querySelectorAll("input, select")
-      .forEach((el) => el.classList.remove("input-error"));
+    DOM.createForm?.querySelectorAll(".input-group.has-error").forEach((el) => el.classList.remove("has-error"));
+    DOM.createForm?.querySelectorAll("input, select").forEach((el) => el.classList.remove("input-error"));
 
-    // Validate required fields
-    isValid &= validateField(
-      DOM.createForm.nom,
-      (val) => val.length > 0,
-      "Nom requis"
-    );
-    isValid &= validateField(
-      DOM.createForm.prenom,
-      (val) => val.length > 0,
-      "Prénom requis"
-    );
+    isValid &= validateField(DOM.createForm.nom, (val) => val.length > 0, "Nom requis");
+    isValid &= validateField(DOM.createForm.prenom, (val) => val.length > 0, "Prénom requis");
     isValid &= validateField(
       DOM.createForm.cin,
       (val) => /^[A-Za-z]{1,2}\d{5,6}$/.test(val) || val === "",
       "Format CIN invalide (ex: AB123456)"
     );
-    isValid &= validateField(
-      DOM.createForm.telephone,
-      (val) => /^0[5-7]\d{8}$/.test(val),
-      "Format téléphone 0Xxxxxxxxx requis"
-    );
-    isValid &= validateField(
-      DOM.createForm.adresse,
-      (val) => val.length > 0,
-      "Adresse requise"
-    );
-    isValid &= validateField(
-      DOM.createForm.ville,
-      (val) => val.length > 0,
-      "Ville requise"
-    );
-    isValid &= validateField(
-      DOM.createForm.date_naissance,
-      (val) => val !== "",
-      "Date naissance requise"
-    );
-    isValid &= validateField(
-      DOM.createForm.sexe,
-      (val) => val !== "",
-      "Sélection sexe requise"
-    );
+    isValid &= validateField(DOM.createForm.telephone, (val) => /^0[5-7]\d{8}$/.test(val), "Format téléphone 0Xxxxxxxxx requis");
+    isValid &= validateField(DOM.createForm.adresse, (val) => val.length > 0, "Adresse requise");
+    isValid &= validateField(DOM.createForm.ville, (val) => val.length > 0, "Ville requise");
+    isValid &= validateField(DOM.createForm.date_naissance, (val) => val !== "", "Date naissance requise");
+    isValid &= validateField(DOM.createForm.sexe, (val) => val !== "", "Sélection sexe requise");
 
     if (!isValid) {
       showMessage("message", "Veuillez corriger les erreurs.", "error");
@@ -722,68 +526,43 @@
   };
 
   // --- Event Handlers ---
-  /**
-   * Handles the patient search process.
-   */
   const handlePatientSearch = async () => {
     showMessage("getResult", "", "");
     const cin = DOM.cinInput?.value.trim() || "";
     if (!cin) {
       showMessage("getResult", "Veuillez entrer un CIN.", "warning");
-      DOM.resultDiv.innerHTML = `<div class="patient-result-container">
+      DOM.resultDiv.innerHTML = `
+        <div class="patient-result-container">
           <p class="message message-warning">Veuillez entrer un CIN.</p>
         </div>`;
       return;
     }
-    showMessage(
-      "getResult",
-      '<span class="loading-spinner"></span> Recherche patient...',
-      "loading"
-    );
+    showMessage("getResult", '<span class="loading-spinner"></span> Recherche patient...', "loading");
     DOM.resultDiv.style.display = "block";
 
     try {
       const patientResponse = await apiService.fetchPatient(cin);
       console.log("Patient Search API Response:", patientResponse);
-
-      if (
-        patientResponse &&
-        Array.isArray(patientResponse) &&
-        patientResponse.length > 0
-      ) {
+      if (patientResponse && Array.isArray(patientResponse) && patientResponse.length > 0) {
         const currentPatientInfo = patientResponse[0];
         currentIPP = currentPatientInfo.ipp;
         console.log("Patient found:", currentPatientInfo);
-        if (!currentIPP)
-          console.warn("IPP missing in fetched data for CIN:", cin);
+        if (!currentIPP) console.warn("IPP missing in fetched data for CIN:", cin);
 
-        // Start visit if IPP exists
         try {
           if (currentIPP) {
-            console.log(
-              `Calling startVisit for existing patient IPP: ${currentIPP}`
-            );
+            console.log(`Calling startVisit for IPP: ${currentIPP}`);
             const visitResponse = await apiService.startVisit(currentIPP);
             console.log("Start Visit Response:", visitResponse);
-            showToast(
-              visitResponse.message || "Visite démarrée/active.",
-              "success"
-            );
+            showToast(visitResponse.message || "Visite démarrée/active.", "success");
           } else {
-            showToast(
-              "Patient trouvé, mais IPP manquant. Visite non démarrée.",
-              "warning"
-            );
+            showToast("Patient trouvé, mais IPP manquant. Visite non démarrée.", "warning");
           }
         } catch (visitError) {
           console.error("Failed to start visit after search:", visitError);
-          showToast(
-            `Patient trouvé, mais erreur démarrage visite: ${visitError.message}`,
-            "warning"
-          );
+          showToast(`Patient trouvé, mais erreur démarrage visite: ${visitError.message}`, "warning");
         }
 
-        // Build patient info display including QR Code generation
         const qrCodeData = generateQrData(currentIPP);
         let displayDate = "N/A";
         if (currentPatientInfo.date_naissance) {
@@ -795,91 +574,52 @@
           }
         }
         const qrCodeHTML = `
-            <div class="patient-result-container">
-              <div class="patient-result-info">
-                <div class="info-group"><div class="info-label">Nom:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.nom
-                )}</div></div>
-                <div class="info-group"><div class="info-label">Prénom:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.prenom
-                )}</div></div>
-                <div class="info-group"><div class="info-label">IPP:</div><div class="info-value">${sanitizeInput(
-                  currentIPP || "N/A"
-                )}</div></div>
-                <div class="info-group"><div class="info-label">CIN:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.cin
-                )}</div></div>
-                <div class="info-group"><div class="info-label">Téléphone:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.telephone
-                )}</div></div>
-                <div class="info-group"><div class="info-label">Adresse:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.adresse
-                )}</div></div>
-                <div class="info-group"><div class="info-label">Ville:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.ville
-                )}</div></div>
-                <div class="info-group"><div class="info-label">Naissance:</div><div class="info-value">${displayDate}</div></div>
-                <div class="info-group"><div class="info-label">Sexe:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.sexe === "M"
-                    ? "Homme"
-                    : currentPatientInfo.sexe === "F"
-                    ? "Femme"
-                    : "N/A"
-                )}</div></div>
-                <div class="info-group"><div class="info-label">Mutuelle:</div><div class="info-value">${sanitizeInput(
-                  currentPatientInfo.mutuelle || "N/A"
-                )}</div></div>
-              </div>
-              ${
-                qrCodeData
-                  ? `
-                <div class="patient-result-qr">
-                  <img src="${
-                    qrCodeData.qrImageUrl
-                  }" alt="QR Code Patient IPP ${sanitizeInput(
-                      currentIPP
-                    )}" loading="lazy" />
-                  <p style="font-size: 0.8rem; color: var(--gray-600);">Utilisez ce QR Code pour les prochaines étapes.</p>
-                  <button onclick="printQRCode('${
-                    qrCodeData.qrImageUrl
-                  }')" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-print"></i> Imprimer QR
-                  </button>
-                </div>`
-                  : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>'
-              }
-            </div>`;
+          <div class="patient-result-container">
+            <div class="patient-result-info">
+              <div class="info-group"><div class="info-label">Nom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.nom)}</div></div>
+              <div class="info-group"><div class="info-label">Prénom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.prenom)}</div></div>
+              <div class="info-group"><div class="info-label">IPP:</div><div class="info-value">${sanitizeInput(currentIPP || 'N/A')}</div></div>
+              <div class="info-group"><div class="info-label">CIN:</div><div class="info-value">${sanitizeInput(currentPatientInfo.cin)}</div></div>
+              <div class="info-group"><div class="info-label">Téléphone:</div><div class="info-value">${sanitizeInput(currentPatientInfo.telephone)}</div></div>
+              <div class="info-group"><div class="info-label">Adresse:</div><div class="info-value">${sanitizeInput(currentPatientInfo.adresse)}</div></div>
+              <div class="info-group"><div class="info-label">Ville:</div><div class="info-value">${sanitizeInput(currentPatientInfo.ville)}</div></div>
+              <div class="info-group"><div class="info-label">Naissance:</div><div class="info-value">${displayDate}</div></div>
+              <div class="info-group"><div class="info-label">Sexe:</div><div class="info-value">${sanitizeInput(currentPatientInfo.sexe === 'M' ? 'Homme' : (currentPatientInfo.sexe === 'F' ? 'Femme' : 'N/A'))}</div></div>
+              <div class="info-group"><div class="info-label">Mutuelle:</div><div class="info-value">${sanitizeInput(currentPatientInfo.mutuelle || 'N/A')}</div></div>
+            </div>
+            ${qrCodeData ? `
+              <div class="patient-result-qr">
+                <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient IPP ${sanitizeInput(currentIPP)}" loading="lazy" />
+                <p style="font-size: 0.8rem; color: var(--gray-600);">Utilisez ce QR Code pour les prochaines étapes.</p>
+                <button onclick="printQRCode('${qrCodeData.qrImageUrl}')" class="btn btn-secondary btn-sm">
+                  <i class="fas fa-print"></i> Imprimer QR
+                </button>
+              </div>` : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>'
+            }
+          </div>`;
         DOM.resultDiv.innerHTML = qrCodeHTML;
       } else {
         showMessage("getResult", "", "");
         DOM.resultDiv.innerHTML = `
-            <div class="patient-result-container">
-              <p class="message message-warning">Patient non trouvé pour ce CIN.</p>
-            </div>`;
+          <div class="patient-result-container">
+            <p class="message message-warning">Patient non trouvé pour ce CIN.</p>
+          </div>`;
       }
     } catch (error) {
       console.error("Search Patient Process Error:", error);
       showMessage("getResult", "", "");
       DOM.resultDiv.innerHTML = `
-          <div class="patient-result-container">
-            <p class="message message-error">Erreur lors de la recherche: ${error.message}</p>
-          </div>`;
+        <div class="patient-result-container">
+          <p class="message message-error">Erreur lors de la recherche: ${error.message}</p>
+        </div>`;
     }
   };
 
-  /**
-   * Handles the create patient process.
-   * @param {Event} event - The submit event.
-   */
   const handleCreatePatient = async (event) => {
     event.preventDefault();
     if (!validateCreateForm()) return;
 
-    showMessage(
-      "message",
-      '<span class="loading-spinner"></span> Création patient et démarrage visite...',
-      "loading"
-    );
+    showMessage("message", '<span class="loading-spinner"></span> Création patient et démarrage visite...', "loading");
     DOM.createPatientBtn.disabled = true;
     DOM.createResultDiv.style.display = "none";
     DOM.createPrintButton.disabled = true;
@@ -902,59 +642,30 @@
     try {
       const createResponse = await apiService.createPatient(payload);
       console.log("Create Patient API Response:", createResponse);
-      if (
-        createResponse &&
-        createResponse.success &&
-        createResponse.ipp &&
-        createResponse.visit_id !== undefined
-      ) {
+      if (createResponse && createResponse.success && createResponse.ipp && createResponse.visit_id !== undefined) {
         currentIPP = createResponse.ipp;
-        console.log(
-          `Patient created (IPP: ${currentIPP}), Visit Started (ID: ${createResponse.visit_id})`
-        );
-        showToast(
-          createResponse.message || "Patient créé et visite démarrée.",
-          "success"
-        );
+        console.log(`Patient created (IPP: ${currentIPP}), Visit Started (ID: ${createResponse.visit_id})`);
+        showToast(createResponse.message || "Patient créé et visite démarrée.", "success");
 
         const qrCodeData = generateQrData(currentIPP);
         if (qrCodeData) {
-          showMessage(
-            "createResult",
-            `Patient créé (IPP: ${sanitizeInput(currentIPP)})`,
-            "result"
-          );
-          DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(
-            currentIPP
-          )}) - Visite ID: ${createResponse.visit_id}`;
+          showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)})`, "result");
+          DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
-          DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(
-            currentIPP
-          )}`;
+          DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
           DOM.createPrintButton.disabled = false;
-          DOM.createPrintButton.onclick = () =>
-            printQRCode(qrCodeData.qrImageUrl);
+          DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
           DOM.createResultDiv.style.display = "block";
         } else {
-          showMessage(
-            "createResult",
-            `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${
-              createResponse.visit_id
-            }. Erreur QR Code.`,
-            "warning"
-          );
+          showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`, "warning");
           DOM.createResultDiv.style.display = "block";
-          DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(
-            currentIPP
-          )}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`;
+          DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`;
         }
         DOM.createForm.reset();
         $(DOM.mutuelleInput).val(null).trigger("change");
         $(DOM.doctorInput).val(null).trigger("change");
       } else {
-        const errorMessage =
-          createResponse?.message ||
-          "Réponse invalide ou échec création/visite.";
+        const errorMessage = createResponse?.message || "Réponse invalide ou échec création/visite.";
         throw new Error(errorMessage);
       }
     } catch (apiError) {
@@ -967,10 +678,6 @@
   };
 
   // --- Dropdown Initialization Functions ---
-  /**
-   * Populates the mutuelle dropdown.
-   * @param {Array} mutuelles - Array of mutuelle names.
-   */
   const populateMutuelleDropdown = (mutuelles) => {
     const dropdown = DOM.mutuelleInput;
     if (!dropdown) return;
@@ -988,10 +695,6 @@
     });
   };
 
-  /**
-   * Populates the doctor dropdown.
-   * @param {Array} doctors - Array of doctor objects.
-   */
   const populateDoctorsDropdown = (doctors) => {
     const dropdown = DOM.doctorInput;
     if (!dropdown) return;
@@ -1009,9 +712,6 @@
     });
   };
 
-  /**
-   * Fetches mutuelles and initializes the dropdown.
-   */
   const fetchMutuelles = async () => {
     try {
       const data = await apiService.fetchMutuelles();
@@ -1025,9 +725,6 @@
     }
   };
 
-  /**
-   * Fetches doctors and initializes the dropdown.
-   */
   const fetchDoctors = async () => {
     try {
       const data = await apiService.fetchDoctors();
@@ -1042,9 +739,6 @@
   };
 
   // --- Initial Setup ---
-  /**
-   * Initializes the page and related event listeners.
-   */
   const initializePage = () => {
     console.log("Initializing page...");
     if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
@@ -1064,7 +758,16 @@
   };
 
   // --- Event Listeners ---
-  DOM.searchButton?.addEventListener("click", handlePatientSearch);
+  // Attach search to the form submit to prevent page reload
+  DOM.searchForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    handlePatientSearch();
+  });
+  // Optional: Also add click handler if needed
+  DOM.searchButton?.addEventListener("click", (e) => {
+    e.preventDefault();
+    handlePatientSearch();
+  });
   DOM.cinInput?.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -1076,6 +779,5 @@
   DOM.takePhotoButton?.addEventListener("click", takePhotoAndExtract);
   DOM.cancelCaptureButton?.addEventListener("click", () => stopIdCapture(true));
 
-  // --- Run Initialization on DOMContentLoaded ---
   document.addEventListener("DOMContentLoaded", initializePage);
 })();
