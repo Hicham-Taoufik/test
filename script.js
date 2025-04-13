@@ -18,7 +18,6 @@
   };
 
   // --- DOM Elements ---
-  // Cache only elements that are guaranteed to exist.
   const DOM = {
     body: document.body,
     resultDiv: document.getElementById("getResult"),
@@ -27,7 +26,7 @@
     createResultDiv: document.getElementById("createResult"),
     createResultMessage: document.getElementById("createResultMessage"),
     createQrCodeImage: document.getElementById("createQrCodeImage"),
-    // Instead of caching createPrintButton, we will query it later.
+    // Notice: We do NOT cache the createPrintButton here.
     searchForm: document.getElementById("searchForm"),
     searchButton: document.getElementById("searchBtn"),
     cinInput: document.getElementById("getCin"),
@@ -46,6 +45,9 @@
     captureInstruction: document.getElementById("captureInstruction"),
     toast: document.getElementById("toast")
   };
+
+  // We'll declare a variable to hold the create-print-button element.
+  let createPrintButtonEl = null;
 
   // --- State Variables ---
   let currentIPP = null;
@@ -71,7 +73,7 @@
   };
 
   const sanitizeInput = (input) => {
-    if (input === null || input === undefined) return "";
+    if (input == null) return "";
     const temp = document.createElement("div");
     temp.textContent = String(input);
     return temp.innerHTML;
@@ -147,11 +149,7 @@
     ) {
       setTimeout(() => {
         const currentElement = document.getElementById(elementId);
-        if (
-          currentElement &&
-          currentElement.innerHTML &&
-          currentElement.innerHTML.includes(message)
-        ) {
+        if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) {
           currentElement.style.display = "none";
         }
       }, CONFIG.MESSAGE_DISPLAY_TIME);
@@ -204,12 +202,8 @@
           throw new Error(`Authentication Failed: ${response.status}`);
         }
         const errorText = await response.text();
-        console.error(
-          `API Error ${response.status}: ${errorText || response.statusText}`
-        );
-        throw new Error(
-          `Erreur ${response.status}: ${errorText || response.statusText}`
-        );
+        console.error(`API Error ${response.status}: ${errorText || response.statusText}`);
+        throw new Error(`Erreur ${response.status}: ${errorText || response.statusText}`);
       }
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -228,11 +222,7 @@
   // --- API Service ---
   const apiService = {
     fetchPatient: async (cin) =>
-      await fetchWithAuth(
-        `${CONFIG.API_BASE_URL}${CONFIG.GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(
-          cin
-        )}`
-      ),
+      await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_PATIENT_ENDPOINT}?cin=${encodeURIComponent(cin)}`),
     createPatient: async (payload) =>
       await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.CREATE_PATIENT_ENDPOINT}`, {
         method: "POST",
@@ -247,7 +237,7 @@
       await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_MUTUELLES_ENDPOINT}`),
     fetchDoctors: async () =>
       await fetchWithAuth(`${CONFIG.API_BASE_URL}${CONFIG.GET_DOCTORS_ENDPOINT}`),
-    // Note: START_VISIT_ENDPOINT is available but not called automatically in search.
+    // Note: START_VISIT_ENDPOINT is available but we are not using it in search.
   };
 
   // --- QR Code Functions ---
@@ -257,9 +247,7 @@
       return null;
     }
     const qrTargetUrl = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-      qrTargetUrl
-    )}&q=M`;
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&q=M`;
     console.log("Generated QR Target URL:", qrTargetUrl);
     console.log("Generated QR Image URL:", qrImageUrl);
     return { qrTargetUrl, qrImageUrl };
@@ -304,8 +292,7 @@
   };
 
   // --- ID Capture Functions (unchanged) ---
-  const updateCaptureMessage = (message, type = "info") =>
-    showMessage("captureMessage", message, type);
+  const updateCaptureMessage = (message, type = "info") => showMessage("captureMessage", message, type);
 
   const startIdCapture = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -318,8 +305,7 @@
       DOM.backPreview.classList.add("hidden");
       DOM.backPreview.src = "";
       isCapturingFront = true;
-      DOM.captureInstruction.textContent =
-        "Positionnez le RECTO de la CIN et prenez la photo.";
+      DOM.captureInstruction.textContent = "Positionnez le RECTO de la CIN et prenez la photo.";
       try {
         idCaptureStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -466,8 +452,12 @@
     form.adresse.value = extracted.address ?? "";
     form.ville.value = extracted.city ?? "";
     form.sexe.value = extracted.gender === "F" ? "F" : extracted.gender === "M" ? "M" : "";
-    form.querySelectorAll(".input-group.has-error").forEach((el) => el.classList.remove("has-error"));
-    form.querySelectorAll("input, select").forEach((el) => el.classList.remove("input-error"));
+    form.querySelectorAll(".input-group.has-error").forEach((el) =>
+      el.classList.remove("has-error")
+    );
+    form.querySelectorAll("input, select").forEach((el) =>
+      el.classList.remove("input-error")
+    );
     form.querySelectorAll(".error-text").forEach((el) => (el.textContent = ""));
     showMessage("message", "Formulaire pré-rempli. Vérifiez les informations.", "info");
     $(form.sexe).trigger("change");
@@ -519,11 +509,10 @@
   };
 
   // --- Event Handlers ---
-
   /**
    * Handle Patient Search:
    * - Displays patient info in a card with a "Print QR Code" button.
-   * - Does not automatically start a visit.
+   * - Does not start a visit automatically.
    */
   const handlePatientSearch = async () => {
     showMessage("getResult", "", "");
@@ -557,7 +546,7 @@
         return;
       }
 
-      // For search, simply display patient info without starting a visit.
+      // For search, display patient info without starting a visit.
       currentIPP = patientData.ipp;
       console.log("Patient found:", patientData);
 
@@ -635,12 +624,13 @@
     showMessage("message", '<span class="loading-spinner"></span> Création patient...', "loading");
     DOM.createPatientBtn.disabled = true;
     DOM.createResultDiv.style.display = "none";
-    // Query the print button at the moment of handling creation
-    const createPrintButton = document.getElementById("createPrintButton");
-    if (createPrintButton) {
-      createPrintButton.disabled = true;
+
+    // Query the print button fresh
+    const cpButton = document.getElementById("createPrintButton");
+    if (cpButton) {
+      cpButton.disabled = true;
     } else {
-      console.warn("createPrintButton element not found at the beginning of handleCreatePatient");
+      console.warn("createPrintButton element not found at beginning of handleCreatePatient");
     }
 
     const payload = {
@@ -672,9 +662,9 @@
           DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)})`;
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
           DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
-          if (createPrintButton) {
-            createPrintButton.disabled = false;
-            createPrintButton.onclick = () => window.printQRCode(qrCodeData.qrImageUrl);
+          if (cpButton) {
+            cpButton.disabled = false;
+            cpButton.onclick = () => window.printQRCode(qrCodeData.qrImageUrl);
           }
           DOM.createResultDiv.style.display = "block";
         } else {
@@ -766,6 +756,13 @@
       console.log("No token found. Redirecting to login.");
       redirectToLogin();
       return;
+    }
+    // Re-query the print button on DOMContentLoaded to ensure it is available.
+    const cpBtn = document.getElementById("createPrintButton");
+    if (cpBtn) {
+      createPrintButtonEl = cpBtn;
+    } else {
+      console.warn("createPrintButton element not found on DOMContentLoaded");
     }
     DOM.body.classList.add("loaded");
     console.log("Authenticated. Setting up page.");
