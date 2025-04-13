@@ -633,7 +633,7 @@
     }
   };
 
-  // Function to print entire patient info from the search result
+  // Function to print patient info from the search result
   window.printPatientSearchInfo = function printPatientSearchInfo() {
     const contentToPrint = DOM.resultDiv.innerHTML;
     const printWindow = window.open("", "_blank", "width=800,height=900");
