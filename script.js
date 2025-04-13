@@ -523,7 +523,6 @@
   };
 
   // --- Event Handlers ---
-
   // Modified patient search handler
   const handlePatientSearch = async () => {
     showMessage("getResult", "", "");
@@ -671,7 +670,7 @@
     printWindow.document.close();
   };
 
-  // Create Patient Handler with enhanced print functionality – removing the detailed patient information.
+  // Create Patient Handler – adapted to remove detailed patient information.
   const handleCreatePatient = async (event) => {
     event.preventDefault();
     if (!validateCreateForm()) return;
@@ -706,25 +705,18 @@
 
         const qrCodeData = generateQrData(currentIPP);
         if (qrCodeData) {
-          // Update the createResult area to display only the QR code and the print buttons.
+          // Display only the QR code (the detailed patient info has been removed)
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)})`, "result");
           if (DOM.createResultMessage) {
             DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
           }
 
-          // Enable and update the QR code image and print buttons.
+          // Update the QR code image and enable the print button.
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
           DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
           DOM.createPrintButton.disabled = false;
           DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
 
-          let createPrintInfoButton = document.getElementById("createPrintInfoButton");
-          if (createPrintInfoButton) {
-            createPrintInfoButton.disabled = false;
-            createPrintInfoButton.onclick = () => printCreatedPatientInfo();
-          } else {
-            console.warn("createPrintInfoButton element not found in DOM.");
-          }
           DOM.createResultDiv.style.display = "block";
         } else {
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`, "warning");
@@ -747,41 +739,6 @@
     } finally {
       DOM.createPatientBtn.disabled = false;
     }
-  };
-
-  // Function to print the entire created patient info (only prints the QR code as detailed info is removed)
-  window.printCreatedPatientInfo = function printCreatedPatientInfo() {
-    const contentToPrint = `<div class="qr-section">${DOM.createResultDiv.innerHTML}</div>`;
-    const printWindow = window.open("", "_blank", "width=800,height=900");
-    if (!printWindow) {
-      alert("Veuillez autoriser les pop-ups pour imprimer.");
-      return;
-    }
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Imprimer Infos Nouveau Patient</title>
-        <style>
-          body { font-family: sans-serif; margin: 20px; text-align: center; }
-          .qr-section img { max-width: 250px; margin: 20px auto; display: block; }
-          @media print { button { display: none !important; } }
-        </style>
-      </head>
-      <body>
-        ${contentToPrint}
-        <script>
-          window.onload = function() {
-            setTimeout(function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            }, 500);
-          };
-        <\/script>
-      </body>
-      </html>
-    `);
-    printWindow.document.close();
   };
 
   // --- Dropdown Initialization Functions ---
