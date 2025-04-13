@@ -55,7 +55,6 @@
   let isCapturingFront = true;
 
   // --- Utility Functions ---
-
   const showToast = (message, type = "success") => {
     if (!message || !DOM.toast) return;
     const icon =
@@ -127,14 +126,10 @@
       el.style.padding = "1rem";
       el.style.borderRadius = "var(--border-radius)";
       const msgP = el.querySelector("#createResultMessage");
-      const img = el.querySelector("#createQrCodeImage");
-      const btn = el.querySelector("#createPrintButton");
       if (msgP) {
         msgP.style.color = textColor;
         msgP.textContent = message ? message : "";
       }
-      if (img) img.style.display = isResult ? "block" : "none";
-      if (btn) btn.style.display = isResult ? "inline-block" : "none";
     } else {
       el.className = "message";
       if (type) el.classList.add(`message-${type}`);
@@ -529,7 +524,7 @@
 
   // --- Event Handlers ---
 
-  // Modified patient search handler with a compact card layout and two print buttons
+  // Modified patient search handler
   const handlePatientSearch = async () => {
     showMessage("getResult", "", "");
     const cin = DOM.cinInput?.value.trim() || "";
@@ -590,7 +585,8 @@
         }
       }
 
-      // Build a compact card HTML with patient data
+      // Build a compact card HTML with patient data and QR code,
+      // but remove the "Imprimer QR" button for search results.
       const searchResultHTML = `
         <div class="patient-result-card">
           <h3>Informations du Patient</h3>
@@ -618,9 +614,6 @@
             <div class="qr-section">
               <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient IPP ${sanitizeInput(currentIPP)}" loading="lazy" />
               <div class="qr-buttons">
-                <button class="btn btn-secondary btn-sm" onclick="printQRCode('${qrCodeData.qrImageUrl}')">
-                  <i class="fas fa-print"></i> Imprimer QR
-                </button>
                 <button class="btn btn-secondary btn-sm" onclick="printPatientSearchInfo()">
                   <i class="fas fa-print"></i> Imprimer Infos
                 </button>
@@ -678,7 +671,7 @@
     printWindow.document.close();
   };
 
-  // Create Patient Handler with enhanced print functionality for created patient info
+  // Create Patient Handler with enhanced print functionality – removing the detailed patient information.
   const handleCreatePatient = async (event) => {
     event.preventDefault();
     if (!validateCreateForm()) return;
@@ -713,79 +706,20 @@
 
         const qrCodeData = generateQrData(currentIPP);
         if (qrCodeData) {
+          // Update the createResult area to display only the QR code and the print buttons.
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)})`, "result");
-          DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
-          
-          // Build complete created patient info card
-          const createdPatient = {
-            nom: payload.nom,
-            prenom: payload.prenom,
-            cin: payload.cin,
-            ipp: createResponse.ipp,
-            telephone: payload.telephone,
-            adresse: payload.adresse,
-            ville: payload.ville,
-            date_naissance: payload.date_naissance,
-            sexe: payload.sexe,
-            mutuelle: payload.mutuelle,
-          };
-
-          // Fill in a div with id "createdPatientData"
-          // Ensure your HTML has <div id="createdPatientData"></div> inside #createResult.
-          let createdInfoHTML = `
-            <div class="patient-result-card">
-              <h3>Patient Créé</h3>
-              <ul class="patient-info-list">
-                <li><strong>Nom:</strong> ${sanitizeInput(createdPatient.nom)}</li>
-                <li><strong>Prénom:</strong> ${sanitizeInput(createdPatient.prenom)}</li>
-                <li><strong>CIN:</strong> ${sanitizeInput(createdPatient.cin)}</li>
-                <li><strong>IPP:</strong> ${sanitizeInput(createdPatient.ipp)}</li>
-                <li><strong>Téléphone:</strong> ${sanitizeInput(createdPatient.telephone)}</li>
-                <li><strong>Adresse:</strong> ${sanitizeInput(createdPatient.adresse)}</li>
-                <li><strong>Ville:</strong> ${sanitizeInput(createdPatient.ville)}</li>
-                <li><strong>Date de Naissance:</strong> ${sanitizeInput(createdPatient.date_naissance)}</li>
-                <li><strong>Sexe:</strong> ${
-                  createdPatient.sexe === 'M'
-                    ? 'Homme'
-                    : createdPatient.sexe === 'F'
-                    ? 'Femme'
-                    : 'N/A'
-                }</li>
-                <li><strong>Mutuelle:</strong> ${sanitizeInput(createdPatient.mutuelle || 'N/A')}</li>
-              </ul>
-              ${
-                qrCodeData
-                  ? `<div class="qr-section">
-                        <img src="${qrCodeData.qrImageUrl}" alt="QR Code IPP ${sanitizeInput(createdPatient.ipp)}" />
-                     </div>`
-                  : ''
-              }
-            </div>`;
-          
-          // Try to populate or create the container
-          let createdPatientDataDiv = document.getElementById("createdPatientData");
-          if (!createdPatientDataDiv) {
-            createdPatientDataDiv = document.createElement("div");
-            createdPatientDataDiv.id = "createdPatientData";
-            DOM.createResultDiv.appendChild(createdPatientDataDiv);
+          // The createResultMessage element is maintained for the brief message if needed.
+          if (DOM.createResultMessage) {
+            DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
           }
-          createdPatientDataDiv.innerHTML = createdInfoHTML;
-          
-          // Enable Print QR button (only prints the QR image)
+
+          // Enable and update the QR code image and print buttons.
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
           DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
           DOM.createPrintButton.disabled = false;
           DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
 
-          // Create and assign a new print button for printing the entire patient info
           let createPrintInfoButton = document.getElementById("createPrintInfoButton");
-          if (!createPrintInfoButton) {
-            createPrintInfoButton = document.createElement("button");
-            createPrintInfoButton.id = "createPrintInfoButton";
-            createPrintInfoButton.className = "btn btn-secondary";
-            createPrintInfoButton.innerHTML = `<i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos`;
-            DOM.createResultDiv.appendChild(createPrintInfoButton);
-          }
           createPrintInfoButton.disabled = false;
           createPrintInfoButton.onclick = () => printCreatedPatientInfo();
 
@@ -793,7 +727,9 @@
         } else {
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`, "warning");
           DOM.createResultDiv.style.display = "block";
-          DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`;
+          if (DOM.createResultMessage) {
+            DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`;
+          }
         }
         DOM.createForm.reset();
         $(DOM.mutuelleInput).val(null).trigger("change");
@@ -811,11 +747,9 @@
     }
   };
 
-  // Function to print the entire created patient info
+  // Function to print the entire created patient info (only prints the QR code as detailed info is removed)
   window.printCreatedPatientInfo = function printCreatedPatientInfo() {
-    const createdPatientDataDiv = document.getElementById("createdPatientData");
-    if (!createdPatientDataDiv) return;
-    const contentToPrint = createdPatientDataDiv.innerHTML;
+    const contentToPrint = `<div class="qr-section">${DOM.createResultDiv.innerHTML}</div>`;
     const printWindow = window.open("", "_blank", "width=800,height=900");
     if (!printWindow) {
       alert("Veuillez autoriser les pop-ups pour imprimer.");
@@ -827,9 +761,8 @@
       <head>
         <title>Imprimer Infos Nouveau Patient</title>
         <style>
-          body { font-family: sans-serif; margin: 20px; }
-          .patient-info-list { list-style: none; padding-left: 0; }
-          img { max-width: 200px; display: block; margin: 20px auto; }
+          body { font-family: sans-serif; margin: 20px; text-align: center; }
+          .qr-section img { max-width: 250px; margin: 20px auto; display: block; }
           @media print { button { display: none !important; } }
         </style>
       </head>
