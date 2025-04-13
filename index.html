@@ -12,10 +12,12 @@
     />
     <meta name="theme-color" content="#ffffff" />
     <title>Réception - MediClinic</title>
+
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+
     <!-- Fonts and icons -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -25,16 +27,20 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
+
     <!-- Select2 CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css"
       rel="stylesheet"
     />
+
     <!-- Local CSS -->
     <link rel="stylesheet" href="style.css" />
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
+
   <body>
     <a href="#main-content" class="skip-link">Passer au contenu principal</a>
     <div class="container">
@@ -75,8 +81,9 @@
                 <i class="fas fa-pen"></i>
               </div>
             </div>
+
             <div class="card-body">
-              <!-- ID Capture Section -->
+              <!-- ID Capture Section (Optional) -->
               <div class="id-capture-section mb-4 no-print">
                 <button
                   id="captureIdButton"
@@ -85,12 +92,14 @@
                 >
                   <i class="fas fa-camera"></i> Scanner CIN
                 </button>
+
                 <div id="idCaptureContainer" class="hidden">
                   <p id="captureInstruction">
                     Positionnez le RECTO de la CIN et prenez la photo.
                   </p>
                   <video id="idVideo" playsinline></video>
                   <canvas id="idCanvas" class="hidden"></canvas>
+
                   <div class="d-flex justify-content-center gap-2 my-2">
                     <img
                       id="frontPreview"
@@ -103,6 +112,7 @@
                       alt="Aperçu Verso"
                     />
                   </div>
+
                   <div class="btn-group mt-2">
                     <button
                       id="takePhotoButton"
@@ -121,6 +131,7 @@
                       Annuler
                     </button>
                   </div>
+
                   <div
                     id="captureMessage"
                     class="message message-info mt-2"
@@ -129,8 +140,10 @@
               </div>
               <!-- END ID Capture Section -->
 
+              <!-- Create Patient Form -->
               <form id="createForm" novalidate>
                 <div class="form-grid">
+                  <!-- Basic Patient Inputs -->
                   <div class="input-group">
                     <label for="nom">
                       Nom <span class="required" aria-hidden="true">*</span>
@@ -147,6 +160,7 @@
                     />
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <div class="input-group">
                     <label for="prenom">
                       Prénom <span class="required" aria-hidden="true">*</span>
@@ -163,6 +177,7 @@
                     />
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <div class="input-group">
                     <label for="cin">
                       CIN <span class="required" aria-hidden="true">*</span>
@@ -179,6 +194,7 @@
                     />
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <div class="input-group">
                     <label for="telephone">
                       Téléphone
@@ -198,6 +214,7 @@
                     />
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <div class="input-group">
                     <label for="adresse">
                       Adresse <span class="required" aria-hidden="true">*</span>
@@ -214,6 +231,7 @@
                     />
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <div class="input-group">
                     <label for="ville">
                       Ville <span class="required" aria-hidden="true">*</span>
@@ -230,6 +248,7 @@
                     />
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <div class="input-group">
                     <label for="date_naissance">
                       Date de Naissance <span class="required" aria-hidden="true">*</span>
@@ -245,6 +264,7 @@
                     />
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <div class="input-group">
                     <label for="sexe">
                       Sexe <span class="required" aria-hidden="true">*</span>
@@ -263,6 +283,7 @@
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <!-- Mutuelle Dropdown -->
                   <div class="input-group mutuelle-group">
                     <label for="mutuelle">Mutuelle</label>
@@ -272,6 +293,7 @@
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
                   <!-- Doctor Dropdown -->
                   <div class="input-group">
                     <label for="doctor">Médecin</label>
@@ -281,6 +303,8 @@
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
+
+                  <!-- Submit Button & Message -->
                   <div class="form-submit-button">
                     <button
                       type="submit"
@@ -320,8 +344,9 @@
             </div>
           </section>
         </div>
+
+        <!-- Search Section -->
         <div class="flex-col">
-          <!-- Search Patient Section -->
           <section class="card" aria-labelledby="search-patient-heading">
             <div class="card-header">
               <h2 id="search-patient-heading" class="card-title">
@@ -356,6 +381,7 @@
               </div>
             </div>
           </section>
+
           <!-- Recent Patients Section (optional) -->
           <section class="card" aria-labelledby="recent-patients-heading">
             <div class="card-header">
@@ -374,9 +400,11 @@
           </section>
         </div>
       </main>
+
       <footer class="footer no-print">
         <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
       </footer>
+
       <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
     </div>
 
@@ -413,7 +441,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Select2 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
-    <!-- Local JS -->
-    <script src="script.js" defer></script>
+    
+    <!-- Local JS: place AFTER all elements so we can reliably reference them -->
+    <script src="script.js"></script>
   </body>
 </html>
