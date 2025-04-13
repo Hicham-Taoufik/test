@@ -10,7 +10,13 @@
       name="description"
       content="Dashboard de réception pour la gestion des patients - MediClinic"
     />
+    <meta name="theme-color" content="#ffffff" />
     <title>Réception - MediClinic</title>
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <!-- Fonts and icons -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -24,33 +30,38 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css"
       rel="stylesheet"
     />
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
   <body>
     <a href="#main-content" class="skip-link">Passer au contenu principal</a>
     <div class="container">
-      <div class="header">
+      <header class="header">
         <div class="header-main-content">
           <div class="logo">
             <img
               src="./clinique-nakhil-logo-horizontal.webp"
               alt="MediClinic Logo"
               class="logo-img"
+              width="180"
+              height="40"
             />
           </div>
           <h1 class="header-title">Réception</h1>
         </div>
         <div class="header-logout">
           <button
-            onclick="logout()"
+            type="button"
             class="btn btn-outline logout-btn no-print"
             aria-label="Déconnexion"
+            id="logoutBtn"
           >
             <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion
           </button>
         </div>
-      </div>
+      </header>
 
       <main id="main-content" class="flex-row">
         <div class="flex-col">
@@ -74,24 +85,22 @@
                 >
                   <i class="fas fa-camera"></i> Scanner CIN
                 </button>
-                <div id="idCaptureContainer">
+                <div id="idCaptureContainer" class="hidden">
                   <p id="captureInstruction">
                     Positionnez le RECTO de la CIN et prenez la photo.
                   </p>
                   <video id="idVideo" playsinline></video>
-                  <canvas id="idCanvas" style="display: none"></canvas>
+                  <canvas id="idCanvas" class="hidden"></canvas>
                   <div class="d-flex justify-content-center gap-2 my-2">
                     <img
                       id="frontPreview"
-                      class="capture-preview"
+                      class="capture-preview hidden"
                       alt="Aperçu Recto"
-                      style="display: none"
                     />
                     <img
                       id="backPreview"
-                      class="capture-preview"
+                      class="capture-preview hidden"
                       alt="Aperçu Verso"
-                      style="display: none"
                     />
                   </div>
                   <div class="btn-group mt-2">
@@ -123,9 +132,10 @@
               <form id="createForm" novalidate>
                 <div class="form-grid">
                   <div class="input-group">
-                    <label for="nom"
-                      >Nom <span aria-hidden="true">*</span></label
-                    >
+                    <label for="nom">
+                      Nom <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <input
                       id="nom"
                       name="nom"
@@ -135,12 +145,13 @@
                       aria-required="true"
                       autocomplete="family-name"
                     />
-                    <div class="error-text">Veuillez entrer un nom</div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <div class="input-group">
-                    <label for="prenom"
-                      >Prénom <span aria-hidden="true">*</span></label
-                    >
+                    <label for="prenom">
+                      Prénom <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <input
                       id="prenom"
                       name="prenom"
@@ -150,12 +161,13 @@
                       aria-required="true"
                       autocomplete="given-name"
                     />
-                    <div class="error-text">Veuillez entrer un prénom</div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <div class="input-group">
-                    <label for="cin"
-                      >CIN <span aria-hidden="true">*</span></label
-                    >
+                    <label for="cin">
+                      CIN <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <input
                       id="cin"
                       name="cin"
@@ -165,14 +177,14 @@
                       aria-required="true"
                       pattern="^[A-Za-z]{1,2}\d{5,6}$"
                     />
-                    <div class="error-text">
-                      Format CIN invalide (ex: AB123456)
-                    </div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <div class="input-group">
-                    <label for="telephone"
-                      >Téléphone <span aria-hidden="true">*</span></label
-                    >
+                    <label for="telephone">
+                      Téléphone
+                      <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <input
                       id="telephone"
                       name="telephone"
@@ -182,15 +194,15 @@
                       aria-required="true"
                       autocomplete="tel"
                       pattern="^0[5-7]\d{8}$"
+                      inputmode="numeric"
                     />
-                    <div class="error-text">
-                      Format téléphone invalide (0Xxxxxxxxx)
-                    </div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <div class="input-group">
-                    <label for="adresse"
-                      >Adresse <span aria-hidden="true">*</span></label
-                    >
+                    <label for="adresse">
+                      Adresse <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <input
                       id="adresse"
                       name="adresse"
@@ -200,12 +212,13 @@
                       aria-required="true"
                       autocomplete="address-line1"
                     />
-                    <div class="error-text">Veuillez entrer une adresse</div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <div class="input-group">
-                    <label for="ville"
-                      >Ville <span aria-hidden="true">*</span></label
-                    >
+                    <label for="ville">
+                      Ville <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <input
                       id="ville"
                       name="ville"
@@ -215,13 +228,14 @@
                       aria-required="true"
                       autocomplete="address-level2"
                     />
-                    <div class="error-text">Veuillez entrer une ville</div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <div class="input-group">
-                    <label for="date_naissance"
-                      >Date de Naissance
-                      <span aria-hidden="true">*</span></label
-                    >
+                    <label for="date_naissance">
+                      Date de Naissance
+                      <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <input
                       id="date_naissance"
                       name="date_naissance"
@@ -230,14 +244,13 @@
                       aria-required="true"
                       autocomplete="bday"
                     />
-                    <div class="error-text">
-                      Veuillez entrer une date valide
-                    </div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <div class="input-group">
-                    <label for="sexe"
-                      >Sexe <span aria-hidden="true">*</span></label
-                    >
+                    <label for="sexe">
+                      Sexe <span class="required" aria-hidden="true">*</span>
+                      <span class="sr-only">(obligatoire)</span>
+                    </label>
                     <select
                       id="sexe"
                       name="sexe"
@@ -245,11 +258,11 @@
                       aria-required="true"
                       autocomplete="sex"
                     >
-                      <option value="" disabled selected>Choisir...</option> <!-- Added placeholder -->
+                      <option value="" disabled selected>Choisir...</option>
                       <option value="M">Homme</option>
                       <option value="F">Femme</option>
                     </select>
-                    <div class="error-text">Veuillez sélectionner un sexe</div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
                   <!-- Updated Mutuelle Dropdown -->
                   <div class="input-group mutuelle-group">
@@ -258,24 +271,21 @@
                       <option value="" disabled selected>
                         Choisir une mutuelle...
                       </option>
-                       <!-- Options populated by JS -->
+                      <!-- Options populated by JS -->
                     </select>
-                    <div class="error-text">
-                      Veuillez choisir une mutuelle (si applicable)
-                    </div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
-                  <!-- New Doctor Dropdown -->
+                  <!-- Doctor Dropdown -->
                   <div class="input-group">
                     <label for="doctor">Médecin</label>
                     <select name="doctor" id="doctor" class="form-select">
                       <option value="" disabled selected>
                         Choisir un médecin...
                       </option>
-                       <!-- Options populated by JS -->
+                      <!-- Options populated by JS -->
                     </select>
-                    <div class="error-text">Veuillez choisir un médecin</div>
+                    <div class="error-text" aria-live="polite"></div>
                   </div>
-                  <!-- End Doctor Dropdown -->
 
                   <div class="form-submit-button">
                     <button
@@ -284,7 +294,7 @@
                       id="createPatientBtn"
                     >
                       <i class="fas fa-plus-circle" aria-hidden="true"></i>
-                      Créer Patient & Démarrer Visite <!-- Updated Text -->
+                      Créer Patient & Démarrer Visite
                     </button>
                   </div>
                   <div
@@ -295,9 +305,16 @@
                   ></div>
                 </div>
               </form>
-              <div id="createResult">
+              <div id="createResult" class="hidden">
                 <p id="createResultMessage"></p>
-                <img id="createQrCodeImage" src="" alt="" loading="lazy" />
+                <div class="qr-code-container">
+                  <img
+                    id="createQrCodeImage"
+                    src=""
+                    alt="QR Code patient"
+                    loading="lazy"
+                  />
+                </div>
                 <button
                   id="createPrintButton"
                   class="btn btn-secondary"
@@ -323,29 +340,91 @@
               </div>
             </div>
             <div class="card-body">
-              <div class="search-bar">
-                <input
-                  id="getCin"
-                  type="text"
-                  placeholder="Entrer le CIN du patient"
-                  aria-label="Numéro CIN du patient"
-                />
-                <button id="searchBtn" class="btn btn-primary">
-                  <i class="fas fa-search" aria-hidden="true"></i> Rechercher & Démarrer Visite <!-- Updated Text -->
-                </button>
+              <form id="searchForm" class="search-bar">
+                <div class="search-input-group">
+                  <input
+                    id="getCin"
+                    type="text"
+                    placeholder="Entrer le CIN du patient"
+                    aria-label="Numéro CIN du patient"
+                    pattern="^[A-Za-z]{1,2}\d{5,6}$"
+                  />
+                  <button type="submit" id="searchBtn" class="btn btn-primary">
+                    <i class="fas fa-search" aria-hidden="true"></i> Rechercher
+                    & Démarrer Visite
+                  </button>
+                </div>
+              </form>
+              <div
+                id="getResult"
+                role="region"
+                aria-live="polite"
+                class="search-results"
+              ></div>
+            </div>
+          </section>
+
+          <!-- New Section: Recent Patients -->
+          <section class="card" aria-labelledby="recent-patients-heading">
+            <div class="card-header">
+              <h2 id="recent-patients-heading" class="card-title">
+                <i class="fas fa-clock" aria-hidden="true"></i> Patients Récents
+              </h2>
+              <div class="card-actions" aria-hidden="true">
+                <i class="fas fa-history"></i>
               </div>
-              <div id="getResult" role="region" aria-live="polite"></div>
+            </div>
+            <div class="card-body">
+              <div id="recentPatientsList" class="recent-patients-list">
+                <!-- Content populated by JS -->
+                <p class="no-data-message">Aucun patient récent à afficher</p>
+              </div>
             </div>
           </section>
         </div>
       </main>
 
+      <footer class="footer no-print">
+        <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
+      </footer>
+
       <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+    </div>
+
+    <!-- Modal for advanced patient information -->
+    <div
+      id="patientModal"
+      class="modal"
+      aria-labelledby="modal-title"
+      aria-modal="true"
+      role="dialog"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">Détails du Patient</h3>
+          <button id="closeModal" class="close-button" aria-label="Fermer">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="patientDetails"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="startVisitBtn" class="btn btn-primary">
+            Démarrer Visite
+          </button>
+          <button id="editPatientBtn" class="btn btn-secondary">
+            Modifier
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Select2 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+    <!-- Local JS -->
+    <script src="script.js" defer></script>
   </body>
 </html>
