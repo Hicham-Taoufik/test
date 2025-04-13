@@ -62,14 +62,14 @@
           </button>
         </div>
       </header>
-
+  
       <main id="main-content" class="flex-row">
         <div class="flex-col">
+          <!-- Create Patient Section -->
           <section class="card" aria-labelledby="create-patient-heading">
             <div class="card-header">
               <h2 id="create-patient-heading" class="card-title">
-                <i class="fas fa-user-plus" aria-hidden="true"></i> Créer un
-                Patient
+                <i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient
               </h2>
               <div class="card-actions" aria-hidden="true">
                 <i class="fas fa-pen"></i>
@@ -128,7 +128,7 @@
                 </div>
               </div>
               <!-- END ID Capture Section -->
-
+  
               <form id="createForm" novalidate>
                 <div class="form-grid">
                   <div class="input-group">
@@ -268,9 +268,7 @@
                   <div class="input-group mutuelle-group">
                     <label for="mutuelle">Mutuelle</label>
                     <select name="mutuelle" id="mutuelle" class="form-select">
-                      <option value="" disabled selected>
-                        Choisir une mutuelle...
-                      </option>
+                      <option value="" disabled selected>Choisir une mutuelle...</option>
                       <!-- Options populated by JS -->
                     </select>
                     <div class="error-text" aria-live="polite"></div>
@@ -279,14 +277,12 @@
                   <div class="input-group">
                     <label for="doctor">Médecin</label>
                     <select name="doctor" id="doctor" class="form-select">
-                      <option value="" disabled selected>
-                        Choisir un médecin...
-                      </option>
+                      <option value="" disabled selected>Choisir un médecin...</option>
                       <!-- Options populated by JS -->
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
-
+  
                   <div class="form-submit-button">
                     <button
                       type="submit"
@@ -315,25 +311,31 @@
                     loading="lazy"
                   />
                 </div>
+                <!-- Existing print QR button -->
                 <button
                   id="createPrintButton"
                   class="btn btn-secondary"
                   disabled
                 >
-                  <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR
-                  Code
+                  <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code
                 </button>
+                <!-- New print infos button for created patient -->
+                <button id="createPrintInfoButton" class="btn btn-secondary" disabled>
+                  <i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos
+                </button>
+                <!-- Container for complete created patient info -->
+                <div id="createdPatientData"></div>
               </div>
             </div>
           </section>
         </div>
-
+  
         <div class="flex-col">
+          <!-- Search Patient Section -->
           <section class="card" aria-labelledby="search-patient-heading">
             <div class="card-header">
               <h2 id="search-patient-heading" class="card-title">
-                <i class="fas fa-search" aria-hidden="true"></i> Rechercher un
-                Patient
+                <i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient
               </h2>
               <div class="card-actions" aria-hidden="true">
                 <i class="fas fa-users"></i>
@@ -350,8 +352,7 @@
                     pattern="^[A-Za-z]{1,2}\d{5,6}$"
                   />
                   <button type="submit" id="searchBtn" class="btn btn-primary">
-                    <i class="fas fa-search" aria-hidden="true"></i> Rechercher
-                    & Démarrer Visite
+                    <i class="fas fa-search" aria-hidden="true"></i> Rechercher & Démarrer Visite
                   </button>
                 </div>
               </form>
@@ -363,8 +364,8 @@
               ></div>
             </div>
           </section>
-
-          <!-- New Section: Recent Patients -->
+  
+          <!-- Recent Patients Section -->
           <section class="card" aria-labelledby="recent-patients-heading">
             <div class="card-header">
               <h2 id="recent-patients-heading" class="card-title">
@@ -383,22 +384,16 @@
           </section>
         </div>
       </main>
-
+  
       <footer class="footer no-print">
         <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
       </footer>
-
+  
       <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
     </div>
-
+  
     <!-- Modal for advanced patient information -->
-    <div
-      id="patientModal"
-      class="modal"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-      role="dialog"
-    >
+    <div id="patientModal" class="modal" aria-labelledby="modal-title" aria-modal="true" role="dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h3 id="modal-title">Détails du Patient</h3>
@@ -419,7 +414,7 @@
         </div>
       </div>
     </div>
-
+  
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Select2 JS -->
