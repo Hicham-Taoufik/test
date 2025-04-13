@@ -151,7 +151,7 @@
                     <label for="prenom">
                       Prénom <span class="required" aria-hidden="true">*</span>
                       <span class="sr-only">(obligatoire)</span>
-                    </label>
+                      </label>
                     <input
                       id="prenom"
                       name="prenom"
@@ -301,7 +301,7 @@
                   ></div>
                 </div>
               </form>
-              <!-- Patient creation result (QR and Info print) -->
+              <!-- Patient creation result (QR only print) -->
               <div id="createResult" class="hidden">
                 <p id="createResultMessage"></p>
                 <div class="qr-code-container">
@@ -313,20 +313,13 @@
                   />
                 </div>
                 <!-- Button container for better layout -->
-                <div class="print-buttons-container mt-3 d-flex justify-content-center gap-2">
+                <div class="print-buttons-container mt-3 d-flex justify-content-center">
                     <button
                       id="createPrintQrButton" <!-- Renamed ID -->
                       class="btn btn-secondary"
                       disabled
                     >
                       <i class="fas fa-qrcode" aria-hidden="true"></i> Imprimer QR Code
-                    </button>
-                    <button
-                      id="createPrintInfoButton" <!-- New Button ID -->
-                      class="btn btn-info"
-                      disabled
-                    >
-                      <i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos Patient
                     </button>
                 </div>
               </div>
