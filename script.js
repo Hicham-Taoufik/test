@@ -84,6 +84,7 @@
       console.error(`showMessage Error: Element ID "${elementId}" not found.`);
       return;
     }
+
     const statusIcons = {
       info: "fas fa-info-circle",
       success: "fas fa-check-circle",
@@ -92,75 +93,78 @@
       loading: "fas fa-spinner fa-spin", // Use spinner icon for loading
     };
     const iconClass = statusIcons[type] || statusIcons.info;
-    // Use div for loading spinner for better CSS control
-    const iconHtml = type === 'loading'
-      ? `<div class="loading-spinner" role="status" aria-label="Chargement" style="margin-right: 6px; display: inline-block;"></div>`
-      : (message && type !== "result" ? `<i class="${iconClass}" style="margin-right: 6px;" aria-hidden="true"></i>` : "");
 
-    el.innerHTML = message ? `${iconHtml}${message}` : "";
-    el.style.display = message ? "block" : "none";
-    el.className = ""; // Reset class list first
-
-    // For createResult styling specifically
+    // Special handling for createResult: We only update the message paragraph, not the whole div's innerHTML
     if (elementId === "createResult") {
-      const isResult = type === "result" || type === 'warning'; // Treat warning also as a result display type
-      const baseBg = isResult
-        ? (type === 'warning' ? "var(--warning-light)" : "var(--success-light)")
-        : type === "error"
-        ? "var(--danger-light)"
-        : "transparent";
-      const baseBorder = isResult
-        ? (type === 'warning' ? "var(--warning)" : "var(--success)")
-        : type === "error"
-        ? "var(--danger)"
-        : "transparent";
-      const textColor = isResult
-        ? (type === 'warning' ? "var(--warning)" : "var(--success-dark)")
-        : type === "error"
-        ? "var(--danger)"
-        : "inherit";
-      el.style.backgroundColor = baseBg;
-      el.style.borderLeft = `4px solid ${baseBorder}`;
-      el.style.textAlign = "center";
-      el.style.marginTop = "20px";
-      el.style.padding = "1rem";
-      el.style.borderRadius = "var(--border-radius)";
-      const msgP = el.querySelector("#createResultMessage");
-      const img = el.querySelector("#createQrCodeImage");
-      const btnContainer = el.querySelector(".print-buttons-container");
+        const isResult = type === "result" || type === 'warning';
+        const baseBg = isResult ? (type === 'warning' ? "var(--warning-light)" : "var(--success-light)") : (type === "error" ? "var(--danger-light)" : "transparent");
+        const baseBorder = isResult ? (type === 'warning' ? "var(--warning)" : "var(--success)") : (type === "error" ? "var(--danger)" : "transparent");
+        const textColor = isResult ? (type === 'warning' ? "var(--warning-dark)" : "var(--success-dark)") : (type === "error" ? "var(--danger)" : "inherit"); // Adjusted warning text color
 
-      if (msgP) {
-        msgP.style.color = textColor;
-        // Setting textContent directly for the message paragraph
-        msgP.textContent = message ? message : "";
-      }
-      if (img) img.style.display = isResult && DOM.createQrCodeImage.src ? "block" : "none"; // Show image only if result and src is set
-      if (btnContainer) btnContainer.style.display = isResult ? "flex" : "none"; // Show button container if result
+        // Style the main container (#createResult)
+        el.style.backgroundColor = baseBg;
+        el.style.borderLeft = `4px solid ${baseBorder}`;
+        el.style.textAlign = "center";
+        el.style.marginTop = "20px";
+        el.style.padding = "1rem";
+        el.style.borderRadius = "var(--border-radius)";
+        el.className = ""; // Clear any conflicting message classes like message-error if type is result/warning
+
+        // Find child elements within #createResult
+        const msgP = el.querySelector("#createResultMessage");
+        const img = el.querySelector("#createQrCodeImage");
+        const btnContainer = el.querySelector(".print-buttons-container");
+
+        // Update ONLY the message paragraph's content
+        if (msgP) {
+            msgP.style.color = textColor;
+            msgP.textContent = message ? message : ""; // Set text content directly
+        } else {
+            console.warn("#createResultMessage paragraph not found within #createResult");
+        }
+
+        // Control visibility of image and buttons based on whether it's a result type
+        if (img) {
+             // Show image only if it's a result/warning AND the src is set (handled in handleCreatePatient)
+             img.style.display = isResult && img.src && !img.src.endsWith('/') ? "block" : "none";
+        }
+         if (btnContainer) {
+             // Show button container only if it's a result/warning type
+             btnContainer.style.display = isResult ? "flex" : "none";
+         }
+
+         // Ensure the #createResult div itself is visible if we are showing a result/warning/error
+         el.style.display = (type === 'result' || type === 'warning' || type === 'error') ? 'block' : 'none';
 
     } else {
-      // Apply message classes for other elements
-      el.className = "message";
-      if (type) el.classList.add(`message-${type}`);
-    }
+        // --- Standard handling for other elements (like #message, #getResult, #captureMessage) ---
+        const iconHtml = type === 'loading'
+          ? `<div class="loading-spinner" role="status" aria-label="Chargement" style="margin-right: 6px; display: inline-block;"></div>`
+          : (message && type !== "result" ? `<i class="${iconClass}" style="margin-right: 6px;" aria-hidden="true"></i>` : "");
 
-    // Auto-hide some messages (like info, success, warning on the main 'message' div)
-    if (
-      type !== "error" &&
-      type !== "result" &&
-      type !== "loading" &&
-      message &&
-      elementId === "message" // Only auto-hide the main message area
-    ) {
-      setTimeout(() => {
-        const currentElement = document.getElementById(elementId);
-        // Check if the message is still the same one we set
-        if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) {
-           // Fade out or hide
-           // currentElement.style.opacity = 0; // Optional fade
-           // setTimeout(() => { currentElement.style.display = 'none'; currentElement.style.opacity = 1; }, 500); // Hide after fade
-           currentElement.style.display = 'none'; // Just hide
+        // Set innerHTML for general message elements
+        el.innerHTML = message ? `${iconHtml}${message}` : "";
+        el.style.display = message ? "block" : "none"; // Control visibility
+        el.className = "message"; // Base class
+        if (type) {
+          el.classList.add(`message-${type}`); // Add type-specific class
         }
-      }, CONFIG.MESSAGE_DISPLAY_TIME);
+
+        // Auto-hide logic (only for the main #message div, not #getResult or #captureMessage)
+        if (
+          elementId === "message" &&
+          type !== "error" &&
+          type !== "loading" &&
+          message
+        ) {
+          setTimeout(() => {
+            const currentElement = document.getElementById(elementId);
+            // Check if the message is still the same one we set
+            if (currentElement && currentElement.style.display !== 'none' && currentElement.innerHTML.includes(message)) {
+               currentElement.style.display = 'none'; // Just hide
+            }
+          }, CONFIG.MESSAGE_DISPLAY_TIME);
+        }
     }
   };
 
