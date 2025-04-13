@@ -663,10 +663,10 @@
 
   // --- Form Validation ---
   const validateField = (input, validationFn, errorMessage) => {
-    if (!input) return true;
+    if (!input) return true; // Skip if element doesn't exist
     const value = input.value.trim();
     const group = input.closest(".input-group");
-    if (!group) return true;
+    if (!group) return true; // Skip if structure is wrong
 
     let isValid = true;
     // Check if field is required
@@ -687,7 +687,7 @@
   };
 
   const validateCreateForm = () => {
-    let isFormValid = true;
+    let isFormValid = true; // Use a different variable name
     showMessage("message", "", ""); // Clear previous messages
     DOM.createForm?.querySelectorAll(".input-group.has-error").forEach((el) => el.classList.remove("has-error"));
     DOM.createForm?.querySelectorAll("input.input-error, select.input-error").forEach((el) => el.classList.remove("input-error"));
