@@ -62,7 +62,7 @@
           </button>
         </div>
       </header>
-
+  
       <main id="main-content" class="flex-row">
         <div class="flex-col">
           <!-- Create Patient Section -->
@@ -128,7 +128,7 @@
                 </div>
               </div>
               <!-- END ID Capture Section -->
-
+  
               <form id="createForm" novalidate>
                 <div class="form-grid">
                   <div class="input-group">
@@ -282,7 +282,7 @@
                     </select>
                     <div class="error-text" aria-live="polite"></div>
                   </div>
-
+  
                   <div class="form-submit-button">
                     <button
                       type="submit"
@@ -302,7 +302,7 @@
                 </div>
               </form>
               <div id="createResult" class="hidden">
-                <!-- We keep only the QR code image and the print buttons -->
+                <!-- Only the QR code and print buttons are kept -->
                 <div class="qr-code-container">
                   <img
                     id="createQrCodeImage"
@@ -311,7 +311,6 @@
                     loading="lazy"
                   />
                 </div>
-                <!-- Existing print QR button (kept) -->
                 <button
                   id="createPrintButton"
                   class="btn btn-secondary"
@@ -319,7 +318,6 @@
                 >
                   <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code
                 </button>
-                <!-- Print infos button for created patient (kept) -->
                 <button id="createPrintInfoButton" class="btn btn-secondary" disabled>
                   <i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos
                 </button>
@@ -327,7 +325,7 @@
             </div>
           </section>
         </div>
-
+  
         <div class="flex-col">
           <!-- Search Patient Section -->
           <section class="card" aria-labelledby="search-patient-heading">
@@ -362,7 +360,7 @@
               ></div>
             </div>
           </section>
-
+  
           <!-- Recent Patients Section -->
           <section class="card" aria-labelledby="recent-patients-heading">
             <div class="card-header">
@@ -382,14 +380,14 @@
           </section>
         </div>
       </main>
-
+  
       <footer class="footer no-print">
         <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
       </footer>
-
+  
       <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
     </div>
-
+  
     <!-- Modal for advanced patient information -->
     <div
       id="patientModal"
@@ -418,7 +416,7 @@
         </div>
       </div>
     </div>
-
+  
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Select2 JS -->
