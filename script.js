@@ -90,7 +90,10 @@
       loading: "fas fa-spinner fa-spin",
     };
     const iconClass = statusIcons[type] || statusIcons.info;
-    const iconHtml = message && type !== "result" ? `<i class="${iconClass}" style="margin-right: 6px;" aria-hidden="true"></i>` : "";
+    const iconHtml =
+      message && type !== "result"
+        ? `<i class="${iconClass}" style="margin-right: 6px;" aria-hidden="true"></i>`
+        : "";
     el.innerHTML = message ? `${iconHtml}${message}` : "";
     el.style.display = message ? "block" : "none";
     el.className = "";
@@ -584,8 +587,8 @@
         }
       }
 
-      // Build a compact card HTML with patient data and QR code,
-      // but remove the "Imprimer QR" button for search results.
+      // Build a compact card HTML with patient data and QR code.
+      // (The "Imprimer QR" button is removed from search results; only an "Imprimer Infos" button remains.)
       const searchResultHTML = `
         <div class="patient-result-card">
           <h3>Informations du Patient</h3>
