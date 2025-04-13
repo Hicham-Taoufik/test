@@ -301,7 +301,7 @@
                   ></div>
                 </div>
               </form>
-              <!-- Patient creation result (QR only) -->
+              <!-- Patient creation result (QR and Info print) -->
               <div id="createResult" class="hidden">
                 <p id="createResultMessage"></p>
                 <div class="qr-code-container">
@@ -312,14 +312,23 @@
                     loading="lazy"
                   />
                 </div>
-                <!-- Single button to print QR only -->
-                <button
-                  id="createPrintButton"
-                  class="btn btn-secondary"
-                  disabled
-                >
-                  <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code
-                </button>
+                <!-- Button container for better layout -->
+                <div class="print-buttons-container mt-3 d-flex justify-content-center gap-2">
+                    <button
+                      id="createPrintQrButton" <!-- Renamed ID -->
+                      class="btn btn-secondary"
+                      disabled
+                    >
+                      <i class="fas fa-qrcode" aria-hidden="true"></i> Imprimer QR Code
+                    </button>
+                    <button
+                      id="createPrintInfoButton" <!-- New Button ID -->
+                      class="btn btn-info"
+                      disabled
+                    >
+                      <i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos Patient
+                    </button>
+                </div>
               </div>
             </div>
           </section>
@@ -381,7 +390,7 @@
       </main>
 
       <footer class="footer no-print">
-        <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
+        <p>© 2025 MediClinic. Tous droits réservés.</p>
       </footer>
 
       <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
@@ -399,7 +408,7 @@
         <div class="modal-header">
           <h3 id="modal-title">Détails du Patient</h3>
           <button id="closeModal" class="close-button" aria-label="Fermer">
-            &times;
+            ×
           </button>
         </div>
         <div class="modal-body">
