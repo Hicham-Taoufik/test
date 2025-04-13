@@ -98,7 +98,6 @@
     el.style.display = message ? "block" : "none";
     el.className = "";
 
-    // Custom styling for createResult area.
     if (elementId === "createResult") {
       const isResult = type === "result";
       const baseBg = isResult
@@ -314,16 +313,15 @@
   };
 
   // --- ID Capture Functions ---
-  const updateCaptureMessage = (message, type = "info") => showMessage("captureMessage", message, type);
+  const updateCaptureMessage = (message, type = "info") =>
+    showMessage("captureMessage", message, type);
 
   const startIdCapture = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       updateCaptureMessage("Demande caméra...", "loading");
       DOM.captureIdButton.disabled = true;
-      // Remove "hidden" class so the container becomes visible
       DOM.idCaptureContainer.classList.remove("hidden");
       DOM.idCaptureContainer.style.display = "block";
-      // Reset previews: add back the "hidden" class for now
       DOM.frontPreview.classList.add("hidden");
       DOM.frontPreview.src = "";
       DOM.backPreview.classList.add("hidden");
@@ -356,7 +354,6 @@
       idCaptureStream.getTracks().forEach((track) => track.stop());
     }
     DOM.idVideo.srcObject = null;
-    // Hide the capture container again
     DOM.idCaptureContainer.classList.add("hidden");
     DOM.idCaptureContainer.style.display = "none";
     DOM.takePhotoButton.disabled = true;
@@ -588,7 +585,7 @@
       }
 
       // Build a compact card HTML with patient data and QR code.
-      // (The "Imprimer QR" button is removed from search results; only an "Imprimer Infos" button remains.)
+      // The search result shows patient information along with the QR code and a print button.
       const searchResultHTML = `
         <div class="patient-result-card">
           <h3>Informations du Patient</h3>
@@ -673,7 +670,7 @@
     printWindow.document.close();
   };
 
-  // Create Patient Handler – adapted to remove detailed patient information.
+  // Create Patient Handler – now displays only the QR code and uses a single print button.
   const handleCreatePatient = async (event) => {
     event.preventDefault();
     if (!validateCreateForm()) return;
@@ -708,18 +705,15 @@
 
         const qrCodeData = generateQrData(currentIPP);
         if (qrCodeData) {
-          // Display only the QR code (the detailed patient info has been removed)
+          // Display only the QR code; detailed patient information is omitted.
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)})`, "result");
           if (DOM.createResultMessage) {
             DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
           }
-
-          // Update the QR code image and enable the print button.
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
           DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
           DOM.createPrintButton.disabled = false;
           DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
-
           DOM.createResultDiv.style.display = "block";
         } else {
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`, "warning");
