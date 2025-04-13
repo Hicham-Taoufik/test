@@ -708,7 +708,6 @@
         if (qrCodeData) {
           // Update the createResult area to display only the QR code and the print buttons.
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)})`, "result");
-          // The createResultMessage element is maintained for the brief message if needed.
           if (DOM.createResultMessage) {
             DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
           }
@@ -720,9 +719,12 @@
           DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
 
           let createPrintInfoButton = document.getElementById("createPrintInfoButton");
-          createPrintInfoButton.disabled = false;
-          createPrintInfoButton.onclick = () => printCreatedPatientInfo();
-
+          if (createPrintInfoButton) {
+            createPrintInfoButton.disabled = false;
+            createPrintInfoButton.onclick = () => printCreatedPatientInfo();
+          } else {
+            console.warn("createPrintInfoButton element not found in DOM.");
+          }
           DOM.createResultDiv.style.display = "block";
         } else {
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`, "warning");
