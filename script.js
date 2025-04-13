@@ -92,13 +92,11 @@
     const iconClass = statusIcons[type] || statusIcons.info;
     const iconHtml = message && type !== "result" ? `<i class="${iconClass}" style="margin-right: 6px;" aria-hidden="true"></i>` : "";
     el.innerHTML = message ? `${iconHtml}${message}` : "";
-    // Override "hidden" if set by CSS
     el.style.display = message ? "block" : "none";
     el.className = "";
 
-    if (type === "result") {
-      // Additional styling for result messages if needed.
-    } else if (elementId === "createResult") {
+    // Custom styling for the createResult area
+    if (elementId === "createResult") {
       const isResult = type === "result";
       const baseBg = isResult
         ? "var(--success-light)"
@@ -141,7 +139,13 @@
       if (type) el.classList.add(`message-${type}`);
     }
 
-    if (type !== "error" && type !== "result" && type !== "loading" && message && elementId === "message") {
+    if (
+      type !== "error" &&
+      type !== "result" &&
+      type !== "loading" &&
+      message &&
+      elementId === "message"
+    ) {
       setTimeout(() => {
         const currentElement = document.getElementById(elementId);
         if (currentElement && currentElement.innerHTML && currentElement.innerHTML.includes(message)) {
@@ -318,10 +322,10 @@
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       updateCaptureMessage("Demande caméra...", "loading");
       DOM.captureIdButton.disabled = true;
-      // Remove "hidden" class so the container is visible
+      // Remove "hidden" class so the container becomes visible
       DOM.idCaptureContainer.classList.remove("hidden");
       DOM.idCaptureContainer.style.display = "block";
-      // Remove hidden classes from previews so they can be updated
+      // Reset previews (remove hidden classes if set)
       DOM.frontPreview.classList.add("hidden");
       DOM.frontPreview.src = "";
       DOM.backPreview.classList.add("hidden");
@@ -354,7 +358,7 @@
       idCaptureStream.getTracks().forEach((track) => track.stop());
     }
     DOM.idVideo.srcObject = null;
-    // Hide the capture container by adding "hidden" class and updating display
+    // Hide the capture container by adding "hidden" class
     DOM.idCaptureContainer.classList.add("hidden");
     DOM.idCaptureContainer.style.display = "none";
     DOM.takePhotoButton.disabled = true;
@@ -399,7 +403,6 @@
           frontImageBlob = blob;
           console.log("Recto captured");
           DOM.frontPreview.src = URL.createObjectURL(frontImageBlob);
-          // Remove "hidden" so preview is shown
           DOM.frontPreview.classList.remove("hidden");
           isCapturingFront = false;
           DOM.captureInstruction.textContent = "Positionnez le VERSO et prenez la photo.";
@@ -541,14 +544,23 @@
     DOM.resultDiv.style.display = "block";
 
     try {
-      const patientResponse = await apiService.fetchPatient(cin);
-      console.log("Patient Search API Response:", patientResponse);
-      if (patientResponse && Array.isArray(patientResponse) && patientResponse.length > 0) {
-        const currentPatientInfo = patientResponse[0];
-        currentIPP = currentPatientInfo.ipp;
-        console.log("Patient found:", currentPatientInfo);
+      const response = await apiService.fetchPatient(cin);
+      console.log("Patient Search API Response:", response);
+
+      // Handle both array and object responses
+      let patientData = null;
+      if (Array.isArray(response)) {
+        patientData = response.length > 0 ? response[0] : null;
+      } else if (typeof response === "object" && response !== null) {
+        patientData = response;
+      }
+
+      if (patientData) {
+        currentIPP = patientData.ipp;
+        console.log("Patient found:", patientData);
         if (!currentIPP) console.warn("IPP missing in fetched data for CIN:", cin);
 
+        // --- Start Visit ---
         try {
           if (currentIPP) {
             console.log(`Calling startVisit for IPP: ${currentIPP}`);
@@ -563,29 +575,31 @@
           showToast(`Patient trouvé, mais erreur démarrage visite: ${visitError.message}`, "warning");
         }
 
+        // --- Display Patient Info with QR Code and Print Button ---
         const qrCodeData = generateQrData(currentIPP);
         let displayDate = "N/A";
-        if (currentPatientInfo.date_naissance) {
-          const dateParts = currentPatientInfo.date_naissance.split("-");
-          if (dateParts.length === 3) {
-            displayDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+        if (patientData.date_naissance) {
+          // For ISO date, split on 'T' and format as DD/MM/YYYY
+          const parts = patientData.date_naissance.split("T")[0].split("-");
+          if (parts.length === 3) {
+            displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
           } else {
-            displayDate = sanitizeInput(currentPatientInfo.date_naissance);
+            displayDate = sanitizeInput(patientData.date_naissance);
           }
         }
         const qrCodeHTML = `
           <div class="patient-result-container">
             <div class="patient-result-info">
-              <div class="info-group"><div class="info-label">Nom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.nom)}</div></div>
-              <div class="info-group"><div class="info-label">Prénom:</div><div class="info-value">${sanitizeInput(currentPatientInfo.prenom)}</div></div>
+              <div class="info-group"><div class="info-label">Nom:</div><div class="info-value">${sanitizeInput(patientData.nom)}</div></div>
+              <div class="info-group"><div class="info-label">Prénom:</div><div class="info-value">${sanitizeInput(patientData.prenom)}</div></div>
               <div class="info-group"><div class="info-label">IPP:</div><div class="info-value">${sanitizeInput(currentIPP || 'N/A')}</div></div>
-              <div class="info-group"><div class="info-label">CIN:</div><div class="info-value">${sanitizeInput(currentPatientInfo.cin)}</div></div>
-              <div class="info-group"><div class="info-label">Téléphone:</div><div class="info-value">${sanitizeInput(currentPatientInfo.telephone)}</div></div>
-              <div class="info-group"><div class="info-label">Adresse:</div><div class="info-value">${sanitizeInput(currentPatientInfo.adresse)}</div></div>
-              <div class="info-group"><div class="info-label">Ville:</div><div class="info-value">${sanitizeInput(currentPatientInfo.ville)}</div></div>
+              <div class="info-group"><div class="info-label">CIN:</div><div class="info-value">${sanitizeInput(patientData.cin)}</div></div>
+              <div class="info-group"><div class="info-label">Téléphone:</div><div class="info-value">${sanitizeInput(patientData.telephone)}</div></div>
+              <div class="info-group"><div class="info-label">Adresse:</div><div class="info-value">${sanitizeInput(patientData.adresse)}</div></div>
+              <div class="info-group"><div class="info-label">Ville:</div><div class="info-value">${sanitizeInput(patientData.ville)}</div></div>
               <div class="info-group"><div class="info-label">Naissance:</div><div class="info-value">${displayDate}</div></div>
-              <div class="info-group"><div class="info-label">Sexe:</div><div class="info-value">${sanitizeInput(currentPatientInfo.sexe === 'M' ? 'Homme' : (currentPatientInfo.sexe === 'F' ? 'Femme' : 'N/A'))}</div></div>
-              <div class="info-group"><div class="info-label">Mutuelle:</div><div class="info-value">${sanitizeInput(currentPatientInfo.mutuelle || 'N/A')}</div></div>
+              <div class="info-group"><div class="info-label">Sexe:</div><div class="info-value">${sanitizeInput(patientData.sexe === 'M' ? 'Homme' : (patientData.sexe === 'F' ? 'Femme' : 'N/A'))}</div></div>
+              <div class="info-group"><div class="info-label">Mutuelle:</div><div class="info-value">${sanitizeInput(patientData.mutuelle || 'N/A')}</div></div>
             </div>
             ${qrCodeData ? `
               <div class="patient-result-qr">
@@ -654,6 +668,7 @@
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
           DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
           DOM.createPrintButton.disabled = false;
+          // The create section's print button calls printQRCode similarly
           DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
           DOM.createResultDiv.style.display = "block";
         } else {
@@ -758,12 +773,12 @@
   };
 
   // --- Event Listeners ---
-  // Attach search to the form submit to prevent page reload
+  // Attach search to the form submit event to prevent page reload
   DOM.searchForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     handlePatientSearch();
   });
-  // Optional: Also add click handler if needed
+  // Also attach a click handler (optional)
   DOM.searchButton?.addEventListener("click", (e) => {
     e.preventDefault();
     handlePatientSearch();
