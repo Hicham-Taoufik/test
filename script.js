@@ -46,7 +46,7 @@
     captureInstruction: document.getElementById("captureInstruction"),
   };
 
-  // --- State Variables ---
+  // State Variables
   let currentIPP = null;
   let sessionTimeoutId = null;
   let idCaptureStream = null;
@@ -55,6 +55,7 @@
   let isCapturingFront = true;
 
   // --- Utility Functions ---
+
   const showToast = (message, type = "success") => {
     if (!message || !DOM.toast) return;
     const icon =
@@ -95,7 +96,7 @@
     el.style.display = message ? "block" : "none";
     el.className = "";
 
-    // Custom styling for the createResult area
+    // Custom styling for createResult area.
     if (elementId === "createResult") {
       const isResult = type === "result";
       const baseBg = isResult
@@ -306,7 +307,7 @@
               window.print();
               setTimeout(function() { window.close(); }, 500);
             }, 500);
-          }
+          };
         <\/script>
       </body>
       </html>
@@ -315,8 +316,7 @@
   };
 
   // --- ID Capture Functions ---
-  const updateCaptureMessage = (message, type = "info") =>
-    showMessage("captureMessage", message, type);
+  const updateCaptureMessage = (message, type = "info") => showMessage("captureMessage", message, type);
 
   const startIdCapture = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -325,7 +325,7 @@
       // Remove "hidden" class so the container becomes visible
       DOM.idCaptureContainer.classList.remove("hidden");
       DOM.idCaptureContainer.style.display = "block";
-      // Reset previews (remove hidden classes if set)
+      // Reset previews: add back the "hidden" class for now
       DOM.frontPreview.classList.add("hidden");
       DOM.frontPreview.src = "";
       DOM.backPreview.classList.add("hidden");
@@ -358,7 +358,7 @@
       idCaptureStream.getTracks().forEach((track) => track.stop());
     }
     DOM.idVideo.srcObject = null;
-    // Hide the capture container by adding "hidden" class
+    // Hide the capture container again
     DOM.idCaptureContainer.classList.add("hidden");
     DOM.idCaptureContainer.style.display = "none";
     DOM.takePhotoButton.disabled = true;
@@ -378,7 +378,6 @@
   };
 
   const takePhotoAndExtract = async () => {
-    // Ensure the video stream is ready: check videoWidth > 0
     if (!idCaptureStream || !DOM.idVideo || DOM.idVideo.videoWidth <= 0) {
       updateCaptureMessage("Caméra non prête.", "warning");
       console.warn("ID capture: Video element not ready", DOM.idVideo);
@@ -414,7 +413,7 @@
           console.log("Verso captured");
           DOM.backPreview.src = URL.createObjectURL(backImageBlob);
           DOM.backPreview.classList.remove("hidden");
-          stopIdCapture(false); // Keep blobs for further processing
+          stopIdCapture(false);
           updateCaptureMessage("Verso OK. Analyse en cours...", "loading");
           if (frontImageBlob && backImageBlob) {
             const formData = new FormData();
@@ -529,6 +528,8 @@
   };
 
   // --- Event Handlers ---
+
+  // Modified patient search handler with a compact card layout and two print buttons
   const handlePatientSearch = async () => {
     showMessage("getResult", "", "");
     const cin = DOM.cinInput?.value.trim() || "";
@@ -547,7 +548,6 @@
       const response = await apiService.fetchPatient(cin);
       console.log("Patient Search API Response:", response);
 
-      // Handle both array and object responses
       let patientData = null;
       if (Array.isArray(response)) {
         patientData = response.length > 0 ? response[0] : null;
@@ -555,70 +555,82 @@
         patientData = response;
       }
 
-      if (patientData) {
-        currentIPP = patientData.ipp;
-        console.log("Patient found:", patientData);
-        if (!currentIPP) console.warn("IPP missing in fetched data for CIN:", cin);
-
-        // --- Start Visit ---
-        try {
-          if (currentIPP) {
-            console.log(`Calling startVisit for IPP: ${currentIPP}`);
-            const visitResponse = await apiService.startVisit(currentIPP);
-            console.log("Start Visit Response:", visitResponse);
-            showToast(visitResponse.message || "Visite démarrée/active.", "success");
-          } else {
-            showToast("Patient trouvé, mais IPP manquant. Visite non démarrée.", "warning");
-          }
-        } catch (visitError) {
-          console.error("Failed to start visit after search:", visitError);
-          showToast(`Patient trouvé, mais erreur démarrage visite: ${visitError.message}`, "warning");
-        }
-
-        // --- Display Patient Info with QR Code and Print Button ---
-        const qrCodeData = generateQrData(currentIPP);
-        let displayDate = "N/A";
-        if (patientData.date_naissance) {
-          // For ISO date, split on 'T' and format as DD/MM/YYYY
-          const parts = patientData.date_naissance.split("T")[0].split("-");
-          if (parts.length === 3) {
-            displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-          } else {
-            displayDate = sanitizeInput(patientData.date_naissance);
-          }
-        }
-        const qrCodeHTML = `
-          <div class="patient-result-container">
-            <div class="patient-result-info">
-              <div class="info-group"><div class="info-label">Nom:</div><div class="info-value">${sanitizeInput(patientData.nom)}</div></div>
-              <div class="info-group"><div class="info-label">Prénom:</div><div class="info-value">${sanitizeInput(patientData.prenom)}</div></div>
-              <div class="info-group"><div class="info-label">IPP:</div><div class="info-value">${sanitizeInput(currentIPP || 'N/A')}</div></div>
-              <div class="info-group"><div class="info-label">CIN:</div><div class="info-value">${sanitizeInput(patientData.cin)}</div></div>
-              <div class="info-group"><div class="info-label">Téléphone:</div><div class="info-value">${sanitizeInput(patientData.telephone)}</div></div>
-              <div class="info-group"><div class="info-label">Adresse:</div><div class="info-value">${sanitizeInput(patientData.adresse)}</div></div>
-              <div class="info-group"><div class="info-label">Ville:</div><div class="info-value">${sanitizeInput(patientData.ville)}</div></div>
-              <div class="info-group"><div class="info-label">Naissance:</div><div class="info-value">${displayDate}</div></div>
-              <div class="info-group"><div class="info-label">Sexe:</div><div class="info-value">${sanitizeInput(patientData.sexe === 'M' ? 'Homme' : (patientData.sexe === 'F' ? 'Femme' : 'N/A'))}</div></div>
-              <div class="info-group"><div class="info-label">Mutuelle:</div><div class="info-value">${sanitizeInput(patientData.mutuelle || 'N/A')}</div></div>
-            </div>
-            ${qrCodeData ? `
-              <div class="patient-result-qr">
-                <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient IPP ${sanitizeInput(currentIPP)}" loading="lazy" />
-                <p style="font-size: 0.8rem; color: var(--gray-600);">Utilisez ce QR Code pour les prochaines étapes.</p>
-                <button onclick="printQRCode('${qrCodeData.qrImageUrl}')" class="btn btn-secondary btn-sm">
-                  <i class="fas fa-print"></i> Imprimer QR
-                </button>
-              </div>` : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>'
-            }
-          </div>`;
-        DOM.resultDiv.innerHTML = qrCodeHTML;
-      } else {
+      if (!patientData) {
         showMessage("getResult", "", "");
         DOM.resultDiv.innerHTML = `
           <div class="patient-result-container">
             <p class="message message-warning">Patient non trouvé pour ce CIN.</p>
           </div>`;
+        return;
       }
+
+      currentIPP = patientData.ipp;
+      console.log("Patient found:", patientData);
+      if (!currentIPP) {
+        showToast("Patient trouvé, mais IPP manquant. Visite non démarrée.", "warning");
+      } else {
+        try {
+          const visitResponse = await apiService.startVisit(currentIPP);
+          console.log("Start Visit Response:", visitResponse);
+          showToast(visitResponse.message || "Visite démarrée/active.", "success");
+        } catch (visitError) {
+          console.error("Failed to start visit after search:", visitError);
+          showToast(`Patient trouvé, mais erreur démarrage visite: ${visitError.message}`, "warning");
+        }
+      }
+
+      const qrCodeData = generateQrData(currentIPP);
+      let displayDate = "N/A";
+      if (patientData.date_naissance) {
+        const parts = patientData.date_naissance.split("T")[0].split("-");
+        if (parts.length === 3) {
+          displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        } else {
+          displayDate = sanitizeInput(patientData.date_naissance);
+        }
+      }
+
+      // Build a compact card HTML with patient data
+      const searchResultHTML = `
+        <div class="patient-result-card">
+          <h3>Informations du Patient</h3>
+          <ul class="patient-info-list">
+            <li><strong>Nom:</strong> ${sanitizeInput(patientData.nom)}</li>
+            <li><strong>Prénom:</strong> ${sanitizeInput(patientData.prenom)}</li>
+            <li><strong>CIN:</strong> ${sanitizeInput(patientData.cin)}</li>
+            <li><strong>IPP:</strong> ${sanitizeInput(currentIPP || 'N/A')}</li>
+            <li><strong>Téléphone:</strong> ${sanitizeInput(patientData.telephone)}</li>
+            <li><strong>Adresse:</strong> ${sanitizeInput(patientData.adresse)}</li>
+            <li><strong>Ville:</strong> ${sanitizeInput(patientData.ville)}</li>
+            <li><strong>Date de Naissance:</strong> ${displayDate}</li>
+            <li><strong>Sexe:</strong> ${
+              patientData.sexe === 'M'
+                ? 'Homme'
+                : patientData.sexe === 'F'
+                ? 'Femme'
+                : 'N/A'
+            }</li>
+            <li><strong>Mutuelle:</strong> ${sanitizeInput(patientData.mutuelle || 'N/A')}</li>
+          </ul>
+          ${
+            qrCodeData
+              ? `
+            <div class="qr-section">
+              <img src="${qrCodeData.qrImageUrl}" alt="QR Code Patient IPP ${sanitizeInput(currentIPP)}" loading="lazy" />
+              <div class="qr-buttons">
+                <button class="btn btn-secondary btn-sm" onclick="printQRCode('${qrCodeData.qrImageUrl}')">
+                  <i class="fas fa-print"></i> Imprimer QR
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="printPatientSearchInfo()">
+                  <i class="fas fa-print"></i> Imprimer Infos
+                </button>
+              </div>
+            </div>`
+              : '<p class="text-center text-muted mt-3">QR Code non généré (IPP manquant)</p>'
+          }
+        </div>
+      `;
+      DOM.resultDiv.innerHTML = searchResultHTML;
     } catch (error) {
       console.error("Search Patient Process Error:", error);
       showMessage("getResult", "", "");
@@ -629,6 +641,44 @@
     }
   };
 
+  // Function to print entire patient info from the search result
+  window.printPatientSearchInfo = function printPatientSearchInfo() {
+    const contentToPrint = DOM.resultDiv.innerHTML;
+    const printWindow = window.open("", "_blank", "width=800,height=900");
+    if (!printWindow) {
+      alert("Veuillez autoriser les pop-ups pour imprimer.");
+      return;
+    }
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Imprimer Informations Patient</title>
+        <style>
+          body { font-family: sans-serif; margin: 20px; }
+          .patient-result-card { max-width: 600px; margin: 0 auto; }
+          .patient-info-list { list-style: none; padding-left: 0; }
+          .qr-section img { max-width: 200px; display: block; margin: 0 auto; }
+          @media print { button { display: none !important; } }
+        </style>
+      </head>
+      <body>
+        ${contentToPrint}
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }, 500);
+          };
+        <\/script>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  // Create Patient Handler with enhanced print functionality for created patient info
   const handleCreatePatient = async (event) => {
     event.preventDefault();
     if (!validateCreateForm()) return;
@@ -665,11 +715,80 @@
         if (qrCodeData) {
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)})`, "result");
           DOM.createResultMessage.textContent = `Patient créé (IPP: ${sanitizeInput(currentIPP)}) - Visite ID: ${createResponse.visit_id}`;
+          
+          // Build complete created patient info card
+          const createdPatient = {
+            nom: payload.nom,
+            prenom: payload.prenom,
+            cin: payload.cin,
+            ipp: createResponse.ipp,
+            telephone: payload.telephone,
+            adresse: payload.adresse,
+            ville: payload.ville,
+            date_naissance: payload.date_naissance,
+            sexe: payload.sexe,
+            mutuelle: payload.mutuelle,
+          };
+
+          // Fill in a div with id "createdPatientData"
+          // Ensure your HTML has <div id="createdPatientData"></div> inside #createResult.
+          let createdInfoHTML = `
+            <div class="patient-result-card">
+              <h3>Patient Créé</h3>
+              <ul class="patient-info-list">
+                <li><strong>Nom:</strong> ${sanitizeInput(createdPatient.nom)}</li>
+                <li><strong>Prénom:</strong> ${sanitizeInput(createdPatient.prenom)}</li>
+                <li><strong>CIN:</strong> ${sanitizeInput(createdPatient.cin)}</li>
+                <li><strong>IPP:</strong> ${sanitizeInput(createdPatient.ipp)}</li>
+                <li><strong>Téléphone:</strong> ${sanitizeInput(createdPatient.telephone)}</li>
+                <li><strong>Adresse:</strong> ${sanitizeInput(createdPatient.adresse)}</li>
+                <li><strong>Ville:</strong> ${sanitizeInput(createdPatient.ville)}</li>
+                <li><strong>Date de Naissance:</strong> ${sanitizeInput(createdPatient.date_naissance)}</li>
+                <li><strong>Sexe:</strong> ${
+                  createdPatient.sexe === 'M'
+                    ? 'Homme'
+                    : createdPatient.sexe === 'F'
+                    ? 'Femme'
+                    : 'N/A'
+                }</li>
+                <li><strong>Mutuelle:</strong> ${sanitizeInput(createdPatient.mutuelle || 'N/A')}</li>
+              </ul>
+              ${
+                qrCodeData
+                  ? `<div class="qr-section">
+                        <img src="${qrCodeData.qrImageUrl}" alt="QR Code IPP ${sanitizeInput(createdPatient.ipp)}" />
+                     </div>`
+                  : ''
+              }
+            </div>`;
+          
+          // Try to populate or create the container
+          let createdPatientDataDiv = document.getElementById("createdPatientData");
+          if (!createdPatientDataDiv) {
+            createdPatientDataDiv = document.createElement("div");
+            createdPatientDataDiv.id = "createdPatientData";
+            DOM.createResultDiv.appendChild(createdPatientDataDiv);
+          }
+          createdPatientDataDiv.innerHTML = createdInfoHTML;
+          
+          // Enable Print QR button (only prints the QR image)
           DOM.createQrCodeImage.src = qrCodeData.qrImageUrl;
           DOM.createQrCodeImage.alt = `QR Code pour IPP ${sanitizeInput(currentIPP)}`;
           DOM.createPrintButton.disabled = false;
-          // The create section's print button calls printQRCode similarly
           DOM.createPrintButton.onclick = () => printQRCode(qrCodeData.qrImageUrl);
+
+          // Create and assign a new print button for printing the entire patient info
+          let createPrintInfoButton = document.getElementById("createPrintInfoButton");
+          if (!createPrintInfoButton) {
+            createPrintInfoButton = document.createElement("button");
+            createPrintInfoButton.id = "createPrintInfoButton";
+            createPrintInfoButton.className = "btn btn-secondary";
+            createPrintInfoButton.innerHTML = `<i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos`;
+            DOM.createResultDiv.appendChild(createPrintInfoButton);
+          }
+          createPrintInfoButton.disabled = false;
+          createPrintInfoButton.onclick = () => printCreatedPatientInfo();
+
           DOM.createResultDiv.style.display = "block";
         } else {
           showMessage("createResult", `Patient créé (IPP: ${sanitizeInput(currentIPP)}), Visite ID: ${createResponse.visit_id}. Erreur QR Code.`, "warning");
@@ -690,6 +809,44 @@
     } finally {
       DOM.createPatientBtn.disabled = false;
     }
+  };
+
+  // Function to print the entire created patient info
+  window.printCreatedPatientInfo = function printCreatedPatientInfo() {
+    const createdPatientDataDiv = document.getElementById("createdPatientData");
+    if (!createdPatientDataDiv) return;
+    const contentToPrint = createdPatientDataDiv.innerHTML;
+    const printWindow = window.open("", "_blank", "width=800,height=900");
+    if (!printWindow) {
+      alert("Veuillez autoriser les pop-ups pour imprimer.");
+      return;
+    }
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Imprimer Infos Nouveau Patient</title>
+        <style>
+          body { font-family: sans-serif; margin: 20px; }
+          .patient-info-list { list-style: none; padding-left: 0; }
+          img { max-width: 200px; display: block; margin: 20px auto; }
+          @media print { button { display: none !important; } }
+        </style>
+      </head>
+      <body>
+        ${contentToPrint}
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }, 500);
+          };
+        <\/script>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
   };
 
   // --- Dropdown Initialization Functions ---
@@ -773,12 +930,10 @@
   };
 
   // --- Event Listeners ---
-  // Attach search to the form submit event to prevent page reload
   DOM.searchForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     handlePatientSearch();
   });
-  // Also attach a click handler (optional)
   DOM.searchButton?.addEventListener("click", (e) => {
     e.preventDefault();
     handlePatientSearch();
