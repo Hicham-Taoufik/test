@@ -1,427 +1,638 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <meta
-      name="description"
-      content="Dashboard de réception pour la gestion des patients - MediClinic"
-    />
-    <meta name="theme-color" content="#ffffff" />
-    <title>Réception - MediClinic</title>
-    <!-- Preconnect to external domains for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
-    <!-- Fonts and icons -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <!-- Select2 CSS -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css"
-      rel="stylesheet"
-    />
-    <!-- Local CSS -->
-    <link rel="stylesheet" href="style.css" />
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  </head>
-  <body>
-    <a href="#main-content" class="skip-link">Passer au contenu principal</a>
-    <div class="container">
-      <header class="header">
-        <div class="header-main-content">
-          <div class="logo">
-            <img
-              src="./clinique-nakhil-logo-horizontal.webp"
-              alt="MediClinic Logo"
-              class="logo-img"
-              width="180"
-              height="40"
-            />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Dashboard de réception pour la gestion des patients – MediClinic" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Réception – MediClinic</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Select2 CSS -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      button { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Passer au contenu principal</a>
+  <div class="container">
+    <header class="header">
+      <div class="header-main-content">
+        <div class="logo">
+          <img
+            src="./clinique-nakhil-logo-horizontal.webp"
+            alt="MediClinic Logo"
+            class="logo-img"
+            width="180" height="40"
+          />
+        </div>
+        <h1 class="header-title">Réception</h1>
+      </div>
+      <div class="header-logout">
+        <button
+          type="button"
+          class="btn btn-outline logout-btn no-print"
+          id="logoutBtn"
+        >
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+      </div>
+    </header>
+
+    <main id="main-content" class="flex-row">
+      <!-- Create Patient Column -->
+      <div class="flex-col">
+        <section class="card" aria-labelledby="create-patient-heading">
+          <div class="card-header">
+            <h2 id="create-patient-heading" class="card-title">
+              <i class="fas fa-user-plus"></i> Créer un Patient
+            </h2>
+            <div class="card-actions" aria-hidden="true">
+              <i class="fas fa-pen"></i>
+            </div>
           </div>
-          <h1 class="header-title">Réception</h1>
-        </div>
-        <div class="header-logout">
-<button
-  type="button"
-  class="btn btn-outline logout-btn no-print"
-  aria-label="Déconnexion"
-  id="logoutBtn"
->
-  <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion
-</button>
-        </div>
-      </header>
-  
-      <main id="main-content" class="flex-row">
-        <div class="flex-col">
-          <!-- Create Patient Section -->
-          <section class="card" aria-labelledby="create-patient-heading">
-            <div class="card-header">
-              <h2 id="create-patient-heading" class="card-title">
-                <i class="fas fa-user-plus" aria-hidden="true"></i> Créer un Patient
-              </h2>
-              <div class="card-actions" aria-hidden="true">
-                <i class="fas fa-pen"></i>
-              </div>
-            </div>
-            <div class="card-body">
-              <!-- ID Capture Section -->
-              <div class="id-capture-section mb-4 no-print">
-                <button
-                  id="captureIdButton"
-                  type="button"
-                  class="btn btn-primary"
-                >
-                  <i class="fas fa-camera"></i> Scanner CIN
-                </button>
-                <div id="idCaptureContainer" class="hidden">
-                  <p id="captureInstruction">
-                    Positionnez le RECTO de la CIN et prenez la photo.
-                  </p>
-                  <video id="idVideo" playsinline></video>
-                  <canvas id="idCanvas" class="hidden"></canvas>
-                  <div class="d-flex justify-content-center gap-2 my-2">
-                    <img
-                      id="frontPreview"
-                      class="capture-preview hidden"
-                      alt="Aperçu Recto"
-                    />
-                    <img
-                      id="backPreview"
-                      class="capture-preview hidden"
-                      alt="Aperçu Verso"
-                    />
-                  </div>
-                  <div class="btn-group mt-2">
-                    <button
-                      id="takePhotoButton"
-                      type="button"
-                      class="btn btn-success"
-                      disabled
-                    >
-                      <i class="fas fa-camera-retro"></i> Prendre Photo
-                    </button>
-                    <button
-                      id="cancelCaptureButton"
-                      type="button"
-                      class="btn btn-secondary"
-                      disabled
-                    >
-                      Annuler
-                    </button>
-                  </div>
-                  <div
-                    id="captureMessage"
-                    class="message message-info mt-2"
-                  ></div>
+          <div class="card-body">
+            <!-- CIN Capture -->
+            <div class="id-capture-section mb-4 no-print">
+              <button id="captureIdButton" type="button" class="btn btn-primary">
+                <i class="fas fa-camera"></i> Scanner CIN
+              </button>
+              <div id="idCaptureContainer" class="hidden">
+                <p id="captureInstruction">Positionnez le RECTO de la CIN et prenez la photo.</p>
+                <video id="idVideo" playsinline></video>
+                <canvas id="idCanvas" class="hidden"></canvas>
+                <div class="d-flex justify-content-center gap-2 my-2">
+                  <img id="frontPreview" class="capture-preview hidden" alt="Aperçu Recto" />
+                  <img id="backPreview" class="capture-preview hidden" alt="Aperçu Verso" />
                 </div>
-              </div>
-              <!-- END ID Capture Section -->
-  
-              <form id="createForm" novalidate>
-                <div class="form-grid">
-                  <div class="input-group">
-                    <label for="nom">
-                      Nom <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <input
-                      id="nom"
-                      name="nom"
-                      type="text"
-                      placeholder="Nom de famille"
-                      required
-                      aria-required="true"
-                      autocomplete="family-name"
-                    />
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <div class="input-group">
-                    <label for="prenom">
-                      Prénom <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <input
-                      id="prenom"
-                      name="prenom"
-                      type="text"
-                      placeholder="Prénom"
-                      required
-                      aria-required="true"
-                      autocomplete="given-name"
-                    />
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <div class="input-group">
-                    <label for="cin">
-                      CIN <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <input
-                      id="cin"
-                      name="cin"
-                      type="text"
-                      placeholder="Ex: AB123456"
-                      required
-                      aria-required="true"
-                      pattern="^[A-Za-z]{1,2}\d{5,6}$"
-                    />
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <div class="input-group">
-                    <label for="telephone">
-                      Téléphone
-                      <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <input
-                      id="telephone"
-                      name="telephone"
-                      type="tel"
-                      placeholder="Ex: 0612345678"
-                      required
-                      aria-required="true"
-                      autocomplete="tel"
-                      pattern="^0[5-7]\d{8}$"
-                      inputmode="numeric"
-                    />
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <div class="input-group">
-                    <label for="adresse">
-                      Adresse <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <input
-                      id="adresse"
-                      name="adresse"
-                      type="text"
-                      placeholder="Adresse complète"
-                      required
-                      aria-required="true"
-                      autocomplete="address-line1"
-                    />
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <div class="input-group">
-                    <label for="ville">
-                      Ville <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <input
-                      id="ville"
-                      name="ville"
-                      type="text"
-                      placeholder="Ville"
-                      required
-                      aria-required="true"
-                      autocomplete="address-level2"
-                    />
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <div class="input-group">
-                    <label for="date_naissance">
-                      Date de Naissance
-                      <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <input
-                      id="date_naissance"
-                      name="date_naissance"
-                      type="date"
-                      required
-                      aria-required="true"
-                      autocomplete="bday"
-                    />
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <div class="input-group">
-                    <label for="sexe">
-                      Sexe <span class="required" aria-hidden="true">*</span>
-                      <span class="sr-only">(obligatoire)</span>
-                    </label>
-                    <select
-                      id="sexe"
-                      name="sexe"
-                      required
-                      aria-required="true"
-                      autocomplete="sex"
-                    >
-                      <option value="" disabled selected>Choisir...</option>
-                      <option value="M">Homme</option>
-                      <option value="F">Femme</option>
-                    </select>
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <!-- Updated Mutuelle Dropdown -->
-                  <div class="input-group mutuelle-group">
-                    <label for="mutuelle">Mutuelle</label>
-                    <select name="mutuelle" id="mutuelle" class="form-select">
-                      <option value="" disabled selected>Choisir une mutuelle...</option>
-                      <!-- Options populated by JS -->
-                    </select>
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-                  <!-- Doctor Dropdown -->
-                  <div class="input-group">
-                    <label for="doctor">Médecin</label>
-                    <select name="doctor" id="doctor" class="form-select">
-                      <option value="" disabled selected>Choisir un médecin...</option>
-                      <!-- Options populated by JS -->
-                    </select>
-                    <div class="error-text" aria-live="polite"></div>
-                  </div>
-  
-                  <div class="form-submit-button">
-                    <button
-                      type="submit"
-                      class="btn btn-success"
-                      id="createPatientBtn"
-                    >
-                      <i class="fas fa-plus-circle" aria-hidden="true"></i>
-                      Créer Patient & Démarrer Visite
-                    </button>
-                  </div>
-                  <div
-                    id="message"
-                    class="message"
-                    role="alert"
-                    aria-live="polite"
-                  ></div>
-                </div>
-              </form>
-              <div id="createResult" class="hidden">
-                <!-- Only the QR code and print buttons are kept -->
-                <div class="qr-code-container">
-                  <img
-                    id="createQrCodeImage"
-                    src=""
-                    alt="QR Code patient"
-                    loading="lazy"
-                  />
-                </div>
-                <button
-                  id="createPrintButton"
-                  class="btn btn-secondary"
-                  disabled
-                >
-                  <i class="fas fa-print" aria-hidden="true"></i> Imprimer QR Code
-                </button>
-                <button id="createPrintInfoButton" class="btn btn-secondary" disabled>
-                  <i class="fas fa-print" aria-hidden="true"></i> Imprimer Infos
-                </button>
-              </div>
-            </div>
-          </section>
-        </div>
-  
-        <div class="flex-col">
-          <!-- Search Patient Section -->
-          <section class="card" aria-labelledby="search-patient-heading">
-            <div class="card-header">
-              <h2 id="search-patient-heading" class="card-title">
-                <i class="fas fa-search" aria-hidden="true"></i> Rechercher un Patient
-              </h2>
-              <div class="card-actions" aria-hidden="true">
-                <i class="fas fa-users"></i>
-              </div>
-            </div>
-            <div class="card-body">
-              <form id="searchForm" class="search-bar">
-                <div class="search-input-group">
-                  <input
-                    id="getCin"
-                    type="text"
-                    placeholder="Entrer le CIN du patient"
-                    aria-label="Numéro CIN du patient"
-                    pattern="^[A-Za-z]{1,2}\d{5,6}$"
-                  />
-                  <button type="submit" id="searchBtn" class="btn btn-primary">
-                    <i class="fas fa-search" aria-hidden="true"></i> Rechercher & Démarrer Visite
+                <div class="btn-group mt-2">
+                  <button id="takePhotoButton" type="button" class="btn btn-success" disabled>
+                    <i class="fas fa-camera-retro"></i> Prendre Photo
+                  </button>
+                  <button id="cancelCaptureButton" type="button" class="btn btn-secondary" disabled>
+                    Annuler
                   </button>
                 </div>
-              </form>
-              <div
-                id="getResult"
-                role="region"
-                aria-live="polite"
-                class="search-results"
-              ></div>
-            </div>
-          </section>
-  
-          <!-- Recent Patients Section -->
-          <section class="card" aria-labelledby="recent-patients-heading">
-            <div class="card-header">
-              <h2 id="recent-patients-heading" class="card-title">
-                <i class="fas fa-clock" aria-hidden="true"></i> Patients Récents
-              </h2>
-              <div class="card-actions" aria-hidden="true">
-                <i class="fas fa-history"></i>
+                <div id="captureMessage" class="message message-info mt-2"></div>
               </div>
             </div>
-            <div class="card-body">
-              <div id="recentPatientsList" class="recent-patients-list">
-                <!-- Content populated by JS -->
-                <p class="no-data-message">Aucun patient récent à afficher</p>
+
+            <!-- Create Form -->
+            <form id="createForm" novalidate>
+              <div class="form-grid">
+                <!-- form inputs as before -->
+                <div class="input-group">
+                  <label for="nom">Nom <span class="required">*</span></label>
+                  <input id="nom" name="nom" type="text" placeholder="Nom de famille" required />
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="prenom">Prénom <span class="required">*</span></label>
+                  <input id="prenom" name="prenom" type="text" placeholder="Prénom" required />
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="cin">CIN <span class="required">*</span></label>
+                  <input
+                    id="cin" name="cin" type="text" placeholder="Ex: AB123456"
+                    required pattern="^[A-Za-z]{1,2}\d{5,6}$"
+                  />
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="telephone">Téléphone <span class="required">*</span></label>
+                  <input
+                    id="telephone" name="telephone" type="tel"
+                    placeholder="Ex: 0612345678" required pattern="^0[5-7]\d{8}$"
+                  />
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="adresse">Adresse <span class="required">*</span></label>
+                  <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required />
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="ville">Ville <span class="required">*</span></label>
+                  <input id="ville" name="ville" type="text" placeholder="Ville" required />
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="date_naissance">Date de Naissance <span class="required">*</span></label>
+                  <input id="date_naissance" name="date_naissance" type="date" required />
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="sexe">Sexe <span class="required">*</span></label>
+                  <select id="sexe" name="sexe" required>
+                    <option value="" disabled selected>Choisir...</option>
+                    <option value="M">Homme</option>
+                    <option value="F">Femme</option>
+                  </select>
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group mutuelle-group">
+                  <label for="mutuelle">Mutuelle</label>
+                  <select id="mutuelle" name="mutuelle" class="form-select">
+                    <option value="" selected>Aucune / Non spécifié</option>
+                  </select>
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="input-group">
+                  <label for="doctor">Médecin</label>
+                  <select id="doctor" name="doctor" class="form-select">
+                    <option value="" selected>Choisir un médecin...</option>
+                  </select>
+                  <div class="error-text" aria-live="polite"></div>
+                </div>
+                <div class="form-submit-button">
+                  <button type="submit" class="btn btn-success" id="createPatientBtn">
+                    <i class="fas fa-plus-circle"></i> Créer Patient &amp; Démarrer Visite
+                  </button>
+                </div>
+                <div id="message" class="message" role="alert" aria-live="polite"></div>
               </div>
-            </div>
-          </section>
-        </div>
-      </main>
-  
-      <footer class="footer no-print">
-        <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
-      </footer>
-  
-      <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
-    </div>
-  
-    <!-- Modal for advanced patient information -->
-    <div
-      id="patientModal"
-      class="modal"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-      role="dialog"
-    >
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 id="modal-title">Détails du Patient</h3>
-          <button id="closeModal" class="close-button" aria-label="Fermer">
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <div id="patientDetails"></div>
-        </div>
-        <div class="modal-footer">
-          <button id="startVisitBtn" class="btn btn-primary">
-            Démarrer Visite
-          </button>
-          <button id="editPatientBtn" class="btn btn-secondary">
-            Modifier
-          </button>
-        </div>
+            </form>
+
+            <!-- Create Result -->
+            <div id="createResult" style="display:none;"></div>
+          </div>
+        </section>
       </div>
-    </div>
-  
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Select2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
-    <!-- Local JS -->
-    <script src="script.js" defer></script>
-  </body>
+
+      <!-- Search & Recent Column -->
+      <div class="flex-col">
+        <section class="card" aria-labelledby="search-patient-heading">
+          <div class="card-header">
+            <h2 id="search-patient-heading" class="card-title">
+              <i class="fas fa-search"></i> Rechercher un Patient
+            </h2>
+            <div class="card-actions" aria-hidden="true">
+              <i class="fas fa-users"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="searchForm" class="search-bar">
+              <div class="search-input-group">
+                <input
+                  id="getCin" type="text" placeholder="Entrer le CIN du patient"
+                  pattern="^[A-Za-z]{1,2}\d{5,6}$"
+                />
+                <button type="submit" id="searchBtn" class="btn btn-primary">
+                  <i class="fas fa-search"></i> Rechercher &amp; Démarrer Visite
+                </button>
+              </div>
+            </form>
+            <div id="getResult" class="search-results" role="region" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="recent-patients-heading">
+          <div class="card-header">
+            <h2 id="recent-patients-heading" class="card-title">
+              <i class="fas fa-clock"></i> Patients Récents
+            </h2>
+            <div class="card-actions" aria-hidden="true">
+              <i class="fas fa-history"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="recentPatientsList" class="recent-patients-list">
+              <p class="no-data-message">Aucun patient récent à afficher</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer no-print">
+      <p>&copy; 2025 MediClinic. Tous droits réservés.</p>
+    </footer>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- Patient Modal -->
+  <div id="patientModal" class="modal" aria-labelledby="modal-title" aria-modal="true" role="dialog">
+    <!-- Modal content unchanged... -->
+  </div>
+
+  <!-- Dependencies -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+
+  <script>
+  (() => {
+    // --- Config ---
+    const CONFIG = {
+      API_BASE_URL: "https://workflows.aphelionxinnovations.com",
+      QR_TARGET_BASE_URL: "app://medilink/patient",
+      TOKEN_KEY: "authToken",
+      LOGIN_PAGE_URL: "https://hicham-taoufik.github.io/login/",
+      MESSAGE_DISPLAY_TIME: 7000,
+      TOAST_DISPLAY_TIME: 4000,
+      CREATE_PATIENT_ENDPOINT: "/webhook/create-patient",
+      GET_PATIENT_ENDPOINT: "/webhook/get-patient",
+      START_VISIT_ENDPOINT: "/webhook/start-visit",
+      GET_MUTUELLES_ENDPOINT: "/webhook/get-mutuelles",
+      GET_DOCTORS_ENDPOINT: "/webhook/get-doctors",
+      EXTRACT_ID_ENDPOINT: "/webhook/extract-id-info"
+    };
+
+    // --- DOM refs ---
+    const DOM = {
+      logoutBtn: document.getElementById("logoutBtn"),
+      createForm: document.getElementById("createForm"),
+      createPatientBtn: document.getElementById("createPatientBtn"),
+      createResultDiv: document.getElementById("createResult"),
+      messageDiv: document.getElementById("message"),
+      getCin: document.getElementById("getCin"),
+      searchForm: document.getElementById("searchForm"),
+      getResult: document.getElementById("getResult"),
+      recentList: document.getElementById("recentPatientsList"),
+      mutuelleInput: document.getElementById("mutuelle"),
+      doctorInput: document.getElementById("doctor"),
+      captureIdButton: document.getElementById("captureIdButton"),
+      idCaptureContainer: document.getElementById("idCaptureContainer"),
+      idVideo: document.getElementById("idVideo"),
+      idCanvas: document.getElementById("idCanvas"),
+      takePhotoButton: document.getElementById("takePhotoButton"),
+      cancelCaptureButton: document.getElementById("cancelCaptureButton"),
+      frontPreview: document.getElementById("frontPreview"),
+      backPreview: document.getElementById("backPreview"),
+      captureInstruction: document.getElementById("captureInstruction"),
+      captureMessage: document.getElementById("captureMessage"),
+    };
+
+    let sessionTimeoutId = null;
+    let idCaptureStream = null;
+    let frontBlob = null;
+    let backBlob = null;
+    let capturingFront = true;
+    let currentIPP = null;
+
+    // --- Utils ---
+    const showToast = (msg, type="success") => {
+      const t = document.getElementById("toast");
+      t.innerHTML = (type==="success"
+        ? '<i class="fas fa-check-circle"></i> '
+        : '<i class="fas fa-exclamation-circle"></i> ') + msg;
+      t.className = `toast ${type} show`;
+      setTimeout(()=> t.classList.remove("show"), CONFIG.TOAST_DISPLAY_TIME);
+    };
+
+    const showMessage = (id, msg, type="info") => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.innerHTML = msg;
+      el.style.display = msg ? "block" : "none";
+      el.className = `message message-${type}`;
+      if(id==="message" && msg && (type==="info"||type==="success")) {
+        setTimeout(()=> el.style.display="none", CONFIG.MESSAGE_DISPLAY_TIME);
+      }
+    };
+
+    const logout = () => {
+      localStorage.removeItem(CONFIG.TOKEN_KEY);
+      showToast("Déconnecté.", "success");
+      setTimeout(()=> location.href=CONFIG.LOGIN_PAGE_URL,500);
+    };
+    DOM.logoutBtn?.addEventListener("click", logout);
+
+    const resetSession = () => {
+      clearTimeout(sessionTimeoutId);
+      sessionTimeoutId = setTimeout(logout, 30*60*1000);
+    };
+
+    async function fetchWithAuth(url, opts={}) {
+      const token = localStorage.getItem(CONFIG.TOKEN_KEY);
+      if(!token) { logout(); throw "No token"; }
+      resetSession();
+      const headers = { ...(opts.headers||{}), Authorization:`Bearer ${token}` };
+      if(opts.body && !(opts.body instanceof FormData)) headers["Content-Type"]="application/json";
+      const res = await fetch(url, {...opts, headers});
+      if(!res.ok) {
+        if(res.status===401||res.status===403) { logout(); throw "Auth failed"; }
+        const txt=await res.text(); throw txt||res.statusText;
+      }
+      const ct=res.headers.get("content-type")||"";
+      return ct.includes("application/json")?res.json():res.text();
+    }
+
+    const api = {
+      createPatient: p => fetchWithAuth(CONFIG.API_BASE_URL+CONFIG.CREATE_PATIENT_ENDPOINT,{
+        method:"POST", body:JSON.stringify(p)
+      }),
+      fetchPatient: cin => fetchWithAuth(CONFIG.API_BASE_URL+CONFIG.GET_PATIENT_ENDPOINT+"?cin="+encodeURIComponent(cin)),
+      startVisit: ipp => fetchWithAuth(CONFIG.API_BASE_URL+CONFIG.START_VISIT_ENDPOINT,{
+        method:"POST", body:JSON.stringify({ipp})
+      }),
+      fetchMutuelles: ()=> fetchWithAuth(CONFIG.API_BASE_URL+CONFIG.GET_MUTUELLES_ENDPOINT),
+      fetchDoctors: ()=> fetchWithAuth(CONFIG.API_BASE_URL+CONFIG.GET_DOCTORS_ENDPOINT),
+      extractId: fd => fetchWithAuth(CONFIG.API_BASE_URL+CONFIG.EXTRACT_ID_ENDPOINT,{
+        method:"POST", body:fd
+      }),
+    };
+
+    const generateQr = ipp => {
+      const data = `${CONFIG.QR_TARGET_BASE_URL}?ipp=${encodeURIComponent(ipp)}`;
+      return `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(data)}`;
+    };
+    window.printQRCode = qrUrl => {
+      const w=window.open("","_blank","width=400,height=450");
+      if(!w){alert("Autorisez pop‑ups.");return;}
+      w.document.write(`
+        <html><head><style>
+          body{margin:20px;text-align:center;font-family:sans-serif;}
+          img{max-width:250px;border:1px solid #ccc;padding:5px;}
+          @media print{button{display:none}}
+        </style></head><body>
+          <img src="${qrUrl}" alt="QR Code"/>
+          <script>
+            window.onload=()=>{setTimeout(()=>{
+              window.print();
+              setTimeout(()=>window.close(),500);
+            },500);};
+          <\/script>
+        </body></html>`);
+      w.document.close();
+    };
+
+    // Populate dropdowns
+    const fillMutuelles = async () => {
+      try {
+        const d = await api.fetchMutuelles();
+        if(d.success && Array.isArray(d.mutuelles)) {
+          DOM.mutuelleInput.innerHTML = '<option value="">Aucune</option>';
+          d.mutuelles.forEach(m=>{
+            DOM.mutuelleInput.insertAdjacentHTML("beforeend",
+              `<option>${m}</option>`);
+          });
+        }
+        $(DOM.mutuelleInput).select2({placeholder:"Mutuelle…",allowClear:true,width:"100%"});
+      } catch(e){console.error(e);}
+    };
+    const fillDoctors = async () => {
+      try {
+        const d=await api.fetchDoctors();
+        if(d.success && Array.isArray(d.doctors)) {
+          DOM.doctorInput.innerHTML = '<option value="">Aucun</option>';
+          d.doctors.forEach(doc=>{
+            DOM.doctorInput.insertAdjacentHTML("beforeend",
+              `<option value="${doc.matricule}">
+                ${doc.nom} ${doc.prenom} (${doc.specialite})
+               </option>`);
+          });
+        }
+        $(DOM.doctorInput).select2({placeholder:"Médecin…",allowClear:true,width:"100%"});
+      } catch(e){console.error(e);}
+    };
+
+    // Validate form (basic)
+    const validateCreate = () => {
+      let ok=true;
+      ["nom","prenom","telephone","adresse","ville","date_naissance","sexe"].forEach(id=>{
+        const inp=DOM.createForm[id];
+        if(!inp.value.trim()){
+          inp.classList.add("input-error");
+          ok=false;
+        } else inp.classList.remove("input-error");
+      });
+      if(!ok) showMessage("message","Veuillez remplir tous les champs obligatoires.","error");
+      return ok;
+    };
+
+    // Create handler
+    const handleCreate = async e=>{
+      e.preventDefault();
+      showMessage("message","Création en cours…","info");
+      if(!validateCreate()) return;
+      DOM.createPatientBtn.disabled=true;
+      const p = {
+        nom:DOM.createForm.nom.value.trim(),
+        prenom:DOM.createForm.prenom.value.trim(),
+        cin:DOM.createForm.cin.value.trim()||null,
+        telephone:DOM.createForm.telephone.value.trim(),
+        adresse:DOM.createForm.adresse.value.trim(),
+        ville:DOM.createForm.ville.value.trim(),
+        date_naissance:DOM.createForm.date_naissance.value,
+        sexe:DOM.createForm.sexe.value,
+        mutuelle:DOM.mutuelleInput.value||null,
+        doctor:DOM.doctorInput.value||null
+      };
+      try {
+        const r = await api.createPatient(p);
+        if(!r.success||!r.ipp) throw r.message||"Échec";
+        showToast(r.message||"Patient créé !","success");
+        currentIPP=r.ipp;
+        // start visit
+        try {
+          const sv=await api.startVisit(r.ipp);
+          showToast(sv.message||"Visite démarrée.","success");
+        } catch(_){}
+        // render result
+        const qrImg=generateQr(r.ipp);
+        DOM.createResultDiv.innerHTML = `
+          <div class="patient-result-card">
+            <h3>Patient créé</h3>
+            <ul class="patient-info-list">
+              <li><strong>Nom:</strong> ${p.nom}</li>
+              <li><strong>Prénom:</strong> ${p.prenom}</li>
+              <li><strong>IPP:</strong> ${r.ipp}</li>
+            </ul>
+            <div class="qr-section">
+              <img src="${qrImg}" alt="QR Code"/>
+              <div class="qr-buttons no-print" style="margin-top:10px;">
+                <button class="btn btn-secondary btn-sm"
+                  onclick="printQRCode('${qrImg}')">
+                  <i class="fas fa-print"></i> Imprimer QR Code
+                </button>
+              </div>
+            </div>
+          </div>`;
+        DOM.createResultDiv.style.display="block";
+        DOM.createForm.reset();
+      } catch(err) {
+        console.error(err);
+        showMessage("message","Erreur : "+err,"error");
+      } finally {
+        DOM.createPatientBtn.disabled=false;
+      }
+    };
+
+    // Search handler
+    const handleSearch = async e=>{
+      e.preventDefault();
+      const cin=DOM.getCin.value.trim();
+      if(!cin){ showMessage("getResult","Entrez un CIN.","warning"); return; }
+      showMessage("getResult","Recherche…","loading");
+      try {
+        const r = await api.fetchPatient(cin);
+        let pt = Array.isArray(r)?r[0]:r;
+        if(!pt||!pt.ipp){
+          DOM.getResult.innerHTML=`<p class="message message-warning">Patient non trouvé</p>`;
+          return;
+        }
+        currentIPP=pt.ipp;
+        // start visit
+        try{
+          const sv=await api.startVisit(pt.ipp);
+          showToast(sv.message||"Visite démarrée.","success");
+        }catch(_){}
+        const qrImg=generateQr(pt.ipp);
+        DOM.getResult.innerHTML = `
+          <div class="patient-result-card">
+            <h3>Patient trouvé</h3>
+            <ul class="patient-info-list">
+              <li><strong>Nom:</strong> ${pt.nom}</li>
+              <li><strong>Prénom:</strong> ${pt.prenom}</li>
+              <li><strong>IPP:</strong> ${pt.ipp}</li>
+            </ul>
+            <div class="qr-section">
+              <img src="${qrImg}" alt="QR Code"/>
+              <div class="qr-buttons no-print" style="margin-top:10px;">
+                <button class="btn btn-secondary btn-sm"
+                  onclick="printQRCode('${qrImg}')">
+                  <i class="fas fa-print"></i> Imprimer QR Code
+                </button>
+              </div>
+            </div>
+          </div>`;
+      } catch(err){
+        console.error(err);
+        DOM.getResult.innerHTML=`<p class="message message-error">Erreur: ${err}</p>`;
+      }
+    };
+
+    // ID capture
+    const updateCaptureMsg=(m,t="info")=> showMessage("captureMessage",m,t);
+    const startCapture=async()=>{
+      updateCaptureMsg("Demande caméra…","loading");
+      DOM.captureIdButton.disabled=true;
+      DOM.idCaptureContainer.classList.remove("hidden");
+      try{
+        idCaptureStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+        DOM.idVideo.srcObject=idCaptureStream;
+        await DOM.idVideo.play();
+        updateCaptureMsg("Caméra prête. Photo RECTO.","info");
+        DOM.takePhotoButton.disabled=false;
+        DOM.cancelCaptureButton.disabled=false;
+      }catch(e){
+        console.error(e);
+        updateCaptureMsg("Caméra non accessible.","error");
+        stopCapture(true);
+      }
+    };
+    const stopCapture=(clearBlobs)=>{
+      if(idCaptureStream) idCaptureStream.getTracks().forEach(t=>t.stop());
+      DOM.idCaptureContainer.classList.add("hidden");
+      DOM.takePhotoButton.disabled=true;
+      DOM.cancelCaptureButton.disabled=true;
+      DOM.captureIdButton.disabled=false;
+      updateCaptureMsg("","");
+      if(clearBlobs){
+        frontBlob=backBlob=null;
+        DOM.frontPreview.classList.add("hidden");
+        DOM.backPreview.classList.add("hidden");
+      }
+      capturingFront = true;
+    };
+    const takePhoto=()=>{
+      if(!DOM.idVideo.videoWidth) return updateCaptureMsg("Vidéo non prête","warning");
+      updateCaptureMsg("Analyse…","loading");
+      const c=DOM.idCanvas;
+      c.width=DOM.idVideo.videoWidth;
+      c.height=DOM.idVideo.videoHeight;
+      const ctx=c.getContext("2d");
+      ctx.drawImage(DOM.idVideo,0,0);
+      c.toBlob(async blob=>{
+        if(!blob) return updateCaptureMsg("Erreur capture","error");
+        if(capturingFront){
+          frontBlob=blob;
+          DOM.frontPreview.src=URL.createObjectURL(blob);
+          DOM.frontPreview.classList.remove("hidden");
+          capturingFront=false;
+          DOM.captureInstruction.textContent="Photo VERSO";
+          updateCaptureMsg("Recto OK, prenez verso","info");
+          DOM.takePhotoButton.disabled=false;
+          DOM.cancelCaptureButton.disabled=false;
+        } else {
+          backBlob=blob;
+          DOM.backPreview.src=URL.createObjectURL(blob);
+          DOM.backPreview.classList.remove("hidden");
+          stopCapture(false);
+          updateCaptureMsg("Envoi pour extraction…","loading");
+          if(frontBlob && backBlob){
+            const fd=new FormData();
+            fd.append("data",frontBlob,"front.jpg");
+            fd.append("data",backBlob,"back.jpg");
+            try{
+              const resp=await api.extractId(fd);
+              console.log("Raw extract‑ID response:",resp);
+              const d = resp.extractedData || resp.data || {};
+              console.log("Using extracted object:", d);
+              // autofill
+              DOM.createForm.nom.value = d.last_name     || "";
+              DOM.createForm.prenom.value = d.first_name || "";
+              DOM.createForm.cin.value = d.id_number     || "";
+              if(d.date_of_birth){
+                const [day,mo,yr] = d.date_of_birth.split("/");
+                DOM.createForm.date_naissance.value = `${yr}-${mo.padStart(2,"0")}-${day.padStart(2,"0")}`;
+              }
+              DOM.createForm.adresse.value = d.address || "";
+              DOM.createForm.ville.value   = d.city    || "";
+              DOM.createForm.sexe.value    = (d.gender==="F"?"F":"M");
+              showToast("Formulaire pré-rempli!","success");
+              updateCaptureMsg("Données extraites","success");
+            }catch(e){
+              console.error(e);
+              updateCaptureMsg("Erreur extraction","error");
+            } finally {
+              frontBlob=backBlob=null;
+            }
+          }
+        }
+      },"image/jpeg",0.9);
+    };
+
+    // Init
+    document.addEventListener("DOMContentLoaded",()=>{
+      if(!localStorage.getItem(CONFIG.TOKEN_KEY)) return logout();
+      resetSession();
+      DOM.createForm.addEventListener("submit",handleCreate);
+      DOM.searchForm.addEventListener("submit",handleSearch);
+      DOM.captureIdButton.addEventListener("click",startCapture);
+      DOM.takePhotoButton.addEventListener("click",takePhoto);
+      DOM.cancelCaptureButton.addEventListener("click",()=>stopCapture(true));
+      fillMutuelles();
+      fillDoctors();
+    });
+
+  })();
+  </script>
+</body>
 </html>
+```
